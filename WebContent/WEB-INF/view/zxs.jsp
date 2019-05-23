@@ -205,6 +205,7 @@ function seachselect(){
 				data:{
 					s_id:row.s_id,
 					s_name:row.s_name,
+					n_userid:row.u_id,
 					n_followTime:$("#n_followTime").datebox("getValue"),
 					n_nextfollowTime:$("#n_nextfollowTime").datebox("getValue"),
 					n_content:$("#n_contentgz").val(),
@@ -270,7 +271,8 @@ function seachselect(){
             <th field="s_isbaobei" hidden="true">是否报备</th>
             <th field="s_returnMoneyReason" hidden="true">退费原因</th>
             <th field="s_preMoney" hidden="true">定金金额</th>
-            <th field="s_preMoneyTime" hidden="true">定金时间</th>            
+            <th field="s_preMoneyTime" hidden="true">定金时间</th> 
+            <th field="u_id" hidden="true">员工id</th>            
             <th data-options="field:'njknjk',formatter:formattercaosuo">操作</th>  
         </tr>
     </thead>
@@ -364,7 +366,7 @@ function seachselect(){
 								
 								<td><input type="checkbox" value="s_qq" checked="checked"/>qq</td>
 								<td><input type="checkbox" value="s_wx" checked="checked"/>微信</td>
-								<td><input type="checkbox" value="s_inClassContent"/>进班备注</td>
+								
 								</tr>
 							<tr>
 								<td><input type="checkbox" value="s_createTime" checked="checked"/>创建时间</td>
@@ -394,6 +396,7 @@ function seachselect(){
 								<td><input type="checkbox" value="s_preMoney"/>定金金额</td>
 								<td><input type="checkbox" value="s_preMoneyTime"/>定金时间</td>
 								<td><input type="checkbox" value="s_stuConcern"/>客户学历</td>
+								<td><input type="checkbox" value="u_id"/>员工id</td>
 							
 								
 							</tr>
@@ -488,7 +491,7 @@ function seachselect(){
 									data-options="multiline:true,height:50,width:329,
 									readonly:true"
 									 type="text"
-									name="s_inClassContent" /></td>
+									name="s_record" /></td>
 							</tr>
 							
 						</table>
@@ -665,7 +668,7 @@ function seachselect(){
 									data-options="multiline:true,height:50,width:329,
 									readonly:true"
 									 type="text"
-									name="s_inClassContent" /></td>
+									name="s_record" /></td>
 							</tr>
 							
 						</table>
@@ -693,10 +696,10 @@ function seachselect(){
 								<td>打分:</td>
 								<td><select class="easyui-combobox" panelHeight='auto' data-options="prompt:'——请选择 ——'" style="width: 150px" name="s_learnforward"> 
 								     
-								    <option value="A、近期可报名">A、近期可报名</option> 
+								    <option value="A、近期可报名">A、近期可报名</option>
 								    <option value="B、一个月内可报名">B、一个月内可报名</option>
-								    <option value="C、长期跟踪">C、长期跟踪</option> 
-								    <option value="D、无效">D、无效</option> 
+								    <option value="C、长期跟踪">C、长期跟踪</option>
+								    <option value="D、无效">D、无效</option>
 									</select></td>
 								<td>是否有效:</td>
 								<td>
@@ -716,12 +719,12 @@ function seachselect(){
 							</tr>
 							<tr>
 								<td>首访时间:</td>
-								<td><input class="easyui-datebox"  
+								<td><input class="easyui-datebox"
 									type="text" data-options="prompt:'请输入正确时间'" name="s_fistVisitTime" /></td>
 								<td>是否上门:</td>
 								<td>
-								<input type="radio" value="已缴费" name="s_ishome" />已上门
-						        <input type="radio" value="未缴费" name="s_ishome" />未上门
+								<input type="radio" value="已上门" name="s_ishome" />已上门
+						        <input type="radio" value="未上门" name="s_ishome" />未上门
 								</td>
 							</tr>
 							<tr>

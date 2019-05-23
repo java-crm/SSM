@@ -159,5 +159,9 @@ public class LoginController {
 	public String zxs() {
 		return "view/zxs";
 	}
+	@RequestMapping(value="/tbtj",method=RequestMethod.GET)
+	public String tbtj() {
+		return "view/tbtj";
+	}
 	
 }

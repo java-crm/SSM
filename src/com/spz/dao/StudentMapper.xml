@@ -873,7 +873,7 @@
 	
 	<insert id="insertStugz" parameterType="com.spz.entity.Netfollows">
 		
-		insert into  netfollows (s_id,s_name,n_followTime,n_nextfollowTime,n_content,n_followType,n_followState)value(#{s_id},#{s_name},#{n_followTime},#{n_nextfollowTime},#{n_content},#{n_followType},#{n_followState})
+		insert into  netfollows (s_id,s_name,n_followTime,n_nextfollowTime,n_content,n_followType,n_followState,n_userid)value(#{s_id},#{s_name},#{n_followTime},#{n_nextfollowTime},#{n_content},#{n_followType},#{n_followState},#{n_userid})
 	</insert>
 	
 	<!-- 孙所蕾 -->
@@ -1381,8 +1381,6 @@
 	<!-- 查询修改删除中下拉框的咨询师 -->
 	<select id="selectUsersByZXS" resultType="student" parameterType="int">
 		SELECT
-			<!-- users.u_id,
-			users.u_name --> 
 			users.*
 		FROM
 			student
@@ -1390,4 +1388,5 @@
 		where student.s_id =#{s_id}
 		
 	</select>
+	
 </mapper>

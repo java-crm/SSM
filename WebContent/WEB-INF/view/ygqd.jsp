@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-<head>
+<head>*
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <script src="${pageContext.request.contextPath}/js/global.js"></script>
@@ -106,7 +106,6 @@
 					us_isCancel='否';
 				}
 				if (checked == false){
-					alert(us_isCancel);
 					us_isCancel='是';
 				}
 				$.ajax({
