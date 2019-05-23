@@ -1,0 +1,6 @@
+/com/
+/applicationContext-dao.xml
+/applicationContext-transaction.xml
+/jdbc.properties
+/mybatis.xml
+/springmvc.xml

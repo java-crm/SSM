@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+ "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spz.dao.UsersMapper">
+
+	<sql id="UsersSql">
+		u_id,u_name,u_pwd,u_isLockout,u_lastLoginTime,u_createTime,u_pwdWrongTime
+			u_lockTime,u_protectEmail,u_protectMtel from Users 
+	</sql>
+	<!-- 登录时（添加时）查询用户是否存在 -->
+	<select id="selectUserBylogin" parameterType="Users" resultType="Users">
+		select <include refid="UsersSql"/>
+			<where>
+				<if test="u_id !=null and u_id !=''">
+					and u_id=#{u_id}
+				</if>
+				<if test="u_name !=null and u_name !=''">
+					and u_name=#{u_name}
+				</if>
+				<if test="u_pwd !=null and u_pwd !=''">
+					and u_pwd=#{u_pwd}
+				</if>
+				<if test="u_isLockout != null and u_isLockout !=''">
+					and u_isLockout=#{u_isLockout}
+				</if>
+			</where>
+	</select>
+	
+	<!-- 搜索条件模糊查询数据 -->
+	<select id="selectUsersByUsers" parameterType="Users" resultType="Users">
+		select <include refid="UsersSql"/>
+			<where>
+				<if test="u_name !=null and u_name !=''">
+					and u_name like "%"#{u_name}"%"
+				</if>
+				<if test="u_isLockout != null and u_isLockout !=''">
+					and u_isLockout=#{u_isLockout}
+				</if>
+				<if test="beginlastLoginTime != null and beginlastLoginTime!=''">
+					and u_lastLoginTime &gt;= #{beginlastLoginTime}
+				</if>
+				<if test="endlastLoginTime != null and endlastLoginTime !=''">
+					and u_lastLoginTime &lt;= #{endlastLoginTime}
+				</if>
+				<if test="beginCreateTime != null and beginCreateTime !=''">
+					and u_createTime &gt;= #{beginCreateTime}
+				</if>
+				<if test="endCreateTime !=null and endCreateTime !=''">
+					and u_createTime &lt;= #{endCreateTime}
+				</if>
+				<if test="u_protectMtel !=null and u_protectMtel !=''">
+					and u_protectMtel =#{u_protectMtel}
+				</if>
+				<if test="u_protectEmail !=null and u_protectEmail !=''">
+					and u_protectEmail =#{u_protectEmail}
+				</if>
+			</where>
+			    <if test="page !=null and page!='' and rows !=null and rows !=''">
+					limit #{page},#{rows}
+				</if>
+	</select>
+	
+	<!-- 搜索条件模糊查询数据条数 -->
+	<select id="selectUsersByUsersCount" parameterType="Users" resultType="int">
+		select count(u_id) from Users 
+			<where>
+				<if test="u_name !=null and u_name !=''">
+					and u_name like "%"#{u_name}"%"
+				</if>
+				<if test="u_isLockout !=null and u_isLockout !=''">
+					and u_isLockout=#{u_isLockout}
+				</if>
+				<if test="beginlastLoginTime != null and beginlastLoginTime!=''">
+					and u_lastLoginTime &gt;= #{beginlastLoginTime}
+				</if>
+				<if test="endlastLoginTime != null and endlastLoginTime !=''">
+					and u_lastLoginTime &lt;= #{endlastLoginTime}
+				</if>
+				<if test="beginCreateTime != null and beginCreateTime !=''">
+					and u_createTime &gt;= #{beginCreateTime}
+				</if>
+				<if test="endCreateTime !=null and endCreateTime !=''">
+					and u_createTime &lt;= #{endCreateTime}
+				</if>
+				<if test="u_protectMtel !=null and u_protectMtel !=''">
+					and u_protectMtel =#{u_protectMtel}
+				</if>
+				<if test="u_protectEmail !=null and u_protectEmail !=''">
+					and u_protectEmail =#{u_protectEmail}
+				</if>
+			</where>
+	</select>
+	
+	<!-- 管理员修改员工基本信息登录名（解锁）员工自身修改（密码） 系统自己修改（登录成功修改最后登录时间） -->
+	<update id="updateUsers" parameterType="Users">
+		update users 
+			<set>
+				<if test="u_name !=null and u_name !=''">
+					u_name=#{u_name},
+				</if>
+				<if test="u_pwd !=null and u_pwd !=''">
+					u_pwd=#{u_pwd},
+				</if>
+				<if test="u_isLockout !=null and u_isLockout !=''">
+					u_isLockout=#{u_isLockout},
+				</if>
+				<if test="u_lastLoginTime !=null and u_lastLoginTime !=''">
+					u_lastLoginTime=#{u_lastLoginTime},
+				</if>
+				<if test="u_protectEmail !=null and u_protectEmail !=''">
+					u_protectEmail=#{u_protectEmail},
+				</if>
+				<if test="u_protectMtel !=null and u_protectMtel !=''">
+					u_protectMtel=#{u_protectMtel},
+				</if>
+				<if test="u_state !=null and u_state !=''">
+					u_state=#{u_state},
+				</if>
+			</set>
+			where u_id=#{u_id}
+	</update>
+	
+	<!-- 可以和下面的写查所有子模块 可以放在一起（后面再修改） -->
+	<select id="selectUserModuls" parameterType="int" resultType="Modules">
+		SELECT 
+			distinct modules.m_id,modules.m_name,modules.m_parentId,modules.m_path,modules.m_weight,modules.m_ops,modules.m_int0
+		FROM 
+			users
+			INNER JOIN userroles ON users.u_id = userroles.u_id -- 用户于用户和角色表管理
+			INNER JOIN roles ON userroles.r_id=roles.r_id -- 角色和用户和角色表
+		  INNER JOIN rolemodules ON roles.r_id=rolemodules.r_id
+			
+			INNER JOIN modules ON rolemodules.m_id =modules.m_id
+			where users.u_id=#{u_id}
+	</select>
+	
+	<!-- 查所有子模块 -->
+	<select id="selectModulsByid" parameterType="int" resultType="Modules">
+		SELECT 
+			distinct modules.m_id,modules.m_name,modules.m_parentId,modules.m_path,modules.m_weight,modules.m_ops,modules.m_int0
+		FROM 
+			users
+			INNER JOIN userroles ON users.u_id = userroles.u_id -- 用户于用户和角色表管理
+			INNER JOIN roles ON userroles.r_id=roles.r_id -- 角色和用户和角色表
+		    INNER JOIN rolemodules ON roles.r_id=rolemodules.r_id
+			INNER JOIN modules ON rolemodules.m_id =modules.m_id
+			where users.u_id=#{1} and modules.m_parentId=#{0}
+	</select>
+	
+	<!-- 管理员可以删除离职员工 -->
+	<delete id="deleteUsers" parameterType="int">
+		delete from users where  u_id=#{u_id}
+	</delete>
+	
+	<!-- 管理员添加员工 -->
+	<insert id="insertUsers" parameterType="users">
+		INSERT INTO users ( u_name, u_pwd, u_isLockout, u_pwdWrongTime, u_protectEMail, u_protectMtel, u_state )
+		VALUES
+		( #{u_name}, #{u_pwd}, 1, 0, #{u_protectEmail}, #{u_protectMtel}, #{u_state})
+	</insert>
+	
+	<!-- 查询已打卡咨询师成交的学生总个数，和已录入的未成交的个数，以及成功率 -->
+	<select id="selectUsersByFenLiang" parameterType="Users" resultType="Users">
+		select a.*,IFNULL(b.count,0) counts ,IFNULL(d.count ,0) dcount , IFNULL(b.count/a.count,0)  as bfb  from (   
+			select users.u_id,users.u_name,count(users.u_id) as count from users
+			INNER JOIN userchecks ON users.u_id=userchecks.u_id		
+			left JOIN student on users.u_id=student.u_id
+			inner JOIN userroles ON users.u_id = userroles.u_id
+			inner JOIN roles ON userroles.r_id = roles.r_id
+			where roles.r_id=10 and userchecks.us_checkState='是' 
+			group by users.u_id HAVING count>0 ) a left join
+			(select users.u_id,users.u_name,count(users.u_id) as count from users  
+			INNER JOIN userchecks ON users.u_id=userchecks.u_id	
+			left JOIN student on users.u_id=student.u_id
+			inner JOIN userroles ON users.u_id = userroles.u_id
+			inner JOIN roles ON userroles.r_id = roles.r_id
+			where roles.r_id=10   and student.s_ispay='已缴费'  
+			group by users.u_id HAVING count>0 
+		) b on a.u_id=b.u_id  left join (
+			select users.u_id,count(users.u_id) as count from users
+			INNER JOIN userchecks ON users.u_id=userchecks.u_id		
+			left JOIN student on users.u_id=student.u_id
+			inner JOIN userroles ON users.u_id = userroles.u_id
+			inner JOIN roles ON userroles.r_id = roles.r_id
+			where roles.r_id=10 and userchecks.us_checkState='是' 
+			and  student.s_createTime &gt; #{beginCreateTime} 
+			and student.s_createTime &lt; #{endCreateTime}
+			group by users.u_id HAVING count>0 
+		) d on b.u_id = d.u_id 
+	</select>
+	
+	<!-- 查看那个网络咨询师被开启分量了 -->
+	<select id="selectUsersByKaiQi" parameterType="int" resultType="Users">
+		SELECT
+			u_id,u_state
+		FROM
+			users
+			WHERE u_id= #{u_id}
+	</select>
+	
+	<!-- 查看网络咨询师的分量情况 -->
+	<select id="selectUsersByflcz" parameterType="users" resultType="users">
+		 SELECT
+			users.u_id,users.u_name,users.u_state
+		FROM
+			users
+			INNER JOIN userroles ON users.u_id = userroles.u_id
+			INNER JOIN roles ON userroles.r_id = roles.r_id
+			<where>
+				<if test="u_name !=null and u_name !=''">
+					and u_name like "%"#{u_name}"%"
+				</if>
+				<if test="u_state !=null and u_state !=''">
+					and u_state = #{u_state}
+				</if>
+				<if test="1>0">
+					and roles.r_id=9
+				</if>
+			</where>
+			  limit #{page},#{rows}
+	</select>
+	
+	<!-- 查看网络咨询师的分量情况条数 -->
+	<select id="selectUsersByflczCount" parameterType="users" resultType="int">
+		 SELECT
+			count(1)
+		FROM
+			users
+			INNER JOIN userroles ON users.u_id = userroles.u_id
+			INNER JOIN roles ON userroles.r_id = roles.r_id
+			<where>
+				<if test="u_name !=null and u_name !=''">
+					and u_name like "%"#{u_name}"%"
+				</if>
+				<if test="u_state !=null and u_state !=''">
+					and u_state = #{u_state}
+				</if>
+				<if test="1>0">
+					and roles.r_id=9
+				</if>
+			</where>
+	</select>
+	
+	<!-- 连表修改所有网络咨询师的u_state为某个状态 -->
+	<update id="updateUsersByu_state" parameterType="int">
+		UPDATE users u1
+		INNER JOIN (
+			SELECT
+				users.* 
+			FROM
+				users
+				INNER JOIN userroles ON userroles.u_id = users.u_id
+				INNER JOIN roles ON roles.r_id = userroles.r_id 
+			WHERE
+				roles.r_id = 9 
+			) u2 
+			SET u1.u_state = #{u_state} 
+		WHERE
+			u1.u_id = u2.u_id;
+	</update>
+	
+	<!-- 对别的员工添加经理的角色的时候做判断经理是否被人引用 -->
+	<select id="selectUsersJingLi" resultType="users">
+		select users.* from users
+		INNER JOIN userroles on users.u_id=userroles.u_id
+		INNER JOIN roles on userroles.r_id=roles.r_id
+		where roles.r_id=15
+	</select>
+	
+	<!-- 添加员工时同时添加签到表的数据 -->
+	<select id="selecuMaxUserId" resultType="int">
+		select users.*  from users order by users.u_id desc limit 1
+	</select>
+</mapper>

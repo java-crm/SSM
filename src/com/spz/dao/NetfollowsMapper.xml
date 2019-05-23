@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.spz.dao.NetfollowsMapper">
+
+	<select id="selectNet" parameterType="Netfollows"
+		resultType="Netfollows">
+		SELECT
+		n_id,s_name,n_followTime,n_content,n_nextfollowTime,n_followType FROM
+		netfollows
+		<where>
+			<if test="mincreateTime !=null and mincreateTime !=''">
+				and n_followTime &gt;= #{mincreateTime}
+			</if>
+			<if test="maxcreateTime !=null and maxcreateTime !=''">
+				and n_followTime &gt;= #{maxcreateTime}
+			</if>
+			<if test="s_id !=null and s_id!=''">
+				and s_id =#{s_id}
+			</if>
+		</where>
+		order by n_id desc 
+		limit #{page},#{rows}
+	</select>
+
+	<select id="selectNetcount" parameterType="Netfollows"
+		resultType="int">
+		SELECT COUNT(n_id) FROM netfollows
+
+		<where>
+			<if test="mincreateTime !=null and mincreateTime !=''">
+				and n_createTime &gt;= #{mincreateTime}
+			</if>
+			<if test="maxcreateTime !=null and maxcreateTime !=''">
+				and n_createTime &gt;= #{maxcreateTime}
+			</if>
+			<if test="s_id !=null and s_id!=''">
+				and s_id =#{s_id}
+			</if>
+		</where>
+	</select>
+	
+</mapper>
