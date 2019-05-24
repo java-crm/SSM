@@ -233,7 +233,7 @@ function seachselect(){
 <table id="dg" data-options="fitColumns:true,checkbox: true" >  
 		<thead>
 			<tr>
-<th data-options="field:'check',checkbox:true">编号</th>   
+			<th data-options="field:'check',checkbox:true">编号</th>   
             <th data-options="field:'s_id'">编号</th>   
             <th data-options="field:'s_name'">客户名称</th>   
             <th data-options="field:'s_age'">年龄</th>   

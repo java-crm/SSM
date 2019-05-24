@@ -121,5 +121,5 @@ public interface StudentMapper {
 	 * 查询修改删除中下拉框的咨询师
 	 * @return
 	 */
-	List<Student> selectUsersByZXS(Integer s_id);
+	List<Users> selectUsersByZXS();
 }

@@ -309,9 +309,9 @@ public class StudentServiceImpl implements StudentService {
 		return new Gson().toJson(studentMapper.selectUsersByZixunShi());
 	}
 	@Override
-	public String selectUsersByZXS(Integer s_id) {
+	public String selectUsersByZXS() {
 		// TODO Auto-generated method stub
-		return new Gson().toJson(studentMapper.selectUsersByZXS(s_id));
+		return new Gson().toJson(studentMapper.selectUsersByZXS());
 	}
 	@Override
 	public List<Users> selectStudentUserName(Integer s_createUser) {

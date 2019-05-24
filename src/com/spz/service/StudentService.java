@@ -106,5 +106,5 @@ public interface StudentService {
 	 * 查询修改删除中下拉框的咨询师
 	 * @return
 	 */
-	String selectUsersByZXS(Integer s_id);
+	String selectUsersByZXS();
 }
