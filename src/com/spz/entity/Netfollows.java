@@ -7,7 +7,7 @@ public class Netfollows {
 	private String n_followTime;
 	private String n_nextfollowTime;
 	private String n_content;
-	private String u_id;
+	private String n_userid;
 	private String n_followType;
 	private String n_createTime;
 	private String n_followState;
@@ -66,11 +66,20 @@ public class Netfollows {
 	public void setN_content(String n_content) {
 		this.n_content = n_content;
 	}
-	public String getU_id() {
-		return u_id;
+	
+	public String getN_userid() {
+		return n_userid;
 	}
-	public void setU_id(String u_id) {
-		this.u_id = u_id;
+	@Override
+	public String toString() {
+		return "Netfollows [n_id=" + n_id + ", s_id=" + s_id + ", s_name=" + s_name + ", n_followTime=" + n_followTime
+				+ ", n_nextfollowTime=" + n_nextfollowTime + ", n_content=" + n_content + ", n_userid=" + n_userid
+				+ ", n_followType=" + n_followType + ", n_createTime=" + n_createTime + ", n_followState="
+				+ n_followState + ", page=" + page + ", rows=" + rows + ", mincreateTime=" + mincreateTime
+				+ ", maxcreateTime=" + maxcreateTime + "]";
+	}
+	public void setN_userid(String n_userid) {
+		this.n_userid = n_userid;
 	}
 	public String getN_followType() {
 		return n_followType;

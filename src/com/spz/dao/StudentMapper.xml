@@ -873,7 +873,7 @@
 	
 	<insert id="insertStugz" parameterType="com.spz.entity.Netfollows">
 		
-		insert into  netfollows (s_id,s_name,n_followTime,n_nextfollowTime,n_content,n_followType,n_followState)value(#{s_id},#{s_name},#{n_followTime},#{n_nextfollowTime},#{n_content},#{n_followType},#{n_followState})
+		insert into  netfollows (s_id,s_name,n_followTime,n_nextfollowTime,n_content,n_followType,n_followState,n_userid)value(#{s_id},#{s_name},#{n_followTime},#{n_nextfollowTime},#{n_content},#{n_followType},#{n_followState},#{n_userid})
 	</insert>
 	
 	<!-- 孙所蕾 -->
