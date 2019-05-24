@@ -69,7 +69,7 @@ public interface StudentMapper {
 	 * @param stu
 	 * @return
 	 */
-		Integer insertStugz(Netfollows net );
+	Integer insertStugz(Netfollows net );
 
 
 	//ËïËùÀÙ

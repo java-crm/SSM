@@ -733,11 +733,15 @@ function seachselect(){
 		link.click();
 		document.body.removeChild(link);
 	}
-
 	$("#btnExport").click(function() {
-		var data = JSON.stringify($('#dg').datagrid('getData').rows);
-		if (data == '')
+		var row=$("#dg").datagrid("getSelections");
+		if(row.length == 0){
+			$.messager.alert("系统信息","请选择数据");
 			return;
+		}
+		var data = JSON.stringify(row);
+		
+			
 
 		JSONToCSVConvertor(data, "数据信息", true);
 	});

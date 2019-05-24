@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.spz.dao.EchartsMapper">
+
+	<!-- 查询登录者今天往前数过去七天用户的分配学生数量 -->
+	<select id="selectEcharts" parameterType="student"  resultType="Echarts">
+		SELECT a.click_date,IFNULL(b.amt,0) AS COUNT
+		FROM (
+		    SELECT CURDATE() AS click_date
+		    UNION ALL
+		    SELECT DATE_SUB(CURDATE(), INTERVAL 1 DAY) AS click_date
+		    UNION ALL
+		    SELECT DATE_SUB(CURDATE(), INTERVAL 2 DAY) AS click_date
+		    UNION ALL
+		    SELECT DATE_SUB(CURDATE(), INTERVAL 3 DAY) AS click_date
+		    UNION ALL
+		    SELECT DATE_SUB(CURDATE(), INTERVAL 4 DAY) AS click_date
+		    UNION ALL
+		    SELECT DATE_SUB(CURDATE(), INTERVAL 5 DAY) AS click_date
+		    UNION ALL
+		    SELECT DATE_SUB(CURDATE(), INTERVAL 6 DAY) AS click_date
+			) a LEFT JOIN (
+			  SELECT  s_name,DATE_FORMAT(s_createTime,'%Y-%m-%d') AS dt,count(1) as amt
+			  FROM student 
+			  <where>
+			  	<if test="u_id !=null and u_id !='' ">
+			  		and u_id=#{u_id} 
+			  	</if>
+			  	<if test="s_createUser !=null and s_createUser !='' ">
+			  		and s_createUser=#{s_createUser} 
+			  	</if>
+			  </where>
+			  GROUP BY dt
+			) b ON a.click_date = b.dt
+			ORDER BY a.click_date ASC;
+	</select>
+	
+	<!-- 得到登录的u_id来这里查询是网络咨询师还是咨询师显示相应的图表 -->
+	<select id="selectRolesEcharts" parameterType="int" resultType="int">
+		SELECT
+			roles.r_id
+		FROM
+			users
+			INNER JOIN userroles ON users.u_id = userroles.u_id
+			INNER JOIN roles ON userroles.r_id = roles.r_id
+			where users.u_id=#{u_id}
+	</select>
+</mapper>
+
+
