@@ -53,9 +53,13 @@
 	function formattercaozuo(value,row,index){
 		return "<a href='javascript:void(0)' onclick='updateStu("+index+")'>编辑</a>   "+
 				"<a href='javascript:void(0)' onclick='deleteStu("+index+")'>删除</a>   "+
-				"<a href='javascript:void(0)' onclick='lookStu("+index+")'>查看</a>";
+				"<a href='javascript:void(0)' onclick='lookStu("+index+")'>查看</a>      ";
 	}
 	
+	function formattergenzong(value,row,index){
+		return "<a href='javascript:void(0)' onclick='follow("+index+")'>跟踪</a>   "+
+				"<a href='javascript:void(0)' onclick='rizhi("+index+")'>日志</a>   ";
+	}
 	
 	function formatterfunction(value,row,index){
 		if(row.users){
@@ -63,7 +67,63 @@
 		}
 	}
 
+	var inde;
+	function rizhi(index){
+		inde=index;
+		initrizi();
+		$("#rizhiform").form("clear");
+		$('#rizhi').dialog("open");
+	}
+	function initrizi(){
+		var data =$("#dg").datagrid("getData");
+		$('#rizhitable').datagrid({
+			url:'${pageContext.request.contextPath}/selectNet',
+		    method:'POST',
+		    fitColumns:true,
+		    singleSelect:true,
+		    pagination:true,
+		    toolbar:"#toolbar2",
+		    queryParams: {
+		    	s_id:data.rows[inde].s_id,
+		    	mincreateTime:$('#mincreateTime').datebox('getValue'),
+		    	maxcreateTime:$('#maxcreateTime').datebox('getValue')
+		    }
+		});
+	}
 	
+	function follow(){
+		$("#genzong").form("clear");
+		$("#genzongStu").dialog("open");
+	}
+	
+	function clearStudent(){
+		$("#genzongStu").dialog("close");
+	}
+
+	function genzong(){
+		var row= $("#dg").datagrid("getSelected");
+		$.ajax({
+			url:'${pageContext.request.contextPath}/insertStugz',
+			method:'post',
+			data:{
+				s_id:row.s_id,
+				s_name:row.s_name,
+				n_followTime:$("#n_followTime").datebox("getValue"),
+				n_nextfollowTime:$("#n_nextfollowTime").datebox("getValue"),
+				n_content:$("#n_contentgz").val(),
+				n_followType:$("#n_followTypegz").val(),
+				n_followState:$("#n_followState").val()
+				
+			},
+			success:function(res){
+				if(res>0){
+					$('#dg').datagrid("reload");
+					$("#genzongStu").dialog("close");
+					$.messager.alert('提示信息','添加成功');    
+				}
+			}
+		},"json")
+	}
 	
 	function insertStudent(){
 		/* 修改标题并打开 */
@@ -117,6 +177,9 @@
 	
 	
 	function updateStu(index){
+
+		var data = $("#dg").datagrid("getData");
+		var name=data.rows[index].users.u_name;
 		/* 每次打开都清空form数据 */
 		$("#stuForm").form("clear");
 		/* 显示提交按钮 */
@@ -124,10 +187,21 @@
 		
 		/* 获取选择的表单数据 */
 		var data = $("#dg").datagrid("getData");
+		
 		$("#stuForm").form("load",data.rows[index]);
 		
 		/* 对表示input进行赋值，标识框主要用来在后面提交时判断url的 */
 		$("#mark").val("2");
+		if($("#mark").val()=="2"){
+			$('#u_ids').combobox({
+				url:'${pageContext.request.contextPath}/selectUsersByZXS',
+				valueField:'u_id',
+				textField:'u_name'
+			})
+		}
+		$("#u_ids").textbox('setValue',name);
+		
+		
 		
 		/* 修改标题并打开 */
 		$("#stu_dialog").dialog({title:'编辑学生'}).dialog("open");
@@ -149,36 +223,25 @@
 	
 	function lookStu(index){
 		var data = $("#dg").datagrid("getData");
-		var row=data.rows[index];
-		
-		//$('#uidname').combobox('getValue');
-		$('#uidname').combobox({
-			url:'${pageContext.request.contextPath}/selectUsersByZXS',
-			valueField:'u_id',
-			textField:'u_name',
-			queryParams:{
-				s_id:row.s_id
-			}
-		})
-		$('#uidname').combobox('select',row.users.u_name)
-			$.ajax({
-	        	url:"${pageContext.request.contextPath}/selectStuByid",
-	        	method:'post',
-	        	data:{s_id:data.rows[index].s_id},
-	        	dataType:'json',
-	        	success:function(res){
-	        		if(res!=null){
-	        			/* 清空form数据 */
-	        			$("#stuForm").form("clear");
-	        			$("#tj").hide();
-	        			
-	        			$("#stuForm").form("load",res);/* 对form赋值 */
-	        			$("#stu_dialog").dialog({title:'查看学生信息'}).dialog("open");
-	        		}
-	        	}
-	        })
-	        
-		} 
+		var name=data.rows[index].users.u_name;
+		$.ajax({
+        	url:"${pageContext.request.contextPath}/selectStuByid",
+        	method:'post',
+        	data:{s_id:data.rows[index].s_id},
+        	dataType:'json',
+        	success:function(res){
+        		if(res!=null){
+        			/* 清空form数据 */
+        			$("#stuForm").form("clear");
+        			$("#tj").hide();
+        			
+        			$("#stuForm").form("load",res);/* 对form赋值 */
+        			$("#u_ids").textbox('setValue',name);
+        			$("#stu_dialog").dialog({title:'查看学生信息'}).dialog("open");
+        		}
+        	}
+        })
+	} 
 	
 	
 	/* 提交添加Student */
@@ -190,127 +253,122 @@
 	function ClearStu(){
 		$("#stu_dialog").dialog("close");
 	}
+	
+	
+	/* 隐藏列 */
+	function saveColumn() {
+		var cbx = $("#hiddenColumn_form input[type='checkbox']"); //获取Form里面是checkbox的Object
+	    var checkedValue = "";
+	    var unCheckValue = "";
+	    for (var i = 0; i < cbx.length; i++) {
+	        if (cbx[i].checked) {//获取已经checked的Object
+	            if (checkedValue.length > 0) {
+	                checkedValue += "," + cbx[i].value; //获取已经checked的value
+	            }
+	            else {
+	                checkedValue = cbx[i].value;
+	            }
+	        }
+	        if (!cbx[i].checked) {//获取没有checked的Object
+	            if (unCheckValue.length > 0) {
+	                unCheckValue += "," + cbx[i].value; //获取没有checked的value
+	            }
+	            else {
+	                unCheckValue = cbx[i].value;
+	            }
+	        }
+	    }
+	    var checkeds = new Array();
+	    if (checkedValue != null && checkedValue != "") {
+	        checkeds = checkedValue.split(',');
+	        for (var i = 0; i < checkeds.length; i++) {
+	        	
+	            $('#dg').datagrid('showColumn', checkeds[i]); //显示相应的列
+	        }
+	    }
+	    var unChecks = new Array();
+	    if (unCheckValue != null && unCheckValue != "") {
+	        unChecks = unCheckValue.split(',');
+	        for (var i = 0; i < unChecks.length; i++) { 
+	            $('#dg').datagrid('hideColumn', unChecks[i]); //隐藏相应的列
+	        }
+	    } 
+	    /* $('#hiddenColumn_dialog').dialog('close'); */
+	    init();
+	}
+	/* //关闭设置隐藏列弹框
+	function closed_hiddenColumn() {
+		$('#hiddenColumn_dialog').dialog('close');
+	} */
+	//全选按钮
+	function ChooseAll() {
+	   
+	    var a=$("#isQuanXuan").text();//获取按钮的值
+	    if("全选"==a.trim()){
+	    	 $("#hiddenColumn_form input[type='checkbox']").prop("checked", true);//全选
+	    	$('#isQuanXuan').linkbutton({ text:'全不选' });
+	    }else{    	
+	    	 $("#hiddenColumn_form input[type='checkbox']").removeAttr("checked", "checked");//取消全选
+	    	 $('#isQuanXuan').linkbutton({ text:'全选' });
+	    }
+	    
+	}
 </script>
 </head>
 <body>
 
 
-	<table id="dg" class="easyui-datagrid">   
-	    <thead>   
-	        <tr>
-	        	<th data-options="field:'check',checkbox:true">编号</th> 
-	            <th data-options="field:'s_id'">编号</th>
-	            <th data-options="field:'s_createTime'">创建时间</th>
-	            <th data-options="field:'s_name'">学生名字</th>
-	            <th data-options="field:'s_iphone'">学员电话</th>
-				<th data-options="field:'s_age'">年龄</th>
-				<th data-options="field:'s_sex'">性别</th>
-	            <th data-options="field:'s_stuConcern'">学历</th>
-	            <th data-options="field:'s_state'">个人状态</th>
-	            <th data-options="field:'s_courceurl'">来源渠道</th>
-	            <th data-options="field:'s_fromPart'">来源网址</th>
+	<table id="dg" data-options="fitColumns:true,checkbox: true" >  
+		<thead>
+			<tr>
+				<th data-options="field:'check',checkbox:true">编号</th>   
+	            <th data-options="field:'s_id'">编号</th>   
+	            <th data-options="field:'s_name'">客户名称</th>   
+	            <th data-options="field:'s_age'">年龄</th>   
+	            <th data-options="field:'s_sex'">性别</th>   
+	            <th data-options="field:'s_iphone'">客户手机号</th>
+	            <th data-options="field:'s_state'">状态</th> 
+	            <th field="s_source" hidden="true">课程方向</th>
+	            <th data-options="field:'s_courceurl'">来源渠道</th> 
 	            <th data-options="field:'s_keywords'">来源关键词</th>
-	            
-	            <th data-options="field:'s_address'">所在区域</th>
+	            <th data-options="field:'s_address'">咨客户地址</th>  
+	            <th data-options="field:'s_qq'">qq</th>
 	            <th data-options="field:'s_wx'">微信</th>
-	            <th data-options="field:'s_qq'">QQ</th>
-	            <th data-options="field:'s_createUser'">来源部门</th>
-	            <th data-options="field:'s_isbaobei'">是否报备</th>
-	            <th data-options="field:'s_source'">课程方向</th>
-	            <th data-options="field:'s_isValid'">是否有效</th>
-	            <th data-options="field:'s_learnforward'">打分</th>
-	            <th data-options="field:'s_isreturnVist'">是否回访</th>
-	            <th data-options="field:'s_fistVisitTime'">首次回访时间</th>
-	            <th data-options="field:'s_ishome'">是否上门</th>
-	            <th data-options="field:'s_homeTime'">上门时间</th>
-	            <th data-options="field:'s_lostValid'">无效原因</th>
-	            <th data-options="field:'s_ispay'">是否缴费</th>
-	            <th data-options="field:'s_paytime'">缴费时间</th>
-	            <th data-options="field:'s_money'">缴费金额</th>
-	            <th data-options="field:'s_isReturnMoney'">是否退费</th>
-	            <th data-options="field:'s_isInClass'">是否进班</th>
-	            <th data-options="field:'s_inClassTime'">进班时间</th>
-	            <th data-options="field:'s_inClassContent'">进班备注</th>
-	            <th data-options="field:'s_returnMoneyReason'">退费原因</th>
-	            <th data-options="field:'s_preMoney'">定金金额</th>
-	            <th data-options="field:'s_preMoneyTime'">定金时间</th>   
-	            
-	            
+	            <th field="s_content" hidden="true">内容</th>
+	            <th data-options="field:'s_createTime'">创建时间</th>
+	            <th field="s_isValid" hidden="true">有效（虚效）</th>
+	            <th field="s_record" hidden="true">记录</th>
+	            <th field="s_isreturnVist" hidden="true">是否回访</th>
+	            <th field="s_fistVisitTime" hidden="true">首访时间</th>
+	            <th field="s_ishome" hidden="true">是否上门</th>
+	            <th field="s_homeTime" hidden="true">上门时间</th>
+	            <th field="s_lostValid" hidden="true">无效原因</th>
+	            <th field="s_ispay" hidden="true">是否缴费</th>
+	            <th field="s_paytime" hidden="true">缴费时间</th>
+	            <th field="s_money" hidden="true">收入</th>
+	            <th field="s_isReturnMoney" hidden="true">是否退费</th>
+	            <th field="s_returnMoneyTime" hidden="true">退费时间</th>
+	            <th field="s_isInClass" hidden="true">是否进班</th>
+	            <th field="s_inClassTime" hidden="true">进班时间</th>
+	            <th field="s_inClassContent" hidden="true">进班备注</th>
+	            <th field="s_askerContent" hidden="true">咨询师备注</th>
+	            <th field="s_isdel" hidden="true">删除状态</th>
+	            <th field="s_fromPart" hidden="true">来源网址</th>
+	            <th field="s_stuConcern" hidden="true" >客户学历</th>
+	            <th field="s_isbaobei" hidden="true">是否报备</th>
+	            <th field="s_returnMoneyReason" hidden="true">退费原因</th>
+	            <th field="s_preMoney" hidden="true">定金金额</th>
+	            <th field="s_preMoneyTime" hidden="true">定金时间</th>            
 	            
 	            <th data-options="field:'users.u_name',formatter:formatterfunction">咨询师</th>
 	            
-	            <th data-options="field:'caozuo',width:'80px',formatter:formattercaozuo">操作</th>
-	           
-	            
-	        </tr>   
-	    </thead>   
+	            <th data-options="field:'caozuo',formatter:formattercaozuo">操作</th>
+	           	<th data-options="field:'genzong',formatter:formattergenzong">操作</th>
+	        </tr>
+	    </thead>
 	</table>
 	
-	
-	<div  class="easyui-accordion" style="width:atuo;height:auto;" data-options="selected:false">
-	  						
-	  			<div title="设置隐藏列" style="overflow:auto;padding:10px;" >
-					<form id="hiddenColumn_form" class="easyui-form">
-					<a href="javascript:void()"  class="easyui-linkbutton" id="isQuanXuan" onclick="ChooseAll()" data-options="iconCls:'icon-edit'">全选</a>
-					<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-edit'" onclick="saveColumn()()">保存</a> 
-						<table>
-							<tr>
-								<td><input type="checkbox" value="s_id" checked="checked"/>编号</td>
-								<td><input type="checkbox" value="s_name" checked="checked"/>姓名</td>
-								<td><input type="checkbox" value="s_age" checked="checked"/>年龄</td>
-								<td><input type="checkbox" value="s_sex" checked="checked"/>性别</td>
-								<td><input type="checkbox" value="s_iphone" checked="checked"/>客户手机号</td>
-								<td><input type="checkbox" value="s_stuConcern" checked="checked"/>客户学历</td>
-								<td><input type="checkbox" value="s_state" checked="checked"/>状态</td>
-								<td><input type="checkbox" value="s_courceurl" checked="checked"/>来源渠道</td>
-								<td><input type="checkbox" value="s_fromPart"/>来源网站</td>
-								<td><input type="checkbox" value="s_keywords" checked="checked"/>来源关键词</td>
-								<td><input type="checkbox" value="s_address" checked="checked"/>咨客户地址</td>
-								
-								
-								<td><input type="checkbox" value="s_qq" checked="checked"/>qq</td>
-								<td><input type="checkbox" value="s_wx" checked="checked"/>微信</td>
-								<td><input type="checkbox" value="s_inClassContent"/>进班备注</td>
-								</tr>
-							<tr>
-								<td><input type="checkbox" value="s_createTime" checked="checked"/>创建时间</td>
-								<td><input type="checkbox" value="s_source"/>课程方向</td>
-							
-								<td><input type="checkbox" value="s_isValid"/>有效（虚效）</td>
-								<td><input type="checkbox" value="s_isreturnVist"/>是否回访</td>
-								<td><input type="checkbox" value="s_fistVisitTime"/>首访时间</td>
-								<td><input type="checkbox" value="s_ishome"/>是否上门</td>
-								<td><input type="checkbox" value="s_homeTime"/>上门时间</td>
-								<td><input type="checkbox" value="s_lostValid"/>无效原因</td>
-								<td><input type="checkbox" value="s_ispay"/>是否缴费</td>
-								<td><input type="checkbox" value="s_paytime"/>缴费时间</td>
-								<td><input type="checkbox" value="s_money"/>收入</td>
-								<td><input type="checkbox" value="s_isReturnMoney"/>是否退费</td>
-								<td><input type="checkbox" value="s_isInClass"/>是否进班</td>
-								<td><input type="checkbox" value="s_inClassTime"/>进班时间</td>
-							</tr>
-							<tr>
-								<td><input type="checkbox" value="s_inClassContent"/>进班备注</td>
-							
-								<td><input type="checkbox" value="s_isdel"/>删除状态</td>
-							
-								<td><input type="checkbox" value="s_isbaobei"/>是否报备</td>
-								<td><input type="checkbox" value="s_returnMoneyReason"/>退费原因</td>
-							
-								<td><input type="checkbox" value="s_preMoney"/>定金金额</td>
-								<td><input type="checkbox" value="s_preMoneyTime"/>定金时间</td>
-								<td><input type="checkbox" value="u_id"/>员工id</td>
-							
-								
-							</tr>
-						</table>
-					</form>
-					
-				</div>
-    </div>   
-	
 	<div id="stuTab" class="easyui-dialog" data-options="resizable:true,modal:true,closed:true">   
-		<form id="ff" method="post">   
 			<a id="btna" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="insertStudent()">添加</a>
 			<a href="javascript:void(0);" id="btnExport" class="easyui-linkbutton" data-options="iconCls:'icon-print',plain:true"  >导出Excel</a>
 			
@@ -322,7 +380,7 @@
 		  		
 		  		
 	        	<label for="name">咨询师:</label> 
-		  		<input class="easyui-combobox" type="text" id="u_id" data-options="valueField:'u_id',textField:'u_name',url:'selectUsersZiXunShi'" /> 
+		  		<input class="easyui-combobox" type="text" id="u_id" panelHeight="auto" data-options="valueField:'u_id',textField:'u_name',url:'selectUsersZiXunShi'" /> 
 		  		
 	        <a id="btn" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="init()">搜索</a>
 		   		
@@ -384,9 +442,68 @@
 	        <input class="easyui-datebox" type="text" id="max_s_inClassTime" />   
 	       	<br>
 			</div>
-		</div>
-		</form>   
+			</div>
+			<!-- 设置隐藏列 -->
+		 <div  class="easyui-accordion" style="width:atuo;height:auto;" data-options="selected:false">
+	  						
+	  			<div title="设置隐藏列" style="overflow:auto;padding:10px;" >
+					<form id="hiddenColumn_form" class="easyui-form">
+					<a href="javascript:void()"  class="easyui-linkbutton" id="isQuanXuan" onclick="ChooseAll()" data-options="iconCls:'icon-edit'">全选</a>
+					<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-edit'" onclick="saveColumn()()">保存</a> 
+						<table>
+							<tr>
+								<td><input type="checkbox" value="s_id" checked="checked"/>编号</td>
+								<td><input type="checkbox" value="s_name" checked="checked"/>姓名</td>
+								<td><input type="checkbox" value="s_age" checked="checked"/>年龄</td>
+								<td><input type="checkbox" value="s_sex" checked="checked"/>性别</td>
+								<td><input type="checkbox" value="s_iphone" checked="checked"/>客户手机号</td>
+								<td><input type="checkbox" value="s_stuConcern" checked="checked"/>客户学历</td>
+								<td><input type="checkbox" value="s_state" checked="checked"/>状态</td>
+								<td><input type="checkbox" value="s_courceurl" checked="checked"/>来源渠道</td>
+								<td><input type="checkbox" value="s_fromPart"/>来源网站</td>
+								<td><input type="checkbox" value="s_keywords" checked="checked"/>来源关键词</td>
+								<td><input type="checkbox" value="s_address" checked="checked"/>咨客户地址</td>
+								
+								
+								<td><input type="checkbox" value="s_qq" checked="checked"/>qq</td>
+								<td><input type="checkbox" value="s_wx" checked="checked"/>微信</td>
+								<td><input type="checkbox" value="s_inClassContent"/>进班备注</td>
+								</tr>
+							<tr>
+								<td><input type="checkbox" value="s_createTime" checked="checked"/>创建时间</td>
+								<td><input type="checkbox" value="s_source"/>课程方向</td>
+							
+								<td><input type="checkbox" value="s_isValid"/>有效（虚效）</td>
+								<td><input type="checkbox" value="s_isreturnVist"/>是否回访</td>
+								<td><input type="checkbox" value="s_fistVisitTime"/>首访时间</td>
+								<td><input type="checkbox" value="s_ishome"/>是否上门</td>
+								<td><input type="checkbox" value="s_homeTime"/>上门时间</td>
+								<td><input type="checkbox" value="s_lostValid"/>无效原因</td>
+								<td><input type="checkbox" value="s_ispay"/>是否缴费</td>
+								<td><input type="checkbox" value="s_paytime"/>缴费时间</td>
+								<td><input type="checkbox" value="s_money"/>收入</td>
+								<td><input type="checkbox" value="s_isReturnMoney"/>是否退费</td>
+								<td><input type="checkbox" value="s_isInClass"/>是否进班</td>
+								<td><input type="checkbox" value="s_inClassTime"/>进班时间</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox" value="s_inClassContent"/>进班备注</td>
+							
+								<td><input type="checkbox" value="s_isdel"/>删除状态</td>
+							
+								<td><input type="checkbox" value="s_isbaobei"/>是否报备</td>
+								<td><input type="checkbox" value="s_returnMoneyReason"/>退费原因</td>
+							
+								<td><input type="checkbox" value="s_preMoney"/>定金金额</td>
+								<td><input type="checkbox" value="s_preMoneyTime"/>定金时间</td>
+								<td><input type="checkbox" value="s_stuConcern"/>客户学历</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+   			 </div>   
 	</div> 
+	
 	<div id="stu_dialog" class="easyui-window" data-options="modal:true,closed:true" style="padding:10px; top: auto;">
 		<form id="stuForm" method="post">
 			<table>
@@ -395,6 +512,9 @@
 						<table cellpadding="5">
 							<tr>
 								<td><h3>在线录入：</h3></td>
+								<td></td>
+								<td></td>
+								<td></td>
 							</tr>
 							
 							<tr>
@@ -500,18 +620,8 @@
 								
 							</tr>
 							<tr>
-								<td>来源部门:</td>
-								<td>
-									<select class="easyui-combobox" style="width: 80px" data-options="readonly:true" name="s_createUser"> 
-								    <option value="网络">网络</option> 
-								    <option value="市场">市场</option>
-								    <option value="教质">教质</option>  
-								    <option value="学术">学术</option>   
-								    <option value="就业">就业</option> 
-									</select>
-								</td>
-								<td>咨询师:</td>
-								<td><input class="easyui-textbox" data-options="readonly:true" type="text" name="u_id" /></td>
+								<td>录入人:</td>
+								<td><input class="easyui-textbox" style="width: 80px" data-options="readonly:true" type="text" name="s_createUser" /></td>
 							</tr>
 						</table>
 					</td>
@@ -520,11 +630,14 @@
 						<table cellpadding="5">
 							<tr>
 								<td><h3>咨询师录入：</h3></td>
+								<td></td>
+								<td></td>
+								<td></td>
 							</tr>
 							<tr>
 								<td>咨询师:</td>
 								<td>
-									<select class="easyui-combobox" style="width: 150px" name="u_id" id="uidname">
+									<select class="easyui-combobox" style="width: 150px" panelHeight="auto" name="u_id" id="u_ids">
 	    							</select>
 								</td>
 								<td>课程方向:</td>
@@ -716,9 +829,73 @@
 		<a href="javascript:void(0)" class="easyui-linkbutton" onclick="inClearStu()">取消</a>
 	</div>
 </div>
+
+
+<!-- 日志窗口 -->
+			
+		<div id="rizhi" class="easyui-dialog" data-options="resizable:true,collapsible:true,closed:true" title="日志" style="width: 554px;" >
+			<table id="rizhitable">   
+			    <thead>
+			        <tr>
+			            <th data-options="field:'n_id'">编号</th>
+			            <th data-options="field:'s_name'">学员名字</th>
+			            <th data-options="field:'n_content'">内容</th>
+						<th data-options="field:'n_followType'">跟踪方式</th>
+			            <th data-options="field:'n_followTime'">跟踪时间</th>
+						<th data-options="field:'n_nextfollowTime'">下次跟踪时间</th>
+			        </tr>
+			    </thead>
+			</table>			
+		<div id="toolbar2" style="background-color:silver;" >
+		<form id="rizhiform">
+	记录时间：<input class="easyui-datebox" id="mincreateTime">~<input class="easyui-datebox" id="maxcreateTime">
+	<a id="btn" href="javascript:void(0)" onclick="initrizi()" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">检索</a>
+</form>
+
+</div>
+</div>
+
+		<!-- 添加跟踪窗口 -->
+
+<div id="genzongStu" class="easyui-dialog" style="width: 270px;height: 300px;" title="添加"    
+        data-options="iconCls:'icon-save',resizable:true,modal:true,closed:true">   
+     <form id="genzong">
+     </br>
+     	<div>   
+	        <label for="name">回访时间:</label>   
+	        <input class="easyui-datebox"  data-options="required:true,prompt:'必须选择回访时间'" required="required" type="text" name="n_followTime" id="n_followTime" />   
+	    </div> 
+	    <br/>
+	    <div>   
+	        <label for="name">回访情况:</label>   
+	        <input class="easyui-textbox" required="required" data-options="multiline:true,height:50,required:true,prompt:'必须选择回访情况'" type="text" name="n_contentgz" id="n_contentgz" />   
+	    </div>
+	    <br/>   
+	    <div>   
+	        <label for="email">跟踪方式:</label>   
+	        <input class="easyui-textbox" required="required" data-options="required:true,prompt:'必须填写跟踪方式'" type="text" name="n_followTypegz" id="n_followTypegz" />   
+	    </div>
+	    <br/>
+	    <div>   
+	        <label for="email">下次跟踪时间:</label>   
+	        <input class="easyui-datebox" required="required" data-options="required:true,prompt:'必须选择下次跟踪时间'"  type="text" name="n_nextfollowTime" id="n_nextfollowTime" />   
+	    </div>
+	    <br/>
+	    <div>   
+	        <label for="email">备注:</label>   
+	        <input class="easyui-textbox"   type="text" name="n_followState" id="n_followState" />   
+	    </div>      
+	</form> 
+	<br/>
+	<div style="margin-left: 60px;">
+	<a id="btn" href="javascript:void(0)" onclick="genzong()" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" >提交</a>  
+	<a id="btn" href="javascript:void(0)" onclick="clearStudent()" class="easyui-linkbutton" data-options="iconCls:'icon-clear'" >取消</a>  
+	</div>
+</div>
+
 </body>
 <script type="text/javascript">
-
+/* 到处excel */
 function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
 		//如果jsondata不是对象，那么json.parse将分析对象中的json字符串。
 		var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;

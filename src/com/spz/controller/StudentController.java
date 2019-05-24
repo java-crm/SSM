@@ -130,7 +130,7 @@ public class StudentController {
 	
 	@RequestMapping(value="/selectUsersByZXS")
 	@ResponseBody
-	public String selectUsersByZXS(Integer s_id) {
-		return studentService.selectUsersByZXS(s_id);
+	public String selectUsersByZXS() {
+		return studentService.selectUsersByZXS();
 	}
 }

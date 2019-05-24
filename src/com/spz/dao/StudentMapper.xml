@@ -879,15 +879,13 @@
 	<!-- 孙所蕾 -->
 	
 	<select id="selectStuAll" parameterType="student" resultMap="com.spz.dao.mapperMap.resultMapStudent">
-		SELECT DISTINCT
-		student.*,
-		users.u_id,
-		users.u_name
+		SELECT
+			student.*,
+			users.u_id,
+			users.u_name 
 		FROM
-		student
-		LEFT JOIN users ON student.u_id = users.u_id
-		left JOIN userroles ON users.u_id = userroles.u_id
-		left JOIN roles ON userroles.r_id = roles.r_id
+			student
+			LEFT JOIN users ON student.u_id = users.u_id 
 		<where>
 			<if test="s_name !=null and s_name !=''">
 				and s_name like "%"#{s_name}"%"
@@ -1043,20 +1041,18 @@
 			<if test="1>0">
 				and s_isdel='是'
 			</if>
-			<if test="1>0">
-				and userroles.r_id=10
-			</if>
 		</where>
-		 order by student.s_id  desc 
+		order by student.s_id  desc 
 		limit #{page},#{rows}
 	</select>
 	
 	
 	<select id="selectStuCount" parameterType="student" resultType="int">
-		select count(1) from student
-		LEFT JOIN users ON student.u_id = users.u_id
-		left JOIN userroles ON users.u_id = userroles.u_id
-		left JOIN roles ON userroles.r_id = roles.r_id
+		SELECT
+			count(1)
+		FROM
+			student
+			LEFT JOIN users ON student.u_id = users.u_id 
 		<where>
 			<if test="s_name !=null and s_name !=''">
 				and s_name like "%"#{s_name}"%"
@@ -1213,6 +1209,7 @@
 				and s_isdel='是' 
 			</if>
 		</where>
+		order by student.s_id  desc 
 	</select>
 	
 	<insert id="insertStus" parameterType="student">
@@ -1379,15 +1376,17 @@
 	</select>
 	
 	<!-- 查询修改删除中下拉框的咨询师 -->
-	<select id="selectUsersByZXS" resultType="student" parameterType="int">
+	<select id="selectUsersByZXS" resultType="users">
 		SELECT
-			<!-- users.u_id,
-			users.u_name --> 
-			users.*
+			users.u_id,
+			users.u_name 
 		FROM
-			student
-			INNER JOIN users ON student.u_id = users.u_id 
-		where student.s_id =#{s_id}
-		
+			users
+			INNER JOIN userchecks ON users.u_id = userchecks.u_id
+			INNER JOIN userroles ON userchecks.u_id = userroles.u_id
+			INNER JOIN roles ON userroles.r_id = roles.r_id 
+		WHERE
+			roles.r_id = 10 
+			AND us_checkState = '是'
 	</select>
 </mapper>
