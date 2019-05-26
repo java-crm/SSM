@@ -377,8 +377,20 @@
 							#{s_keywords},#{s_qq},#{s_wx},#{s_inClassContent},'是',#{s_fromPart},
 							#{s_stuConcern},#{s_isbaobei},#{s_createUser},'未缴费',#{u_id})
 	</insert>
+	<!-- 添加一条推送消息 -->
+	<insert id="addPush" parameterType="com.spz.entity.Push">
+		 INSERT INTO push(studentid,zxname,context,studentname,isreader) values(#{studentid},#{zxname},#{context},#{studentname},#{isreader})
+	</insert>
 	
+	<!-- 修改未读状态2表示未读 -->
+	<update id="updatePushIsreader" parameterType="int">
+		update push set isreader=2 where id=#{id}
+	</update>
 	
+	<!-- 查看最新的一条数据得到id -->
+	<select id="selectMaxId" resultType="int">
+		select id from push ORDER BY id desc limit 1 
+	</select>
 	<!-- 周炎 -->
 	<select id="selectStu" parameterType="student" resultType="student">
 	 SELECT * FROM student 
@@ -1386,7 +1398,44 @@
 			student
 			INNER JOIN users ON student.u_id = users.u_id 
 		where student.s_id =#{s_id}
-		
 	</select>
 	
+	<!-- 查看未分配的的学生 -->
+	<select id="selectStudentWeriFenliang" parameterType="student" resultType="student">
+		select * from student 
+			<where>
+				<if test="s_name !=null and s_name !=''">
+				and s_name like "%"#{s_name}"%"
+			</if>
+			<if test="s_age !=null and s_age !=''">
+				and s_age =#{s_age}
+			</if>
+			<if test="s_sex !=null and s_sex !=''">
+				and s_sex =#{s_sex}
+			</if>
+			<if test="1>0">
+				and ISNULL(u_id)
+			</if>
+			</where>
+			limit #{page},#{rows}
+	</select>
+	
+	<!-- 查看未分配的的学生数量 -->
+	<select id="selectStudentWeriFenliangCount" parameterType="student" resultType="int">
+		select count(1) from student 
+			<where>
+				<if test="s_name !=null and s_name !=''">
+					and s_name like "%"#{s_name}"%"
+				</if>
+				<if test="s_age !=null and s_age !=''">
+					and s_age =#{s_age}
+				</if>
+				<if test="s_sex !=null and s_sex !=''">
+					and s_sex =#{s_sex}
+				</if>
+				<if test="1>0">
+					and ISNULL(u_id)
+				</if>
+			</where>
+	</select>
 </mapper>

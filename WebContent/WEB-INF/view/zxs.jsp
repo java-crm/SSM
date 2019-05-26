@@ -7,12 +7,22 @@
 <title>Insert title here</title>
 <script src="${pageContext.request.contextPath}/js/global.js"></script>
 <script type="text/javascript">
-
+	var webscoket=new WebSocket("ws:localhost:8080/SSM/webscoket/"+<%=request.getSession().getAttribute("u_id")%>+"");
+	webscoket.onopen=function(){
+		alert("连接建立");
+	}
+	webscoket.onmessage=function(event){
+		$.messager.show({
+			title:'提示信息',
+			msg:event.data,
+			timeout:5000,
+			showType:'slide'
+		});
+		//$.messager.alert("提示信息",event.data);
+	}
 	$(function(){
 		seachselect();
 	})
-	
-	
 function seachselect(){
 	$('#dg').datagrid({
 	    url:'${pageContext.request.contextPath}/selectStu',
@@ -222,8 +232,6 @@ function seachselect(){
 				}
 			},"json")
 		}
-
-		
 </script>
 </head>
 <body>

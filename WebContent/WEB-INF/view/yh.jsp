@@ -105,7 +105,11 @@
 	}
 	//锁定和解锁用户
 	function formatterLockUser(value, row, index) {
-		return "<a style='cursor: pointer;' onclick='lockUser(" + index + ")'>锁定用户</a> <a style='cursor: pointer;' onclick='unlockUser(" + index + ")'>解锁用户</a>";
+		if(row.u_isLockout == "1" ){
+			return "<a style='cursor: pointer;' onclick='lockUser(" + index + ")'>锁定用户</a> <a style='cursor: pointer;' onclick='unlockUser(" + index + ")'>解锁用户</a>";
+		}else{
+			return "<a style='cursor: pointer;' onclick='lockUser(" + index + ")'>锁定用户</a> <a style='color:blue;cursor: pointer;' onclick='unlockUser(" + index + ")'>解锁用户</a>";
+		};
 	}
 	//设置角色权限
 	function formatterSetRole(value, row, index) {
@@ -123,6 +127,10 @@
 		var data = $("#dg").datagrid("getData");
 		var row = data.rows[index];
 		$.messager.confirm('确认', '您确认想要删除记录吗？', function(r) {
+			if(row.u_id==1){
+				$.messager.alert("提示信息","管理员不能锁定!");
+				return;
+			}
 			if(r) { // 用户点击了确认按钮
 				$.ajax({
 					method: 'post',
@@ -170,6 +178,14 @@
 		var row = data.rows[index];
 		$.messager.confirm('确认', '您确认想要锁定--' + row.u_name + '--用户？', function(r) {
 			if(r) {
+				if(row.u_id==1){
+					$.messager.alert("提示信息","管理员不能锁定!");
+					return;
+				}
+				if(row.u_isLockout==2){
+					$.messager.alert("提示信息","重复锁定!");
+					return;
+				}
 				$.ajax({
 					type: "post",
 					url: "${pageContext.request.contextPath}/lockUser",
@@ -196,6 +212,10 @@
 		
 		$.messager.confirm('确认', '您确认要为--' + row.u_name + '--解锁？', function(r) {
 			if(r) {
+				if(row.u_isLockout==1){
+					$.messager.alert("提示信息","该员工未锁定！");
+					return;
+				}
 				$.ajax({
 					type: "post",
 					url:"${pageContext.request.contextPath}/lockUser",
@@ -241,6 +261,10 @@
 	}
 	function adddiaUserRoles(){
 		var nodes = $("#allRoles").datagrid("getSelected");
+		if(nodes.r_id==2){
+			$.messager.alert("提示信息","管理员不能设置多个！");
+			return;
+		}
 		if(nodes.r_id==15){
 			$.ajax({
 				method:'post',
@@ -277,6 +301,10 @@
 	}
 	function removediaUserRoles(){
 		var nodes = $("#allUserRoles").datagrid("getSelected");
+		if(nodes.r_id==2){
+			$.messager.alert("提示信息","管理员不能移除!");
+			return;
+		}
 		$.ajax({
 			method:'post',
 			url:'${pageContext.request.contextPath}/deleteRoles',
@@ -309,6 +337,10 @@
 	        message: '请输入正确的电话号码。' 
 	    }  
 	});
+	
+	function formatteruserState(value,row,index){
+		return row.u_isLockout == "1" ?  "未锁定" : "<font color='red'>已锁定</font>";
+	}
 </script>
 <table name="center" class="easyui-datagrid" id="dg" title="员工数据" style="height: 545px" >
 	<thead>
@@ -317,7 +349,7 @@
 			<th data-options="field:'u_name',width:100">用户名</th>
 			<th data-options="field:'u_protectEmail',width:100">邮箱</th>
 			<th data-options="field:'u_protectMtel',width:100,">手机号</th>
-			<th data-options="field:'u_isLockout',width:100,">是否锁定</th>
+			<th data-options="field:'u_isLockout',width:100,formatter:formatteruserState">是否锁定</th>
 			<th data-options="field:'u_createTime',width:160,">创建时间</th>
 			<th data-options="field:'u_lastLoginTime',width:160,">最后登录的时间</th>
 			<th data-options="field:'setRoleAction',width:60,align:'center',formatter:formatterSetRole">角色</th>
@@ -346,7 +378,7 @@
 					<option value="0">否</option>
 			    </select>
 		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search'" onclick="searchUserInfo()">检索</a>
-		<a id="btn" href="javascript:void(0)" onclick="daochu()" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true">自选导出</a>
+		<!-- <a id="btn" href="javascript:void(0)" onclick="daochu()" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true">自选导出</a> -->
 	</div>
 </div>
 
