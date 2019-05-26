@@ -3,6 +3,11 @@ package com.spz.util;
 import java.security.MessageDigest;
 
 public class MyMd5Util {
+	public static void main(String[] args) {
+		String s = new String("song");
+        System.out.println("原始：" + s);
+        System.out.println("加密的：" + strMd5(s));
+	}
 	public static String strMd5(String str) {
 		MessageDigest md5;
 		try {
