@@ -31,6 +31,7 @@ public class LoginController {
 	@RequestMapping(value="login",method=RequestMethod.POST)
 	@ResponseBody
 	public String login(Users users,HttpSession session,Integer yzm,HttpServletResponse resp) throws UnsupportedEncodingException {
+		//获取登陆密码加密后判断
 		Users users2 = usersService.selectUserBylogin(users);
 		String k = (String) session.getAttribute(com.google.code.kaptcha.Constants.KAPTCHA_SESSION_KEY);
 		/*System.out.println(k+"后验证码");
