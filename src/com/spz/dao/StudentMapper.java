@@ -3,6 +3,7 @@ package com.spz.dao;
 import java.util.List;
 
 import com.spz.entity.Netfollows;
+import com.spz.entity.Push;
 import com.spz.entity.Student;
 import com.spz.entity.Users;
 
@@ -43,6 +44,27 @@ public interface StudentMapper {
 	 * @return
 	 */
 	List<Users> selectStudentUserName(Integer s_createUser);
+	
+	/**
+	   *   添加推送
+	 * @param push
+	 * @return
+	 */
+	Integer addPush(Push push);
+	
+	/**
+	 * 修改为已读状态
+	 * @param id
+	 * @return
+	 */
+	Integer updatePushIsreader(Integer id);
+	
+	/**
+	 * 查询刚刚天津的最新的推送消息id
+	 * @return
+	 */
+	Integer selectMaxId();
+
 	//周炎
 	
 	/**
@@ -69,7 +91,7 @@ public interface StudentMapper {
 	 * @param stu
 	 * @return
 	 */
-		Integer insertStugz(Netfollows net );
+	Integer insertStugz(Netfollows net );
 
 
 	//孙所蕾
@@ -122,4 +144,17 @@ public interface StudentMapper {
 	 * @return
 	 */
 	List<Users> selectUsersByZXS();
+	
+	/**
+	 * 查看未分配的学生
+	 * @return
+	 */
+	List<Student> selectStudentWeriFenliang(Student student);
+	
+	/**
+	 * 查看未分配的学生数量
+	 * @param student
+	 * @return
+	 */
+	Integer selectStudentWeriFenliangCount(Student student);
 }

@@ -1,7 +1,5 @@
 package com.spz.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -18,11 +16,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.spz.entity.Student;
 import com.spz.entity.Users;
 import com.spz.util.ExportExcel;
 import com.spz.util.InitDateTime;
-import com.spz.util.Result;
 
 @Controller
 public class ExcelController {
@@ -30,7 +26,6 @@ public class ExcelController {
 	@RequestMapping(value="/dochu",method=RequestMethod.GET)
 	@ResponseBody
 	public void daochu(HttpServletResponse res,@RequestParam("stulist") String stulist,@RequestParam("title") String title) throws Exception{
-		System.out.println("123");
 		String name=InitDateTime.initTimes()+".xls";
 		String[] split = title.split(",");
 		Gson gson=new Gson();

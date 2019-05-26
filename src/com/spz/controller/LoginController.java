@@ -38,17 +38,18 @@ public class LoginController {
 		if(yzm==null) {
 			//前三次无验证码正常查
 			if(users2 != null) {
+				session.setAttribute("u_id", users2.getU_id());
 				if(users2.getU_isLockout()==2) {
 					return Result.toClient(false, "用户已被锁定。");
 				}
 				if(users.getU_pwd()!=null) {
 					if(users.getU_pwd().equals(users2.getU_pwd())) {
-						session.setAttribute("u_id", users2.getU_id());
-						users2.setU_lastLoginTime(InitDateTime.initTime());
-						usersService.updateUsers(users2);
+						//session.setAttribute("u_id", users2.getU_id());
+						users.setU_lastLoginTime(InitDateTime.initTime());
+						usersService.updateUsers(users);
 						//把用户名添加到cookie(因为cookie不能存中文，得处理一下);
 						String name=URLEncoder.encode(users2.getU_name(),"UTF-8");
-						insertCookie(resp,name,users2.getU_pwd());
+						insertCookie(resp,name);
 					}
 				}
 			}
@@ -67,9 +68,9 @@ public class LoginController {
 						session.setAttribute("u_id", users2.getU_id());
 						//把用户名添加到cookie
 						String name=URLEncoder.encode(users2.getU_name(),"UTF-8");
-						insertCookie(resp,name,users2.getU_pwd());
-						users2.setU_lastLoginTime(InitDateTime.initTime());
-						usersService.updateUsers(users2);
+						insertCookie(resp,name);
+						users.setU_lastLoginTime(InitDateTime.initTime());
+						usersService.updateUsers(users);
 					}
 				}
 			}
@@ -100,7 +101,7 @@ public class LoginController {
 	}
 	
 	//将所登录的用户名和密码存到cookie中
-	public void insertCookie(HttpServletResponse resp,String val1,String val2) {
+	public void insertCookie(HttpServletResponse resp,String val1) {
 		Cookie name=new Cookie("u_name", val1);
 		//设置过期时间（以秒为单位）
 		name.setMaxAge(60*60);
@@ -108,14 +109,6 @@ public class LoginController {
 		name.setPath("/");
 		//添加Cookie
 		resp.addCookie(name);
-		
-		Cookie pwds=new Cookie("u_pwd", val2);
-		//设置过期时间（以秒为单位）
-		pwds.setMaxAge(60*60);
-		//设置添加到根路径下
-		pwds.setPath("/");
-		//添加Cookie
-		resp.addCookie(pwds);
 	}
 
 	@RequestMapping(value="/log",method=RequestMethod.GET)
@@ -158,6 +151,14 @@ public class LoginController {
 	@RequestMapping(value="/zxs",method=RequestMethod.GET)
 	public String zxs() {
 		return "view/zxs";
+	}
+	@RequestMapping(value="/tbtj",method=RequestMethod.GET)
+	public String tbtj() {
+		return "view/tbtj";
+	}
+	@RequestMapping(value="/wflxs",method=RequestMethod.GET)
+	public String wflxs() {
+		return "view/wflxs";
 	}
 	
 }

@@ -30,6 +30,9 @@
 			var y;
 			function onblus(){
 				var u_name=$('#u_name').val();
+				if(u_name.trim()==''){
+					return;
+				}
 				$.ajax({
 					url:'login',
 					method:'post',
@@ -58,7 +61,7 @@
 			
 			function islocking(){
 				$.ajax({
-					url:'../locking',
+					url:'${pageContext.request.contextPath}/locking',
 					method:'post',
 					data:{
 						u_id:<%=request.getSession().getAttribute("u_id")%>,

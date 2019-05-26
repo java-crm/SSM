@@ -42,23 +42,25 @@ public class UsersServiceImpl implements UsersService {
 	
 	@Override
 	public Integer insertUsers(Users users) {
-		users.setU_pwd("ysd123");
+		users.setU_pwd(MyMd5Util.strMd5("ysd123"));//默认密码
 		Integer insertUsers = usersMapper.insertUsers(users);
-		Users u = usersMapper.selecuMaxUserId();
-		Userchecks userchecks=new Userchecks();
-		userchecks.setU_id(u.getU_id()+"");
-		userchecks.setUs_userName(u.getU_name());
-		userchecksMapper.insertUserchecks(userchecks);
+		if(insertUsers>0) {
+			users = usersMapper.selecuMaxUserId();
+			System.out.println(users.toString());
+			Userchecks userchecks=new Userchecks();
+			userchecks.setU_id(users.getU_id()+"");
+			userchecks.setUs_userName(users.getU_name());
+			userchecksMapper.insertUserchecks(userchecks);
+		}
 		return insertUsers;
 	}
 
 	@Override
-	public Integer updateUsers(Users users) {
-	/*	if(users.getU_pwd()!=null) {
-			users.setU_pwd(MyMd5Util.converMd5(users.getU_pwd()));
-		}*/
+	public Integer updateUsers(Users users) {//重置密码or修改密码
+		if(users.getU_pwd()!=null) {
+			users.setU_pwd(MyMd5Util.strMd5(users.getU_pwd()));
+		}
 		return usersMapper.updateUsers(users);
-		//return Result.toClient(true, users2>0 ? "修改成功" : "修改失败");
 	}
 
 	@Override
@@ -71,11 +73,12 @@ public class UsersServiceImpl implements UsersService {
 	
 	@Override
 	public Users selectUserBylogin(Users users) {
-		//通过用户名和密码去查询
-		/*if(users.getU_pwd()!=null) {
-			users.setU_pwd(MyMd5Util.converMd5(users.getU_pwd()));
-		}*/
-		return usersMapper.selectUserBylogin(users);
+		//修改密码前比对是否正确or登录时也比对是否正确
+		if(users.getU_pwd()!=null) {
+			users.setU_pwd(MyMd5Util.strMd5(users.getU_pwd()));
+		}
+		Users userBylogin = usersMapper.selectUserBylogin(users);
+		return userBylogin;
 	}
 
 	@Override
@@ -131,7 +134,6 @@ public class UsersServiceImpl implements UsersService {
 
 	@Override
 	public Users selectUsersByKaiQi(Integer u_id) {
-		 
 		return usersMapper.selectUsersByKaiQi(u_id);//Result.toClient(byKaiQi.getU_state() == 1 ? true : false, "");
 	}
 

@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -118,7 +118,6 @@
 	}
 	function szqd(index){
 		var data=$("#dg").datagrid("getData");
-		
 		var us_ch=data.rows[index].us_checkState;
 		if(us_ch=='否'){
 			$.messager.alert("提示信息","该员工未签到,不能加班！！");
@@ -130,12 +129,26 @@
 				$("#szjb").switchbutton({checked:true});
 			}   
 			$("#shezhidd").dialog("open");
-			
-			$('#szjb').switchbutton({
-				onChange: function(checked){
-					var us_isCancel='否';
-					if (checked == true){
-						us_isCancel='否';
+		
+		
+		$('#szjb').switchbutton({
+			onChange: function(checked){
+				var us_isCancel='否';
+				if (checked == true){
+					us_isCancel='否';
+				}
+				if (checked == false){
+					us_isCancel='是';
+				}
+				$.ajax({
+					url:'${pageContext.request.contextPath}/updateUserchecks',
+					method:'post',
+					data:{us_isCancel:us_isCancel,us_id:data.rows[index].us_id},
+					dataType:'json',
+					success:function(res){
+						if(res>0){
+							initt();
+						}
 					}
 					if (checked == false){
 						alert(us_isCancel);
