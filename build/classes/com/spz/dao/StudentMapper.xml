@@ -1,0 +1,1438 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.spz.dao.StudentMapper">
+
+	<!-- 删除员工时判断员工是否有为结束的资源 -->
+	<select id="selectStudentByU_id" parameterType="int" resultType="Student">
+		select student.* from student where u_id=#{u_id} and s_ispay ='未缴费';
+	</select>
+	
+	<!-- 岳治文 -->
+	<select id="selectStudentUserName" parameterType="int" resultType="users" >
+		SELECT DISTINCT users.u_id,users.u_name FROM `student` 
+		INNER join users on student.u_id=users.u_id where student.s_createUser=#{s_createUser}
+	</select>
+	
+	<select id="selectStudent" parameterType="student" resultMap="com.spz.dao.mapperMap.resultMapStudent">
+		SELECT  student.*,users.* FROM `student` left join users on student.u_id=users.u_id 
+		<where>
+			<if test="s_name !=null and s_name != ''">
+				and s_name like "%"#{s_name}"%"
+			</if>
+			
+			<if test="s_sex !=null and s_sex != ''">
+				and s_sex = #{s_sex}
+			</if>
+			
+			<if test="s_age !=null and s_age != ''">
+				and s_age = #{s_age}
+			</if>
+			
+			<if test="s_iphone !=null and s_iphone != ''">
+				and s_iphone = #{s_iphone}
+			</if>
+			
+			<if test="s_state !=null and s_state != ''">
+				and s_state = #{s_state}
+			</if>
+			
+			<if test="s_source !=null and s_source != ''">
+				and s_source = #{s_source}
+			</if>
+			
+			<if test="s_courceurl !=null and s_courceurl != ''">
+				and s_courceurl = #{s_courceurl}
+			</if>
+			
+			<if test="s_keywords !=null and s_keywords != ''">
+				and s_keywords = #{s_keywords}
+			</if>
+			
+			<if test="s_address !=null and s_address != ''">
+				and s_address = #{s_address}
+			</if>
+			
+			<if test="s_netpusherld !=null and s_netpusherld != ''">
+				and s_netpusherld = #{s_netpusherld}
+			</if>
+			
+			<if test="a_askerId !=null and a_askerId != ''">
+				and a_askerId = #{a_askerId}
+			</if>
+			
+			<if test="s_qq !=null and s_qq != ''">
+				and s_qq = #{s_qq}
+			</if>
+			
+			<if test="s_wx !=null and s_wx != ''">
+				and s_wx = #{s_wx}
+			</if>
+			
+			<if test="s_content !=null and s_content != ''">
+				and s_content = #{s_content}
+			</if>
+			
+			<if test="min_s_createTime !=null and min_s_createTime != ''">
+				and s_createTime &gt;= #{min_s_createTime}
+			</if>
+			
+			<if test="max_s_createTime !=null and max_s_createTime != ''">
+				and s_createTime &lt;= #{max_s_createTime}
+			</if>
+			
+			<if test="s_learnforward !=null and s_learnforward != ''">
+				and s_learnforward = #{s_learnforward}
+			</if>
+			
+			<if test="s_isValid !=null and s_isValid != ''">
+				and s_isValid = #{s_isValid}
+			</if>
+			
+			<if test="s_record !=null and s_record != ''">
+				and s_record = #{s_record}
+			</if>
+			
+			<if test="s_isreturnVist !=null and s_isreturnVist != ''">
+				and s_isreturnVist = #{s_isreturnVist}
+			</if>
+			
+			<if test="s_fistVisitTime !=null and s_fistVisitTime != ''">
+				and s_fistVisitTime = #{s_fistVisitTime}
+			</if>
+			
+			<if test="s_ishome !=null and s_ishome != ''">
+				and s_ishome = #{s_ishome}
+			</if>
+			
+			<if test="s_homeTime !=null and s_homeTime != ''">
+				and s_homeTime = #{s_homeTime}
+			</if>
+			
+			<if test="s_lostValid !=null and s_lostValid != ''">
+				and s_lostValid = #{s_lostValid}
+			</if>
+			
+			<if test="s_ispay !=null and s_ispay != ''">
+				and s_ispay = #{s_ispay}
+			</if>
+			
+			<if test="s_paytime !=null and s_paytime != ''">
+				and s_paytime = #{s_paytime}
+			</if>
+			
+			<if test="s_money !=null and s_money != ''">
+				and s_money = #{s_money}
+			</if>
+			
+			<if test="s_isReturnMoney !=null and s_isReturnMoney != ''">
+				and s_isReturnMoney = #{s_isReturnMoney}
+			</if>
+			
+			<if test="s_returnMoneyTime !=null and s_returnMoneyTime != ''">
+				and s_returnMoneyTime = #{s_returnMoneyTime}
+			</if>
+			
+			<if test="s_isInClass !=null and s_isInClass != ''">
+				and s_isInClass = #{s_isInClass}
+			</if>
+			
+			<if test="s_inClassTime !=null and s_inClassTime != ''">
+				and s_inClassTime = #{s_inClassTime}
+			</if>
+			
+			<if test="s_inClassContent !=null and s_inClassContent != ''">
+				and s_inClassContent = #{s_inClassContent}
+			</if>
+			
+			<if test="s_askerContent !=null and s_askerContent != ''">
+				and s_askerContent = #{s_askerContent}
+			</if>
+			
+			<if test="s_isdel !=null and s_isdel != ''">
+				and s_isdel = #{s_isdel}
+			</if>
+			
+			<if test="s_fromPart !=null and s_fromPart != ''">
+				and s_fromPart = #{s_fromPart}
+			</if>
+			
+			<if test="s_stuConcern !=null and s_stuConcern != ''">
+				and s_stuConcern = #{s_stuConcern}
+			</if>
+			
+			<if test="s_isbaobei !=null and s_isbaobei != ''">
+				and s_isbaobei = #{s_isbaobei}
+			</if>
+			
+			<if test="s_zixunName !=null and s_zixunName != ''">
+				and s_zixunName = #{s_zixunName}
+			</if>
+			
+			<if test="s_createUser !=null and s_createUser != ''">
+				and s_createUser = #{s_createUser}
+			</if>
+			
+			<if test="s_returnMoneyReason !=null and s_returnMoneyReason != ''">
+				and s_returnMoneyReason = #{s_returnMoneyReason}
+			</if>
+			
+			<if test="s_preMoney !=null and s_preMoney != ''">
+				and s_preMoney = #{s_preMoney}
+			</if>
+			
+			<if test="s_preMoneyTime !=null and s_preMoneyTime != ''">
+				and s_preMoneyTime = #{s_preMoneyTime}
+			</if>
+			
+			<if test="u_id !=null and u_id != ''">
+				and student.u_id =#{u_id}
+			</if>
+		</where>
+			order by student.s_id  desc 
+			limit #{page},#{rows} 
+	</select>
+	
+	<select id="CountStudent" parameterType="student" resultType="int">
+		SELECT count(s_id) FROM `student` left join users on student.u_id=users.u_id
+		<where>
+			<if test="s_name != null and s_name != ''">
+				and s_name like "%"#{s_name}"%"
+			</if>
+			
+			<if test="s_sex !=null and s_sex != ''">
+				and s_sex = #{s_sex}
+			</if>
+			
+			<if test="s_age !=null and s_age != ''">
+				and s_age = #{s_age}
+			</if>
+			
+			<if test="s_iphone !=null and s_iphone != ''">
+				and s_iphone = #{s_iphone}
+			</if>
+			
+			<if test="s_state !=null and s_state != ''">
+				and s_state = #{s_state}
+			</if>
+			
+			
+			<if test="s_source !=null and s_source != ''">
+				and s_source = #{s_source}
+			</if>
+			
+			<if test="s_courceurl !=null and s_courceurl != ''">
+				and s_courceurl = #{s_courceurl}
+			</if>
+			
+			<if test="s_keywords !=null and s_keywords != ''">
+				and s_keywords = #{s_keywords}
+			</if>
+			
+			<if test="s_address !=null and s_address != ''">
+				and s_address = #{s_address}
+			</if>
+			
+			<if test="s_netpusherld !=null and s_netpusherld != ''">
+				and s_netpusherld = #{s_netpusherld}
+			</if>
+			
+			<if test="a_askerId !=null and a_askerId != ''">
+				and a_askerId = #{a_askerId}
+			</if>
+			
+			<if test="s_qq !=null and s_qq != ''">
+				and s_qq = #{s_qq}
+			</if>
+			
+			<if test="s_wx !=null and s_wx != ''">
+				and s_wx = #{s_wx}
+			</if>
+			
+			<if test="s_content !=null and s_content != ''">
+				and s_content = #{s_content}
+			</if>
+			
+			<if test="s_createTime !=null and s_createTime != ''">
+				and s_createTime = #{s_createTime}
+			</if>
+			
+			<if test="s_learnforward !=null and s_learnforward != ''">
+				and s_learnforward = #{s_learnforward}
+			</if>
+			
+			<if test="s_isValid !=null and s_isValid != ''">
+				and s_isValid = #{s_isValid}
+			</if>
+			
+			<if test="s_record !=null and s_record != ''">
+				and s_record = #{s_record}
+			</if>
+			
+			<if test="s_isreturnVist !=null and s_isreturnVist != ''">
+				and s_isreturnVist = #{s_isreturnVist}
+			</if>
+			
+			<if test="s_fistVisitTime !=null and s_fistVisitTime != ''">
+				and s_fistVisitTime = #{s_fistVisitTime}
+			</if>
+			
+			<if test="s_ishome !=null and s_ishome != ''">
+				and s_ishome = #{s_ishome}
+			</if>
+			
+			<if test="s_homeTime !=null and s_homeTime != ''">
+				and s_homeTime = #{s_homeTime}
+			</if>
+			
+			<if test="s_lostValid !=null and s_lostValid != ''">
+				and s_lostValid = #{s_lostValid}
+			</if>
+			
+			<if test="s_ispay !=null and s_ispay != ''">
+				and s_ispay = #{s_ispay}
+			</if>
+			
+			<if test="s_paytime !=null and s_paytime != ''">
+				and s_paytime = #{s_paytime}
+			</if>
+			
+			<if test="s_money !=null and s_money != ''">
+				and s_money = #{s_money}
+			</if>
+			
+			<if test="s_isReturnMoney !=null and s_isReturnMoney != ''">
+				and s_isReturnMoney = #{s_isReturnMoney}
+			</if>
+			
+			<if test="s_returnMoneyTime !=null and s_returnMoneyTime != ''">
+				and s_returnMoneyTime = #{s_returnMoneyTime}
+			</if>
+			
+			<if test="s_isInClass !=null and s_isInClass != ''">
+				and s_isInClass = #{s_isInClass}
+			</if>
+			
+			<if test="s_inClassTime !=null and s_inClassTime != ''">
+				and s_inClassTime = #{s_inClassTime}
+			</if>
+			
+			<if test="s_inClassContent !=null and s_inClassContent != ''">
+				and s_inClassContent = #{s_inClassContent}
+			</if>
+			
+			<if test="s_askerContent !=null and s_askerContent != ''">
+				and s_askerContent = #{s_askerContent}
+			</if>
+			
+			<if test="s_isdel !=null and s_isdel != ''">
+				and s_isdel = #{s_isdel}
+			</if>
+			
+			<if test="s_fromPart !=null and s_fromPart != ''">
+				and s_fromPart = #{s_fromPart}
+			</if>
+			
+			<if test="s_stuConcern !=null and s_stuConcern != ''">
+				and s_stuConcern = #{s_stuConcern}
+			</if>
+			
+			<if test="s_isbaobei !=null and s_isbaobei != ''">
+				and s_isbaobei = #{s_isbaobei}
+			</if>
+			
+			<if test="s_zixunName !=null and s_zixunName != ''">
+				and s_zixunName = #{s_zixunName}
+			</if>
+			
+			<if test="s_createUser !=null and s_createUser != ''">
+				and s_createUser = #{s_createUser}
+			</if>
+			
+			<if test="s_returnMoneyReason !=null and s_returnMoneyReason != ''">
+				and s_returnMoneyReason = #{s_returnMoneyReason}
+			</if>
+			
+			<if test="s_preMoney !=null and s_preMoney != ''">
+				and s_preMoney = #{s_preMoney}
+			</if>
+			
+			<if test="s_preMoneyTime !=null and s_preMoneyTime != ''">
+				and s_preMoneyTime = #{s_preMoneyTime}
+			</if>
+			
+			<if test="u_id !=null and u_id != ''">
+				and student.u_id = #{u_id}
+			</if>
+		</where>
+	</select>
+
+	
+	<insert id="insertStudent" parameterType="student">
+		INSERT INTO student (s_name,s_sex,s_age,s_iphone,s_state,s_courceurl,
+							s_keywords,s_qq,s_wx,s_inClassContent,s_isdel,s_fromPart,
+							s_stuConcern,s_isbaobei,s_createUser,s_ispay,u_id)
+						values(#{s_name},#{s_sex},#{s_age},#{s_iphone},#{s_state},#{s_courceurl},
+							#{s_keywords},#{s_qq},#{s_wx},#{s_inClassContent},'是',#{s_fromPart},
+							#{s_stuConcern},#{s_isbaobei},#{s_createUser},'未缴费',#{u_id})
+	</insert>
+	<!-- 添加一条推送消息 -->
+	<insert id="addPush" parameterType="com.spz.entity.Push">
+		 INSERT INTO push(studentid,zxname,context,studentname,isreader) values(#{studentid},#{zxname},#{context},#{studentname},#{isreader})
+	</insert>
+	
+	<!-- 修改未读状态2表示未读 -->
+	<update id="updatePushIsreader" parameterType="int">
+		update push set isreader=2 where id=#{id}
+	</update>
+	
+	<!-- 查看最新的一条数据得到id -->
+	<select id="selectMaxId" resultType="int">
+		select id from push ORDER BY id desc limit 1 
+	</select>
+	<!-- 周炎 -->
+	<select id="selectStu" parameterType="student" resultType="student">
+	 SELECT * FROM student 
+		<where>
+			<if test="s_name !=null and s_name !=''">
+				and s_name like "%"#{s_name}"%"
+			</if>
+			<if test="s_age !=null and s_age !=''">
+				and s_age =#{s_age}
+			</if>
+			<if test="s_sex !=null and s_sex !=''">
+				and s_sex =#{s_sex}
+			</if>
+			<if test="s_iphone !=null and s_iphone !=''">
+				and s_iphone =#{s_iphone}
+			</if>
+			<if test="s_state !=null and s_state !=''">
+				and s_state like "%"#{s_state}"%"
+			</if>
+			<if test="s_source !=null and s_source !=''">
+				and s_source like "%"#{s_source}"%"
+			</if>
+			<if test="s_courceurl !=null and s_courceurl !=''">
+				and s_courceurl like "%"#{s_courceurl}"%"
+			</if>
+			<if test="s_keywords !=null and s_keywords !=''">
+				and s_keywords like "%"#{s_keywords}"%"
+			</if>
+			<if test="s_address !=null and s_address !=''">
+				and s_address like "%"#{s_address}"%"
+			</if>
+			<if test="s_netpusherld !=null and s_netpusherld !=''">
+				and s_netpusherld like "%"#{s_netpusherld}"%"
+			</if>
+			<if test="a_askerId !=null and a_askerId !=''">
+				and a.a_askerId =#{a_askerId}
+			</if>
+			<if test="s_qq !=null and s_qq !=''">
+				and s_qq like "%"#{s_qq}"%"
+			</if>
+			<if test="s_wx !=null and s_wx !=''">
+				and s_wx like "%"#{s_wx}"%"
+			</if>
+			<if test="s_content !=null and s_content !=''">
+				and s_content like "%"#{s_content}"%"
+			</if>
+			
+			<if test="s_learnforward !=null and s_learnforward !=''">
+				and s_learnforward =#{s_learnforward}
+			</if>
+			<if test="s_isValid !=null and s_isValid !=''">
+				and s_isValid =#{s_isValid}
+			</if>
+			<if test="s_record !=null and s_record !=''">
+				and s_record =#{s_record}
+			</if>
+			<if test="s_isreturnVist !=null and s_isreturnVist !=''">
+				and s_isreturnVist like "%"#{s_isreturnVist}"%"
+			</if>
+			
+			<if test="s_ishome !=null and s_ishome !=''">
+				and s_ishome =#{s_ishome}
+			</if>
+			
+			<if test="s_lostValid !=null and s_lostValid !=''">
+				and s_lostValid like "%"#{s_lostValid}"%"
+			</if>
+			<if test="s_ispay !=null and s_ispay !=''">
+				and s_ispay =#{s_ispay}
+			</if>
+			<if test="s_paytime !=null and s_paytime !=''">
+				and s_paytime =#{s_paytime}
+			</if>
+			<if test="s_money !=null and s_money !=''">
+				and s_money =#{s_money}
+			</if>
+			<if test="s_isReturnMoney !=null and s_isReturnMoney !=''">
+				and s_isReturnMoney =#{s_isReturnMoney}
+			</if>
+			
+			<if test="s_isInClass !=null and s_isInClass !=''">
+				and s_isInClass =#{s_isInClass}
+			</if>
+			
+			<if test="s_inClassContent !=null and s_inClassContent !=''">
+				and s_inClassContent like "%"#{s_inClassContent}"%"
+			</if>
+			<if test="s_askerContent !=null and s_askerContent !=''">
+				and s_askerContent like "%"#{s_askerContent}"%"
+			</if>
+			<if test="s_isdel !=null and s_isdel !=''">
+				and s_isdel =#{s_isdel}
+			</if>
+			<if test="s_fromPart !=null and s_fromPart !=''">
+				and s_fromPart like "%"#{s_fromPart}"%"
+			</if>
+			<if test="s_stuConcern !=null and s_stuConcern !=''">
+				and s_stuConcern =#{s_stuConcern}
+			</if>
+			<if test="s_isbaobei !=null and s_isbaobei !=''">
+				and s_isbaobei =#{s_isbaobei}
+			</if>
+			<if test="s_zixunName !=null and s_zixunName !=''">
+				and s_zixunName like "%"#{s_zixunName}"%"
+			</if>
+			<if test="s_createUser !=null and s_createUser !=''">
+				and s_createUser =#{s_createUser}
+			</if>
+			<if test="s_returnMoneyReason !=null and s_returnMoneyReason !=''">
+				and s_returnMoneyReason like "%"#{s_returnMoneyReason}"%"
+			</if>
+			<if test="s_preMoney !=null and s_preMoney !=''">
+				and s_preMoney =#{s_preMoney}
+			</if>
+			<if test="s_preMoneyTime !=null and s_preMoneyTime !=''">
+				and s_preMoneyTime =#{s_preMoneyTime}
+			</if>
+			<if test="u_id !=null and  u_id !=''">
+				and  u_id =#{u_id}
+			</if>
+			
+			<if	test="min_s_createTime !=null and min_s_createTime!=''">
+				and s_createTime&gt;=#{min_s_createTime}
+			</if>
+			<if	test="max_s_createTime !=null and max_s_createTime!=''">
+				and s_createTime&lt;=#{max_s_createTime}
+			</if>
+			
+			
+			<if	test="min_s_homeTime !=null and min_s_homeTime!=''">
+				and s_homeTime&gt;=#{min_s_homeTime}
+			</if>
+			<if	test="max_s_homeTime !=null and max_s_homeTime!=''">
+				and s_homeTime&lt;=#{max_s_homeTime}
+			</if>
+			
+			
+			
+			
+			<if	test="min_s_fistVisitTime !=null and min_s_fistVisitTime!=''">
+				and s_fistVisitTime&gt;=#{min_s_fistVisitTime}
+			</if>
+			<if	test="max_s_fistVisitTime !=null and max_s_fistVisitTime!=''">
+				and s_fistVisitTime&lt;=#{max_s_fistVisitTime}
+			</if>
+			
+			
+			
+			
+			<if	test="min_s_paytime !=null and min_s_paytime!=''">
+				and s_paytime &gt;=#{min_s_paytime}
+			</if>
+			<if	test="max_s_paytime !=null and max_s_paytime!=''">
+				and s_paytime &lt;=#{max_s_paytime}
+			</if>
+			
+			
+			
+			<if	test="min_s_inClassTime !=null and min_s_inClassTime!=''">
+				and s_inClassTime&gt;=#{min_s_inClassTime}
+			</if>
+			<if	test="max_s_inClassTime !=null and max_s_inClassTime!=''">
+				and s_inClassTime&lt;=#{max_s_inClassTime}
+			</if>
+			<if test="1>0">
+				and s_isdel='是'
+			</if>
+		</where>
+		order by student.s_id desc 
+		limit #{page},#{rows}
+	</select>
+	
+	<select id="selectStucount" parameterType="student" resultType="int">
+		 SELECT count(1) FROM student 
+		<where>
+			
+			<if test="s_name !=null and s_name !=''">
+				and s_name like "%"#{s_name}"%"
+			</if>
+			<if test="s_sex !=null and s_sex !=''">
+				and s_sex =#{s_sex}
+			</if>
+			<if test="s_age !=null and s_age !=''">
+				and s_age =#{s_age}
+			</if>
+			<if test="s_iphone !=null and s_iphone !=''">
+				and s_iphone =#{s_iphone}
+			</if>
+			<if test="s_state !=null and s_state !=''">
+				and s_state like "%"#{s_state}"%"
+			</if>
+			<if test="s_source !=null and s_source !=''">
+				and s_source like "%"#{s_source}"%"
+			</if>
+			<if test="s_courceurl !=null and s_courceurl !=''">
+				and s_courceurl like "%"#{s_courceurl}"%"
+			</if>
+			<if test="s_keywords !=null and s_keywords !=''">
+				and s_keywords like "%"#{s_keywords}"%"
+			</if>
+			<if test="s_address !=null and s_address !=''">
+				and s_address like "%"#{s_address}"%"
+			</if>
+			<if test="s_netpusherld !=null and s_netpusherld !=''">
+				and s_netpusherld like "%"#{s_netpusherld}"%"
+			</if>
+			<if test="a_askerId !=null and a_askerId !=''">
+				and a_askerId =#{a_askerId}
+			</if>
+			<if test="s_qq !=null and s_qq !=''">
+				and s_qq like "%"#{s_qq}"%"
+			</if>
+			<if test="s_wx !=null and s_wx !=''">
+				and s_wx like "%"#{s_wx}"%"
+			</if>
+			<if test="s_content !=null and s_content !=''">
+				and s_content like "%"#{s_content}"%"
+			</if>
+			
+			<if test="s_learnforward !=null and s_learnforward !=''">
+				and s_learnforward =#{s_learnforward}
+			</if>
+			<if test="s_isValid !=null and s_isValid !=''">
+				and s_isValid =#{s_isValid}
+			</if>
+			<if test="s_record !=null and s_record !=''">
+				and s_record =#{s_record}
+			</if>
+			<if test="s_isreturnVist !=null and s_isreturnVist !=''">
+				and s_isreturnVist like "%"#{s_isreturnVist}"%"
+			</if>
+			
+			<if test="s_ishome !=null and s_ishome !=''">
+				and s_ishome =#{s_ishome}
+			</if>
+			
+			<if test="s_lostValid !=null and s_lostValid !=''">
+				and s_lostValid like "%"#{s_lostValid}"%"
+			</if>
+			<if test="s_ispay !=null and s_ispay !=''">
+				and s_ispay =#{s_ispay}
+			</if>
+			
+			<if test="s_money !=null and s_money !=''">
+				and s_money =#{s_money}
+			</if>
+			<if test="s_isReturnMoney !=null and s_isReturnMoney !=''">
+				and s_isReturnMoney =#{s_isReturnMoney}
+			</if>
+			<if test="s_returnMoneyTime !=null and s_returnMoneyTime !=''">
+				and s_returnMoneyTime =#{s_returnMoneyTime}
+			</if>
+			<if test="s_isInClass !=null and s_isInClass !=''">
+				and s_isInClass =#{s_isInClass}
+			</if>
+			
+			<if test="s_inClassContent !=null and s_inClassContent !=''">
+				and s_inClassContent like "%"#{s_inClassContent}"%"
+			</if>
+			<if test="s_askerContent !=null and s_askerContent !=''">
+				and s_askerContent like "%"#{s_askerContent}"%"
+			</if>
+			<if test="s_isdel !=null and s_isdel !=''">
+				and s_isdel =#{s_isdel}
+			</if>
+			<if test="s_fromPart !=null and s_fromPart !=''">
+				and s_fromPart like "%"#{s_fromPart}"%"
+			</if>
+			<if test="s_stuConcern !=null and s_stuConcern !=''">
+				and s_stuConcern =#{s_stuConcern}
+			</if>
+			<if test="s_isbaobei !=null and s_isbaobei !=''">
+				and s_isbaobei =#{s_isbaobei}
+			</if>
+			<if test="s_zixunName !=null and s_zixunName !=''">
+				and s_zixunName like "%"#{s_zixunName}"%"
+			</if>
+			<if test="s_createUser !=null and s_createUser !=''">
+				and s_createUser =#{s_createUser}
+			</if>
+			<if test="s_returnMoneyReason !=null and s_returnMoneyReason !=''">
+				and s_returnMoneyReason like "%"#{s_returnMoneyReason}"%"
+			</if>
+			<if test="s_preMoney !=null and s_preMoney !=''">
+				and s_preMoney =#{s_preMoney}
+			</if>
+			
+			<if test="u_id !=null and  u_id !=''">
+				and  u_id =#{u_id}
+			</if>
+			
+			<if	test="min_s_createTime !=null and min_s_createTime!=''">
+				and s_createTime &gt;=#{min_s_createTime}
+			</if>
+			<if	test="max_s_createTime !=null and max_s_createTime!=''">
+				and s_createTime &lt;=#{max_s_createTime}
+			</if>
+			
+			
+			
+			
+			<if	test="min_s_homeTime !=null and min_s_homeTime!=''">
+				and s_homeTime &gt;=#{min_s_homeTime}
+			</if>
+			<if	test="max_s_homeTime !=null and max_s_homeTime!=''">
+				and s_homeTime &lt;=#{max_s_homeTime}
+			</if>
+			
+
+
+			
+			
+			<if	test="min_s_fistVisitTime !=null and min_s_fistVisitTime!=''">
+				and s_fistVisitTime &gt;=#{min_s_fistVisitTime}
+			</if>
+			<if	test="max_s_fistVisitTime !=null and max_s_fistVisitTime!=''">
+				and s_fistVisitTime &lt;=#{max_s_fistVisitTime}
+			</if>
+			
+			
+			
+			
+			<if	test="min_s_paytime !=null and min_s_paytime!=''">
+				and s_paytime &gt;=#{min_s_paytime}
+			</if>
+			<if	test="max_s_paytime !=null and max_s_paytime!=''">
+				and s_paytime &lt;=#{max_s_paytime}
+			</if>
+			
+			
+			
+			<if	test="min_s_inClassTime !=null and min_s_inClassTime!=''">
+				and s_inClassTime &gt;=#{min_s_inClassTime}
+			</if>
+			<if	test="max_s_inClassTime !=null and max_s_inClassTime!=''">
+				and s_inClassTime &lt;=#{max_s_inClassTime}
+			</if>
+			<if test="1>0">
+				and s_isdel='是'
+			</if>
+		</where>
+	</select>
+	
+	
+	<update id="updateStu" parameterType="student">
+		
+		update student
+		<set>
+		
+			<if test="s_name !=null and s_name !=''">
+				 s_name = #{s_name},
+			</if>
+			<if test="s_age !=null and s_age !=''">
+				 s_age = #{s_age},
+			</if>
+			<if test="s_sex !=null and s_sex !=''">
+				 s_sex =#{s_sex},
+			</if>
+			
+			
+			<if test="s_iphone !=null and s_iphone !=''">
+				 s_iphone =#{s_iphone},
+			</if>
+			
+			<if test="s_stuConcern !=null and s_stuConcern !=''">
+				 s_stuConcern =#{s_stuConcern},
+			</if>
+			
+			<if test="s_state !=null and s_state !=''">
+				 s_state =#{s_state},
+			</if>
+			
+			<if test="s_courceurl !=null and s_courceurl !=''">
+				 s_courceurl =#{s_courceurl},
+			</if>
+			
+			<if test="s_fromPart !=null and s_fromPart !=''">
+				 s_fromPart =#{s_fromPart},
+			</if>
+			
+			<if test="s_keywords !=null and s_keywords !=''">
+				 s_keywords =#{s_keywords},
+			</if>
+			
+			<if test="s_address !=null and s_address !=''">
+				 s_address =#{s_address},
+			</if>
+			
+			<if test="s_netpusherld !=null and s_netpusherld !=''">
+				 s_netpusherld =#{s_netpusherld},
+			</if>
+			
+			<if test="s_createUser !=null and s_createUser !=''">
+				 s_createUser =#{s_createUser},
+			</if>
+			
+			<if test="s_qq !=null and s_qq !=''">
+				 s_qq =#{s_qq},
+			</if>
+			
+			<if test="s_wx !=null and s_wx !=''">
+				 s_wx =#{s_wx},
+			</if>
+			
+			<if test="s_isbaobei !=null and s_isbaobei !=''">
+				 s_isbaobei =#{s_isbaobei},
+			</if>
+			
+			
+			<if test="s_learnforward !=null and s_learnforward !=''">
+				 s_learnforward =#{s_learnforward},
+			</if>
+			
+			<if test="s_zixunName !=null and s_zixunName !=''">
+				 s_zixunName =#{s_zixunName},
+			</if>
+			
+			<if test="s_source !=null and s_source !=''">
+				 s_source =#{s_source},
+			</if>
+			
+			<if test="s_isValid !=null and s_isValid !=''">
+				 s_isValid =#{s_isValid},
+			</if>
+			
+			<if test="s_lostValid !=null and s_lostValid !=''">
+				 s_lostValid =#{s_lostValid},
+			</if>
+			
+			<if test="s_isreturnVist !=null and s_isreturnVist !=''">
+				 s_isreturnVist =#{s_isreturnVist},
+			</if>
+			
+			<if test="s_fistVisitTime !=null and s_fistVisitTime !=''">
+				 s_fistVisitTime =#{s_fistVisitTime},
+			</if>
+			
+			<if test="s_ishome !=null and s_ishome !=''">
+				 s_ishome =#{s_ishome},
+			</if>
+			
+			<if test="s_homeTime !=null and s_homeTime !=''">
+				 s_homeTime =#{s_homeTime},
+			</if>
+			
+			<if test="s_preMoney !=null and s_preMoney !=''">
+				 s_preMoney =#{s_preMoney},
+			</if>
+			
+			<if test="s_preMoneyTime !=null and s_preMoneyTime !=''">
+				 s_preMoneyTime =#{s_preMoneyTime},
+			</if>
+			
+			<if test="s_ispay !=null and s_ispay !=''">
+				 s_ispay =#{s_ispay},
+			</if>
+			
+			<if test="s_paytime !=null and s_paytime !=''">
+				 s_paytime =#{s_paytime},
+			</if>
+			
+			<if test="s_money !=null and s_money !=''">
+				 s_money =#{s_money},
+			</if>
+			
+			<if test="s_isReturnMoney !=null and s_isReturnMoney !=''">
+				 s_isReturnMoney =#{s_isReturnMoney},
+			</if>
+			
+			<if test="s_returnMoneyReason !=null and s_returnMoneyReason !=''">
+				 s_returnMoneyReason =#{s_returnMoneyReason},
+			</if>
+			
+			<if test="s_isInClass !=null and s_isInClass !=''">
+				 s_isInClass =#{s_isInClass},
+			</if>
+			
+			<if test="s_inClassTime !=null and s_inClassTime !=''">
+				 s_inClassTime =#{s_inClassTime},
+			</if>
+			
+			<if test="s_inClassContent !=null and s_inClassContent !=''">
+				 s_inClassContent =#{s_inClassContent},
+			</if>
+			
+			<if test="s_askerContent !=null and s_askerContent !=''">
+				 s_askerContent =#{s_askerContent}
+			</if>
+		</set>
+		where s_id=#{s_id}
+	</update>
+	
+	<insert id="insertStugz" parameterType="com.spz.entity.Netfollows">
+		
+		insert into  netfollows (s_id,s_name,n_followTime,n_nextfollowTime,n_content,n_followType,n_followState,n_userid)value(#{s_id},#{s_name},#{n_followTime},#{n_nextfollowTime},#{n_content},#{n_followType},#{n_followState},#{n_userid})
+	</insert>
+	
+	<!-- 孙所蕾 -->
+	
+	<select id="selectStuAll" parameterType="student" resultMap="com.spz.dao.mapperMap.resultMapStudent">
+		SELECT
+			student.*,
+			users.u_id,
+			users.u_name 
+		FROM
+			student
+			LEFT JOIN users ON student.u_id = users.u_id 
+		<where>
+			<if test="s_name !=null and s_name !=''">
+				and s_name like "%"#{s_name}"%"
+			</if>
+			<if test="s_age !=null and s_age !=''">
+				and s_age =#{s_age}
+			</if>
+			<if test="s_sex !=null and s_sex !=''">
+				and s_sex =#{s_sex}
+			</if>
+			<if test="s_iphone !=null and s_iphone !=''">
+				and s_iphone =#{s_iphone}
+			</if>
+			<if test="s_state !=null and s_state !=''">
+				and s_state like "%"#{s_state}"%"
+			</if>
+			<if test="s_source !=null and s_source !=''">
+				and s_source like "%"#{s_source}"%"
+			</if>
+			<if test="s_courceurl !=null and s_courceurl !=''">
+				and s_courceurl like "%"#{s_courceurl}"%"
+			</if>
+			<if test="s_keywords !=null and s_keywords !=''">
+				and s_keywords like "%"#{s_keywords}"%"
+			</if>
+			<if test="s_address !=null and s_address !=''">
+				and s_address like "%"#{s_address}"%"
+			</if>
+			<if test="s_netpusherld !=null and s_netpusherld !=''">
+				and s_netpusherld like "%"#{s_netpusherld}"%"
+			</if>
+			<if test="a_askerId !=null and a_askerId !=''">
+				and a_askerId =#{a_askerId}
+			</if>
+			<if test="s_qq !=null and s_qq !=''">
+				and s_qq like "%"#{s_qq}"%"
+			</if>
+			<if test="s_wx !=null and s_wx !=''">
+				and s_wx like "%"#{s_wx}"%"
+			</if>
+			<if test="s_content !=null and s_content !=''">
+				and s_content like "%"#{s_content}"%"
+			</if>
+			
+			<if test="min_s_createTime !=null and min_s_createTime !=''">
+				and s_createTime &gt;= #{min_s_createTime}
+			</if>
+			<if test="max_s_createTime !=null and max_s_createTime !=''">
+				and s_createTime &lt;= #{max_s_createTime}
+			</if>
+			
+			<if test="s_learnforward !=null and s_learnforward !=''">
+				and s_learnforward =#{s_learnforward}
+			</if>
+			<if test="s_isValid !=null and s_isValid !=''">
+				and s_isValid =#{s_isValid}
+			</if>
+			<if test="s_record !=null and s_record !=''">
+				and s_record =#{s_record}
+			</if>
+			<if test="s_isreturnVist !=null and s_isreturnVist !=''">
+				and s_isreturnVist like "%"#{s_isreturnVist}"%"
+			</if>
+			
+			<if test="min_s_fistVisitTime !=null and min_s_fistVisitTime !=''">
+				and s_fistVisitTime &gt;= #{min_s_fistVisitTime}
+			</if>
+			<if test="max_s_fistVisitTime !=null and max_s_fistVisitTime !=''">
+				and s_fistVisitTime &lt;= #{max_s_fistVisitTime}
+			</if>
+			
+			<if test="s_ishome !=null and s_ishome !=''">
+				and s_ishome =#{s_ishome}
+			</if>
+			
+			<if test="min_s_homeTime !=null and min_s_homeTime !=''">
+				and s_homeTime &gt;= #{min_s_homeTime}
+			</if>
+			<if test="max_s_homeTime !=null and max_s_homeTime !=''">
+				and s_homeTime &lt;= #{max_s_homeTime}
+			</if>
+			
+			<if test="s_lostValid !=null and s_lostValid !=''">
+				and s_lostValid like "%"#{s_lostValid}"%"
+			</if>
+			<if test="s_ispay !=null and s_ispay !=''">
+				and s_ispay =#{s_ispay}
+			</if>
+			
+			<if test="min_s_paytime !=null and min_s_paytime !=''">
+				and s_paytime &gt;=#{min_s_paytime}
+			</if>
+			<if test="max_s_paytime !=null and max_s_paytime !=''">
+				and s_paytime &lt;=#{max_s_paytime}
+			</if>
+			
+			<if test="s_money !=null and s_money !=''">
+				and s_money =#{s_money}
+			</if>
+			<if test="s_isReturnMoney !=null and s_isReturnMoney !=''">
+				and s_isReturnMoney =#{s_isReturnMoney}
+			</if>
+			<if test="s_returnMoneyTime !=null and s_returnMoneyTime !=''">
+				and s_returnMoneyTime =#{s_returnMoneyTime}
+			</if>
+			<if test="s_isInClass !=null and s_isInClass !=''">
+				and s_isInClass =#{s_isInClass}
+			</if>
+			
+			<if test="min_s_inClassTime !=null and min_s_inClassTime !=''">
+				and s_inClassTime &gt;= #{min_s_inClassTime}
+			</if>
+			<if test="max_s_inClassTime !=null and max_s_inClassTime !=''">
+				and s_inClassTime &lt;= #{max_s_inClassTime}
+			</if>
+			
+			<if test="s_inClassContent !=null and s_inClassContent !=''">
+				and s_inClassContent like "%"#{s_inClassContent}"%"
+			</if>
+			<if test="s_askerContent !=null and s_askerContent !=''">
+				and s_askerContent like "%"#{s_askerContent}"%"
+			</if>
+			<if test="s_isdel !=null and s_isdel !=''">
+				and s_isdel =#{s_isdel}
+			</if>
+			<if test="s_fromPart !=null and s_fromPart !=''">
+				and s_fromPart like "%"#{s_fromPart}"%"
+			</if>
+			<if test="s_stuConcern !=null and s_stuConcern !=''">
+				and s_stuConcern =#{s_stuConcern}
+			</if>
+			<if test="s_isbaobei !=null and s_isbaobei !=''">
+				and s_isbaobei =#{s_isbaobei}
+			</if>
+			<if test="s_zixunName !=null and s_zixunName !=''">
+				and s_zixunName like "%"#{s_zixunName}"%"
+			</if>
+			<if test="s_createUser !=null and s_createUser !=''">
+				and s_createUser =#{s_createUser}
+			</if>
+			<if test="s_returnMoneyReason !=null and s_returnMoneyReason !=''">
+				and s_returnMoneyReason like "%"#{s_returnMoneyReason}"%"
+			</if>
+			<if test="s_preMoney !=null and s_preMoney !=''">
+				and s_preMoney =#{s_preMoney}
+			</if>
+			<if test="s_preMoneyTime !=null and s_preMoneyTime !=''">
+				and s_preMoneyTime =#{s_preMoneyTime}
+			</if>
+			<if test="u_id !=null and  u_id !=''">
+				and  users.u_id =#{u_id}
+			</if>
+			<if test="1>0">
+				and s_isdel='是'
+			</if>
+		</where>
+		order by student.s_id  desc 
+		limit #{page},#{rows}
+	</select>
+	
+	
+	<select id="selectStuCount" parameterType="student" resultType="int">
+		SELECT
+			count(1)
+		FROM
+			student
+			LEFT JOIN users ON student.u_id = users.u_id 
+		<where>
+			<if test="s_name !=null and s_name !=''">
+				and s_name like "%"#{s_name}"%"
+			</if>
+			<if test="s_age !=null and s_age !=''">
+				and s_age =#{s_age}
+			</if>
+			<if test="s_sex !=null and s_sex !=''">
+				and s_sex =#{s_sex}
+			</if>
+			<if test="s_iphone !=null and s_iphone !=''">
+				and s_iphone =#{s_iphone}
+			</if>
+			<if test="s_state !=null and s_state !=''">
+				and s_state like "%"#{s_state}"%"
+			</if>
+			<if test="s_source !=null and s_source !=''">
+				and s_source like "%"#{s_source}"%"
+			</if>
+			<if test="s_courceurl !=null and s_courceurl !=''">
+				and s_courceurl like "%"#{s_courceurl}"%"
+			</if>
+			<if test="s_keywords !=null and s_keywords !=''">
+				and s_keywords like "%"#{s_keywords}"%"
+			</if>
+			<if test="s_address !=null and s_address !=''">
+				and s_address like "%"#{s_address}"%"
+			</if>
+			<if test="s_netpusherld !=null and s_netpusherld !=''">
+				and s_netpusherld like "%"#{s_netpusherld}"%"
+			</if>
+			<if test="a_askerId !=null and a_askerId !=''">
+				and a_askerId =#{a_askerId}
+			</if>
+			<if test="s_qq !=null and s_qq !=''">
+				and s_qq like "%"#{s_qq}"%"
+			</if>
+			<if test="s_wx !=null and s_wx !=''">
+				and s_wx like "%"#{s_wx}"%"
+			</if>
+			<if test="s_content !=null and s_content !=''">
+				and s_content like "%"#{s_content}"%"
+			</if>
+			
+			<if test="min_s_createTime !=null and min_s_createTime !=''">
+				and s_createTime &gt;= #{min_s_createTime}
+			</if>
+			<if test="max_s_createTime !=null and max_s_createTime !=''">
+				and s_createTime &lt;= #{max_s_createTime}
+			</if>
+			
+			<if test="s_learnforward !=null and s_learnforward !=''">
+				and s_learnforward =#{s_learnforward}
+			</if>
+			<if test="s_isValid !=null and s_isValid !=''">
+				and s_isValid =#{s_isValid}
+			</if>
+			<if test="s_record !=null and s_record !=''">
+				and s_record =#{s_record}
+			</if>
+			<if test="s_isreturnVist !=null and s_isreturnVist !=''">
+				and s_isreturnVist like "%"#{s_isreturnVist}"%"
+			</if>
+			
+			<if test="min_s_fistVisitTime !=null and min_s_fistVisitTime !=''">
+				and s_fistVisitTime &gt;= #{min_s_fistVisitTime}
+			</if>
+			<if test="max_s_fistVisitTime !=null and max_s_fistVisitTime !=''">
+				and s_fistVisitTime &lt;= #{max_s_fistVisitTime}
+			</if>
+			
+			<if test="s_ishome !=null and s_ishome !=''">
+				and s_ishome =#{s_ishome}
+			</if>
+			
+			<if test="min_s_homeTime !=null and min_s_homeTime !=''">
+				and s_homeTime &gt;= #{min_s_homeTime}
+			</if>
+			<if test="max_s_homeTime !=null and max_s_homeTime !=''">
+				and s_homeTime &lt;= #{max_s_homeTime}
+			</if>
+			
+			<if test="s_lostValid !=null and s_lostValid !=''">
+				and s_lostValid like "%"#{s_lostValid}"%"
+			</if>
+			<if test="s_ispay !=null and s_ispay !=''">
+				and s_ispay =#{s_ispay}
+			</if>
+			
+			<if test="min_s_paytime !=null and min_s_paytime !=''">
+				and s_paytime &gt;=#{min_s_paytime}
+			</if>
+			<if test="max_s_paytime !=null and max_s_paytime !=''">
+				and s_paytime &lt;=#{max_s_paytime}
+			</if>
+			
+			<if test="s_money !=null and s_money !=''">
+				and s_money =#{s_money}
+			</if>
+			<if test="s_isReturnMoney !=null and s_isReturnMoney !=''">
+				and s_isReturnMoney =#{s_isReturnMoney}
+			</if>
+			<if test="s_returnMoneyTime !=null and s_returnMoneyTime !=''">
+				and s_returnMoneyTime =#{s_returnMoneyTime}
+			</if>
+			<if test="s_isInClass !=null and s_isInClass !=''">
+				and s_isInClass =#{s_isInClass}
+			</if>
+			
+			<if test="min_s_inClassTime !=null and min_s_inClassTime !=''">
+				and s_inClassTime &gt;= #{min_s_inClassTime}
+			</if>
+			<if test="max_s_inClassTime !=null and max_s_inClassTime !=''">
+				and s_inClassTime &lt;= #{max_s_inClassTime}
+			</if>
+			
+			<if test="s_inClassContent !=null and s_inClassContent !=''">
+				and s_inClassContent like "%"#{s_inClassContent}"%"
+			</if>
+			<if test="s_askerContent !=null and s_askerContent !=''">
+				and s_askerContent like "%"#{s_askerContent}"%"
+			</if>
+			<if test="s_isdel !=null and s_isdel !=''">
+				and s_isdel =#{s_isdel}
+			</if>
+			<if test="s_fromPart !=null and s_fromPart !=''">
+				and s_fromPart like "%"#{s_fromPart}"%"
+			</if>
+			<if test="s_stuConcern !=null and s_stuConcern !=''">
+				and s_stuConcern =#{s_stuConcern}
+			</if>
+			<if test="s_isbaobei !=null and s_isbaobei !=''">
+				and s_isbaobei =#{s_isbaobei}
+			</if>
+			<if test="s_zixunName !=null and s_zixunName !=''">
+				and s_zixunName like "%"#{s_zixunName}"%"
+			</if>
+			<if test="s_createUser !=null and s_createUser !=''">
+				and s_createUser =#{s_createUser}
+			</if>
+			<if test="s_returnMoneyReason !=null and s_returnMoneyReason !=''">
+				and s_returnMoneyReason like "%"#{s_returnMoneyReason}"%"
+			</if>
+			<if test="s_preMoney !=null and s_preMoney !=''">
+				and s_preMoney =#{s_preMoney}
+			</if>
+			<if test="s_preMoneyTime !=null and s_preMoneyTime !=''">
+				and s_preMoneyTime =#{s_preMoneyTime}
+			</if>
+			<if test="u_id !=null and  u_id !=''">
+				and  users.u_id =#{u_id}
+			</if>
+			<if test="1>0">
+				and s_isdel='是' 
+			</if>
+		</where>
+		order by student.s_id  desc 
+	</select>
+	
+	<insert id="insertStus" parameterType="student">
+		insert into student(s_name,s_sex,s_age,s_iphone,s_stuConcern,s_state,s_courceurl,s_fromPart,s_keywords,s_address,s_qq,s_wx,s_isbaobei) values(#{s_name},#{s_sex},#{s_age},#{s_iphone},#{s_stuConcern},#{s_state},#{s_courceurl},#{s_fromPart},#{s_keywords},#{s_address},#{s_qq},#{s_wx},#{s_isbaobei})
+	</insert>
+	
+	
+	<update id="updateStus" parameterType="student">
+		update student 
+		<set>
+			<if test="s_name !=null and s_name !=''">
+				s_name =#{s_name},
+			</if>
+			<if test="s_sex !=null and s_sex !=''">
+				s_sex =#{s_sex},
+			</if>
+			<if test="s_age !=null and s_age !=''">
+				s_age =#{s_age},
+			</if>
+			<if test="s_iphone !=null and s_iphone !=''">
+				s_iphone =#{s_iphone},
+			</if>
+			<if test="s_state !=null and s_state !=''">
+				s_state =#{s_state},
+			</if>
+			<if test="s_source !=null and s_source !=''">
+				s_source =#{s_source},
+			</if>
+			<if test="s_courceurl !=null and s_courceurl !=''">
+				s_courceurl =#{s_courceurl},
+			</if>
+			<if test="s_keywords !=null and s_keywords !=''">
+				s_keywords =#{s_keywords},
+			</if>
+			<if test="s_address !=null and s_address !=''">
+				s_address =#{s_address},
+			</if>
+			<if test="s_netpusherld !=null and s_netpusherld !=''">
+				s_netpusherld =#{s_netpusherld},
+			</if>
+			<if test="a_askerId !=null and a_askerId !=''">
+				a_askerId =#{a_askerId},
+			</if>
+			<if test="s_qq !=null and s_qq !=''">
+				s_qq =#{s_qq},
+			</if>
+			<if test="s_wx !=null and s_wx !=''">
+				s_wx =#{s_wx},
+			</if>
+			<if test="s_content !=null and s_content !=''">
+				s_content =#{s_content},
+			</if>
+			<if test="s_createTime !=null and s_createTime !=''">
+				s_createTime =#{s_createTime},
+			</if>
+			<if test="s_learnforward !=null and s_learnforward !=''">
+				s_learnforward =#{s_learnforward},
+			</if>
+			<if test="s_isValid !=null and s_isValid !=''">
+				s_isValid =#{s_isValid},
+			</if>
+			<if test="s_record !=null and s_record !=''">
+				s_record =#{s_record},
+			</if>
+			<if test="s_isreturnVist !=null and s_isreturnVist !=''">
+				s_isreturnVist =#{s_isreturnVist},
+			</if>
+			<if test="s_fistVisitTime !=null and s_fistVisitTime !=''">
+				s_fistVisitTime =#{s_fistVisitTime},
+			</if>
+			<if test="s_ishome !=null and s_ishome !=''">
+				s_ishome =#{s_ishome},
+			</if>
+			<if test="s_homeTime !=null and s_homeTime !=''">
+				s_homeTime =#{s_homeTime},
+			</if>
+			<if test="s_lostValid !=null and s_lostValid !=''">
+				s_lostValid =#{s_lostValid},
+			</if>
+			<if test="s_ispay !=null and s_ispay !=''">
+				s_ispay =#{s_ispay},
+			</if>
+			<if test="s_paytime !=null and s_paytime !=''">
+				s_paytime =#{s_paytime},
+			</if>
+			<if test="s_money !=null and s_money !=''">
+				s_money =#{s_money},
+			</if>
+			<if test="s_isReturnMoney !=null and s_isReturnMoney !=''">
+				s_isReturnMoney =#{s_isReturnMoney},
+			</if>
+			<if test="s_returnMoneyTime !=null and s_returnMoneyTime !=''">
+				s_returnMoneyTime =#{s_returnMoneyTime},
+			</if>
+			<if test="s_isInClass !=null and s_isInClass !=''">
+				s_isInClass =#{s_isInClass},
+			</if>
+			<if test="s_inClassTime !=null and s_inClassTime !=''">
+				s_inClassTime =#{s_inClassTime},
+			</if>
+			<if test="s_inClassContent !=null and s_inClassContent !=''">
+				s_inClassContent =#{s_inClassContent},
+			</if>
+			<if test="s_askerContent !=null and s_askerContent !=''">
+				s_askerContent =#{s_askerContent},
+			</if>
+			<if test="s_isdel !=null and s_isdel !=''">
+				s_isdel =#{s_isdel},
+			</if>
+			<if test="s_fromPart !=null and s_fromPart !=''">
+				s_fromPart =#{s_fromPart},
+			</if>
+			<if test="s_stuConcern !=null and s_stuConcern !=''">
+				s_stuConcern =#{s_stuConcern},
+			</if>
+			<if test="s_isbaobei !=null and s_isbaobei !=''">
+				s_isbaobei =#{s_isbaobei},
+			</if>
+			<if test="s_zixunName !=null and s_zixunName !=''">
+				s_zixunName =#{s_zixunName},
+			</if>
+			<if test="s_createUser !=null and s_createUser !=''">
+				s_createUser =#{s_createUser},
+			</if>
+			<if test="s_returnMoneyReason !=null and s_returnMoneyReason !=''">
+				s_returnMoneyReason =#{s_returnMoneyReason},
+			</if>
+			<if test="s_preMoney !=null and s_preMoney !=''">
+				s_preMoney =#{s_preMoney},
+			</if>
+			<if test="s_preMoneyTime !=null and s_preMoneyTime !=''">
+				s_preMoneyTime =#{s_preMoneyTime},
+			</if>
+			<if test="u_id !=null and  u_id !=''">
+				u_id =#{u_id},
+			</if>
+		</set>
+			where s_id=#{s_id}
+	</update>
+	
+	
+	
+	<update id="deleteStu" parameterType="student">
+		update student 
+		<set>
+			<if test="1>0">
+				student.s_isdel='否',
+			</if>
+		</set>
+		<where>
+			s_id=#{s_id}
+		</where>
+	</update>
+	
+	<select id="selectStuByid" parameterType="int" resultType="student">
+		select * from student where s_id=#{s_id}
+	</select>
+	
+	<!-- 从角色表查询咨询师id=10的所有员工 -->
+	<select id="selectUsersByZixunShi" resultType="users">
+		SELECT users.u_id,users.u_name FROM  users 
+		INNER JOIN userroles On userroles.u_id = users.u_id 
+		INNER JOIN roles on roles.r_id=userroles.r_id where roles.r_id=10
+	</select>
+	
+	<!-- 查询修改删除中下拉框的咨询师 -->
+	<select id="selectUsersByZXS" resultType="users">
+		SELECT
+			users.*
+		FROM
+			student
+			INNER JOIN users ON student.u_id = users.u_id 
+		where student.s_id =#{s_id}
+	</select>
+	
+	<!-- 查看未分配的的学生 -->
+	<select id="selectStudentWeriFenliang" parameterType="student" resultType="student">
+		select * from student 
+			<where>
+				<if test="s_name !=null and s_name !=''">
+				and s_name like "%"#{s_name}"%"
+			</if>
+			<if test="s_age !=null and s_age !=''">
+				and s_age =#{s_age}
+			</if>
+			<if test="s_sex !=null and s_sex !=''">
+				and s_sex =#{s_sex}
+			</if>
+			<if test="1>0">
+				and ISNULL(u_id)
+			</if>
+			</where>
+			limit #{page},#{rows}
+	</select>
+	
+	<!-- 查看未分配的的学生数量 -->
+	<select id="selectStudentWeriFenliangCount" parameterType="student" resultType="int">
+		select count(1) from student 
+			<where>
+				<if test="s_name !=null and s_name !=''">
+					and s_name like "%"#{s_name}"%"
+				</if>
+				<if test="s_age !=null and s_age !=''">
+					and s_age =#{s_age}
+				</if>
+				<if test="s_sex !=null and s_sex !=''">
+					and s_sex =#{s_sex}
+				</if>
+				<if test="1>0">
+					and ISNULL(u_id)
+				</if>
+			</where>
+	</select>
+</mapper>

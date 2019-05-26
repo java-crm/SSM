@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.spz.dao.UserchecksMapper">
+	
+	<!-- 员工登录后查到该员工是否已经打卡 -->
+	<select id="selectUserchecks" parameterType="int" resultType="Userchecks">
+		select * from Userchecks where u_id=#{u_id}
+	</select>
+	
+	<!-- 修改为否之后 则不能统一的到下班时间一起打卡，需要员工手动打卡，（推出登录时判断用户是否签退） -->
+	<update id="updateUserchecks" parameterType="Userchecks">
+		update userchecks 
+			<set>
+				<if test="us_checkinTime !=null and us_checkinTime !=''">
+					us_checkinTime = #{us_checkinTime},
+				</if>
+				<if test="us_checkState !=null and us_checkState !=''">
+					us_checkState = #{us_checkState},
+				</if>
+				<if test="us_isCancel !=null and us_isCancel !=''">
+					us_isCancel = #{us_isCancel},
+				</if>
+				<if test="us_checkoutTime !=null and us_checkoutTime !=''">
+					us_checkoutTime = #{us_checkoutTime},
+				</if>
+			</set>
+			where u_id=#{u_id}
+	</update>
+	
+	<!-- 每次添加一个员工同时在签到表添加一条该员工的签到数据 -->
+	<insert id="insertUserchecks" parameterType="Userchecks">
+		insert into Userchecks(u_id,us_userName,us_checkinTime,us_checkState,us_isCancel)
+		VALUES(#{u_id},#{us_userName},#{us_checkinTime},'否','是')
+	</insert>
+	
+	
+	
+	<!-- 孙所蕾 -->
+	<select id="selectUserCheckAll" parameterType="userchecks" resultMap="com.spz.dao.mapperMap.resultMapUserchecks">
+		select us_id,u_id,u_name us_userName,us_checkinTime,us_checkState,us_isCancel,us_checkoutTime from 	(
+			select us_id,users.u_id,users.u_name,us_checkinTime,userchecks.us_checkState,userchecks.us_isCancel,us_checkoutTime from 
+				users LEFT JOIN
+				userchecks on userchecks.u_id=users.u_id
+				INNER JOIN userroles on users.u_id=userroles.u_id
+				INNER JOIN roles on userroles.r_id=roles.r_id 
+				where roles.r_id=10 or roles.r_id=9
+			) a
+			<where>
+				<if test="u_id !=null and u_id !=''">
+					and u_id =#{u_id}
+				</if>
+				<if test="us_checkState !=null and us_checkState !=''">
+					and us_checkState =#{us_checkState}
+				</if>
+				<if test="us_checkinTime != null and us_checkinTime !=''">
+					and us_checkinTime &gt;= #{us_checkinTime}
+				</if>
+				<if test="us_checkoutTime !=null and us_checkoutTime !=''">
+					and us_checkoutTime &lt;= #{us_checkoutTime}
+				</if>
+				<!-- <if test="1>0">
+					and a.us_isCancel=#{us_isCancel}
+				</if> -->
+			</where>
+			  limit #{page},#{rows}
+	</select>
+	
+	<select id="selectUserCheckCount" parameterType="userchecks" resultType="int">
+		select count(1) from 	(
+			select us_id,users.u_id,users.u_name,us_checkinTime,userchecks.us_checkState,userchecks.us_isCancel,us_checkoutTime from 
+				users LEFT JOIN
+				userchecks on userchecks.u_id=users.u_id
+				INNER JOIN userroles on users.u_id=userroles.u_id
+				INNER JOIN roles on userroles.r_id=roles.r_id 
+				where roles.r_id=10 or roles.r_id=9
+			) a 
+			<where>
+				<if test="u_id !=null and u_id !=''">
+					and u_id =#{u_id}
+				</if>
+				<if test="us_checkState !=null and us_checkState !=''">
+					and a.us_checkState =#{us_checkState}
+				</if>
+				<if test="us_checkinTime != null and us_checkinTime !=''">
+					and us_checkinTime &gt;= #{us_checkinTime}
+				</if>
+				<if test="us_checkoutTime !=null and us_checkoutTime !=''">
+					and us_checkoutTime &lt;= #{us_checkoutTime}
+				</if>
+				<!-- <if test="1>0">
+					and a.us_isCancel=#{us_isCancel}
+				</if> -->
+			</where>
+	</select>
+	
+	
+	<update id="updateUserchecksPL" parameterType="userchecks">
+		update userchecks 
+			<set>
+				<if test="us_checkinTime !=null and us_checkinTime !=''">
+					us_checkinTime = #{us_checkinTime},
+				</if>
+				<if test="us_checkState !=null and us_checkState !=''">
+					us_checkState = #{us_checkState},
+				</if>
+				<if test="us_isCancel !=null and us_isCancel !=''">
+					us_isCancel = #{us_isCancel},
+				</if>
+				<if test="us_checkoutTime !=null and us_checkoutTime !=''">
+					us_checkoutTime = #{us_checkoutTime},
+				</if>
+			</set>
+			where us_id=#{us_id}
+	</update>
+	
+	<select id="selectUsersByYuanGong" resultType="users">
+		SELECT users.u_id,users.u_name FROM  users 
+		INNER JOIN userroles On userroles.u_id = users.u_id 
+		INNER JOIN roles on roles.r_id=userroles.r_id where roles.r_id=10 or roles.r_id=9 
+	</select>
+	
+	
+	<!-- 删除用户的时候签到表同时删除 -->
+	<delete id="deleteUsersByUserId" parameterType="int">
+		delete from userchecks where u_id=#{u_id}
+	</delete>
+	
+</mapper>
