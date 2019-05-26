@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.spz.dao.UserRolesMapper">
+
+	<!-- 添加角色 -->
+	<insert id="insertUserRoles" parameterType="UserRoles">
+		INSERT into userroles(u_id,r_id)VALUES(#{u_id},#{r_id})
+	</insert>
+	
+	<!-- 删除角色 -->
+	<delete id="deleteUserRoles" parameterType="int">
+		delete from userroles where u_id=#{u_id} and r_id=#{r_id}  
+	</delete>
+	
+	<!-- 删除前查看被删除的角色是否有员工正在引用 -->
+	<select id="selectByR_id" parameterType="int" resultType="UserRoles">
+		select * from userroles where r_id= #{r_id}
+	</select>
+	
+</mapper>
