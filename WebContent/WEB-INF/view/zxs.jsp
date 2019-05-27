@@ -22,6 +22,25 @@
 	}
 	$(function(){
 		seachselect();
+		
+		$.ajax({
+			url:'${pageContext.request.contextPath}/selectUserAndPushIsreaderCount',
+			method:'post',
+			data:{
+				u_name:globalData.getCurUName()
+			},
+			dataType:'json',
+			success:function(res){
+				if(res>0){
+					$.messager.show({
+						title:'提示信息',
+						msg:"您当前有 "+res+" 条未读动态！",
+						timeout:5000,
+						showType:'slide'
+					});
+				}
+			}
+		})
 	})
 function seachselect(){
 	$('#dg').datagrid({

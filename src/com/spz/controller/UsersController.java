@@ -225,4 +225,9 @@ public class UsersController {
 		return userchecksService.updateUserchecksPL(userchecks);
 	}
 	
+	@RequestMapping(value="/selectUserAndPushIsreaderCount")
+	@ResponseBody
+	public Integer selectUserAndPushIsreaderCount(String u_name) {
+		return usersService.selectUserAndPushIsreaderCount(u_name);
+	}
 }

@@ -272,4 +272,9 @@
 	<select id="selecuMaxUserId" resultType="users">
 		select users.*  from users order by users.u_id desc limit 1
 	</select>
+	
+	<!-- 查询当前咨询师的未读消息数量 -->
+	<select id="selectUserAndPushIsreaderCount" parameterType="String" resultType="Push">
+		SELECT count(1) id,zxname FROM `push` where zxname=#{String} and isreader=2
+	</select>
 </mapper>

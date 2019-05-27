@@ -93,4 +93,11 @@ public interface UsersService {
 	 */
 	String selectUsersJingLi();
 	
+	/**
+	 * 根据登录的咨询师名字去查有多少条未读数据
+	 * @param u_name 登录的咨询师的名称
+	 * @return
+	 */
+	Integer selectUserAndPushIsreaderCount(String u_name);
+	
 }

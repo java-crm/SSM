@@ -59,6 +59,12 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/poi-scratchpad-4.1.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.servlet_3.1.0.v201410161800.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.servlet.jsp_2.2.0.v201112011158.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/protostuff-api-1.0.8.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/protostuff-collectionschema-1.0.8.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/protostuff-core-1.0.8.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/protostuff-runtime-1.0.8.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jedis-2.7.3.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-pool2-2.4.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v8.5"/>
 	<classpathentry kind="output" path="build/classes"/>

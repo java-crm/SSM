@@ -136,7 +136,7 @@ function seachselect(){
 		$("#tui").dialog("open");
 	}
 	function send(){
-		webscoket.send(globalData.getCurUName()+","+$("#zxid").val()+","+$("#nr").val()+","+$("#idd").val());
+		webscoket.send(globalData.getCurUName()+","+$("#zxid").val()+","+$("#nr").val()+","+$("#users").val());
 		$.ajax({
 			url:"${pageContext.request.contextPath}/addPush",
 			method:"post",
