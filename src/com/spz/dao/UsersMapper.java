@@ -3,6 +3,7 @@ package com.spz.dao;
 import java.util.List;
 
 import com.spz.entity.Modules;
+import com.spz.entity.Push;
 import com.spz.entity.Users;
 
 public interface UsersMapper {
@@ -107,6 +108,13 @@ public interface UsersMapper {
 	 * @return
 	 */
 	Users selecuMaxUserId();
+	
+	/**
+	 * 根据登录的咨询师名字去查有多少条未读数据
+	 * @param u_name 登录的咨询师的名称
+	 * @return
+	 */
+	Push selectUserAndPushIsreaderCount(String u_name);
 	
 	//孙所蕾
 	/**

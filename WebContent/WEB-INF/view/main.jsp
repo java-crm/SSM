@@ -4,7 +4,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title></title>
+		<title>人力资源管理系统</title>
 		<script src="js/global.js"></script> 
 		<script src="jquery-easyui-1.4.3/jquery.cookie.js"></script> 
 		<script>
@@ -175,12 +175,20 @@
 	<body> 
 		<div style="margin:20px 0;"></div>
 	    <div class="easyui-layout" style="width:100%;height:700px;">
-	        <div data-options="region:'north'" style="height:50px">
-	        	CRM系统&nbsp;&nbsp;欢迎您：<span id="spName"></span>&nbsp;&nbsp;
-	        	<a id="btn" href="javascript:void" onclick="tuichu()" style="cursor:pointer">安全退出</a>
-				<span id="showTime"></span>
-				<a href="javascript:void(0)" id="dk" class="easyui-linkbutton" onclick="dianjidaka()">打卡</a>
-				<a href="javascript:void(0)"  class="easyui-linkbutton" onclick="xiugaimima()">修改密码</a>
+	        <div data-options="region:'north'" style="height:100px">
+	        	<img alt="" src="img/main.jpg" style="height:98px;width:700px;float:left;"  >
+	        	<div style="margin:60px 50px 20px;float:right;">
+	        	<font color="green" >CRM系统&nbsp;&nbsp;欢迎您：</font>&nbsp;
+	        	<font color="red"><span id="spName"></span>&nbsp;&nbsp;</font>
+	        	<font color="green" >
+	        		<span id="showTime"></span>
+	        		<span id="currentdate">&nbsp;
+	        			<a id="btn" href="javascript:void" onclick="tuichu()" style="cursor:pointer">安全退出</a>
+	        			<a href="javascript:void(0)" data-options="plain:true" id="dk" class="easyui-linkbutton" onclick="dianjidaka()">打卡</a>
+						<a href="javascript:void(0)" data-options="plain:true"  class="easyui-linkbutton" onclick="xiugaimima()">修改密码</a>
+	        		</span>
+	        	</font>
+	        	</div>
 	        </div>
 	        <div data-options="region:'south',split:true" style="height:50px;"></div>
 	        <div daata-options="region:'east',split:true,collapsed:true,title:'East'" style="width:150px;padding:10px;">东部区域</div>
@@ -190,9 +198,11 @@
 		           </div>
 		        </div>
 	        
-	        <div id="center_1" data-options="region:'center',iconCls:'icon-ok'"">
-	            <div id="tt" class="easyui-tabs" data-options="fit:true"> <!--这个地方采用tabs控件进行布局-->
-	             	
+	        <div id="center_1" data-options="region:'center',iconCls:'icon-ok'">
+	            <div id="tt" class="easyui-tabs" data-options="fit:true,border:false"> <!--这个地方采用tabs控件进行布局-->
+	             	<div title="首页" style="padding:10px">
+						<div align="center" style="padding-top:100px;"><font color="red" size="7">欢迎使用</font></div>
+					</div>
 	            </div>
 	        </div>
 	    </div>
