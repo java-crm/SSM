@@ -30,6 +30,7 @@
 	});
 	
 	function searchUserInfo(){
+		$("#kqzdfl").switchbutton({checked:true});
 		$("#dg").datagrid({
 			url:'${pageContext.request.contextPath}/selectUsersByflcz',
 			method:'post',
@@ -44,9 +45,16 @@
 			queryParams:{
 				u_name:$("#userName").textbox("getValue"),
 				u_state:$("#u_state").combobox("getValue")
+			},
+			onLoadSuccess:function(data){
+				var dat=data.rows;
+				for(var i=0;i<dat.length;i++){
+					if(dat[i].u_state=="2"){
+						$("#kqzdfl").switchbutton({checked:false});
+					}
+				}
 			}
 		});
-		
 	}
 	/* 格式化分量状态 */
 	function formatterflcz(value, row, index){

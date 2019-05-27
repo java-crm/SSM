@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-<head>*
+<head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <script src="${pageContext.request.contextPath}/js/global.js"></script>
@@ -33,7 +33,7 @@
 		var usid=[];
 		var rows = $("#dg").datagrid("getSelections"); // 获取所有选中的行
 		 $(rows).each(function(){
-			usid.push(this.us_id);   
+			usid.push(this.us_id);
 	     });
 		$.ajax({
     		url:'${pageContext.request.contextPath}/updateUserchecksPL',

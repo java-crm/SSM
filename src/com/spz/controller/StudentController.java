@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.spz.entity.Netfollows;
+import com.spz.entity.Push;
 import com.spz.entity.Student;
 import com.spz.entity.Users;
 import com.spz.service.StudentService;
@@ -51,7 +52,12 @@ public class StudentController {
 		return studentService.selectStudentUserName(s_createUser);
 		
 	}
-	
+	@RequestMapping(value="/addPush",method=RequestMethod.POST)
+	@ResponseBody
+	public Integer addPush(Push Push) {
+		Integer addPush = studentService.addPush(Push);
+		return addPush;
+	}
 	
 	//周炎
 	@RequestMapping (value="selectStu",method=RequestMethod.POST)
@@ -132,5 +138,17 @@ public class StudentController {
 	@ResponseBody
 	public String selectUsersByZXS(Integer s_id) {
 		return studentService.selectUsersByZXS(s_id);
+	}
+	
+	@RequestMapping(value="/selectweifnInfo")
+	@ResponseBody
+	public String selectweifnInfo(Student student) {
+		return studentService.selectStudentWeriFenliang(student);
+	}
+	
+	@RequestMapping(value="/insertjingliFenPei")
+	@ResponseBody
+	public Integer insertjingliFenPei(String s_id) {
+		return studentService.insertjingliFenPei(s_id);
 	}
 }

@@ -157,7 +157,7 @@
 	<insert id="insertUsers" parameterType="users">
 		INSERT INTO users ( u_name, u_pwd, u_isLockout, u_pwdWrongTime, u_protectEMail, u_protectMtel, u_state )
 		VALUES
-		( #{u_name}, #{u_pwd}, 1, 0, #{u_protectEmail}, #{u_protectMtel}, #{u_state})
+		( #{u_name}, #{u_pwd}, 1, 0, #{u_protectEmail}, #{u_protectMtel}, 2)
 	</insert>
 	
 	<!-- 查询已打卡咨询师成交的学生总个数，和已录入的未成交的个数，以及成功率 -->
@@ -269,7 +269,7 @@
 	</select>
 	
 	<!-- 添加员工时同时添加签到表的数据 -->
-	<select id="selecuMaxUserId" resultType="int">
+	<select id="selecuMaxUserId" resultType="users">
 		select users.*  from users order by users.u_id desc limit 1
 	</select>
 </mapper>

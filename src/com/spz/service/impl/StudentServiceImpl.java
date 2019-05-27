@@ -13,6 +13,7 @@ import com.spz.dao.StudentMapper;
 import com.spz.dao.UsersMapper;
 import com.spz.entity.Fenye;
 import com.spz.entity.Netfollows;
+import com.spz.entity.Push;
 import com.spz.entity.Student;
 import com.spz.entity.Users;
 import com.spz.service.StudentService;
@@ -48,7 +49,7 @@ public class StudentServiceImpl implements StudentService {
 			return studentMapper.insertStudent(student);
 		}else {
 			//开启分量
-			Class stuCla = (Class) student.getClass();// 得到类对象
+			Class stuCla = (Class) student.getClass();//得到类对象
 	        Field[] fs = stuCla.getDeclaredFields();//得到属性集合
 	        int tota=0;
 	        for(int i=0;i<fs.length;i++) {//循环得到对象中不为空的属性
@@ -247,7 +248,6 @@ public class StudentServiceImpl implements StudentService {
 	//周炎
 	@Override
 	public  String selectStu(Student stu) {
-		// TODO Auto-generated method stub
 		Fenye<Student> fy = new Fenye<Student>();
 		stu.setPage((stu.getPage()-1)*stu.getRows());
 		fy.setRows(studentMapper.selectStu(stu));
@@ -263,7 +263,6 @@ public class StudentServiceImpl implements StudentService {
 	
 	@Override
 	public Integer insertStugz(Netfollows net) {
-		// TODO Auto-generated method stub
 		return studentMapper.insertStugz(net);
 	}
 
@@ -271,7 +270,6 @@ public class StudentServiceImpl implements StudentService {
 	//孙所蕾
 	@Override
 	public String selectStuAll(Student student) {
-		// TODO Auto-generated method stub
 		Fenye<Student> fenye=new Fenye<Student>();
 		 
 		student.setPage((student.getPage()-1)*student.getRows());
@@ -283,25 +281,21 @@ public class StudentServiceImpl implements StudentService {
 
 	@Override
 	public Integer deleteStu(Student student) {
-		// TODO Auto-generated method stub
 		return studentMapper.deleteStu(student);
 	}
 
 	@Override
 	public Integer updateStus(Student student) {
-		// TODO Auto-generated method stub
 		return studentMapper.updateStu(student);
 	}
 
 	@Override
 	public Integer insertStus(Student student) {
-		// TODO Auto-generated method stub
 		return studentMapper.insertStus(student);
 	}
 
 	@Override
 	public Student selectStuByid(Integer s_id) {
-		// TODO Auto-generated method stub
 		return studentMapper.selectStuByid(s_id);
 	}
 	@Override
@@ -310,11 +304,69 @@ public class StudentServiceImpl implements StudentService {
 	}
 	@Override
 	public String selectUsersByZXS(Integer s_id) {
-		// TODO Auto-generated method stub
 		return new Gson().toJson(studentMapper.selectUsersByZXS(s_id));
 	}
 	@Override
 	public List<Users> selectStudentUserName(Integer s_createUser) {
 		return studentMapper.selectStudentUserName(s_createUser);
 	}
+	@Override
+	public Integer addPush(Push push) {
+		Integer addPush = studentMapper.addPush(push);
+		return addPush;
+	}
+	@Override
+	public String selectStudentWeriFenliang(Student student) {
+		Fenye<Student> fy=new Fenye<Student>();
+		student.setPage((student.getPage()-1)*student.getRows());
+		fy.setTotal(studentMapper.selectStudentWeriFenliangCount(student));
+		fy.setRows(studentMapper.selectStudentWeriFenliang(student));
+		return new Gson().toJson(fy);
+	}
+	
+	@Override
+	public Integer insertjingliFenPei(String u_id) {
+		String[] split = u_id.split(",");
+		Integer Retu=null;
+		for(int i=0;i<split.length;i++) {
+			Student stuByid = studentMapper.selectStuByid(Integer.parseInt(split[i]));
+			int tota = selectStudentCount(stuByid);
+	        Integer id = null;
+	        if(tota>6) {
+	        	id=bubbleSortMax();
+	        }else {
+	        	id=bubbleSoreMin();
+	        }
+	        stuByid.setU_id(id);
+	        Retu=studentMapper.updateStus(stuByid);
+		}
+		return Retu;
+	}
+	public int selectStudentCount(Student student) {
+		Class stuCla = (Class) student.getClass();//得到类对象
+        Field[] fs = stuCla.getDeclaredFields();//得到属性集合
+        int tota=0;
+        for(int j=0;j<fs.length;j++) {//循环得到对象中不为空的属性
+        	 fs[j].setAccessible(true);
+        	 Object val=null;
+        	 try {
+				 val = fs[j].get(student);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        	 if(val!=null && !"".equals(val)) {//只要有1个属性不为空,那么就不是所有的属性值都为空
+                 tota++;
+             }
+        }
+		return tota;
+	}
+	@Override
+	public Integer updatePushIsreader(Integer id) {
+		return studentMapper.updatePushIsreader(id);
+	}
+	@Override
+	public Integer selectMaxId() {
+		return studentMapper.selectMaxId();
+	}
+	
 }

@@ -7,16 +7,23 @@
 <script src="${pageContext.request.contextPath}/js/global.js"></script>
 <script type="text/javascript">
 
+var webscoket=new WebSocket("ws:localhost:8080/SSM/webscoket/"+globalData.getCurUName()+"");
+
+webscoket.onopen=function(){
+	alert("连接建立");
+}
+webscoket.onclose=function(){
+	//alert("连接关闭了");
+}
 $(function(){
 	$("#u_id").combobox({
 		url:'${pageContext.request.contextPath}/selectUserName?s_createUser='+<%=request.getSession().getAttribute("u_id")%>,
 		editable:false, //不可编辑状态 
 		valueField:'u_id',
 		textField:'u_name'
-	})
+	});
 	shezhidongtai();
 	seachselect();
-	
 });
 
 
@@ -50,7 +57,7 @@ function seachselect(){
 	}
 
 	function formattercaosuo(value,row,index){
-		return  " <a href='javascript:void(0)' onclick='chaStu("+index+")'>查看</a>";
+		return  " <a href='javascript:void(0)' onclick='chaStu("+index+")'>查看</a>||<a href='javascript:void(0)' onclick='tuisong("+index+")'>动态推送</a>";
 	}
 	
 	function clearStudent(){
@@ -98,7 +105,8 @@ function seachselect(){
 	
 	function chaStu(index){
 		var data=$("#dg").datagrid("getData");
-		$("#u_name").textbox('setValue',data.rows[index].users.u_name);
+		var name=data.rows[index].users==undefined ? "未分配" : data.rows[index].users.u_name;
+		$("#u_name").textbox('setValue',name);
 		$("#chaform").form("load",data.rows[index])
 		$("#chaStu").dialog("open");
 	}
@@ -112,9 +120,47 @@ function seachselect(){
 	        message: '请输入正确的电话号码。' 
 	    }  
 	});
+	
+	//推送
+	function tuisong(index) {
+		$("#tuiform").form("clear");
+		var data=$("#dg").datagrid("getData");
+		if(data.rows[index].users==undefined){
+			$.messager.alert("提示信息","未分配咨询师不能推送!");
+			return;
+		}
+		$("#zxid").val(data.rows[index].users.u_id);
+		$("#users").textbox('setValue',data.rows[index].users.u_name);
+		var zhi=$("#dg").datagrid("getData");
+		$("#tuiform").form("load",zhi.rows[index])
+		$("#tui").dialog("open");
+	}
+	function send(){
+		webscoket.send(globalData.getCurUName()+","+$("#zxid").val()+","+$("#nr").val()+","+$("#idd").val());
+		$.ajax({
+			url:"${pageContext.request.contextPath}/addPush",
+			method:"post",
+			dataType:"json",
+			data:{
+				studentid:$("#idd").val(),
+				studentname:globalData.getCurUName(),
+				zxname:$("#users").val(),
+				context:$("#nr").val(),
+				isreader:1
+			},
+			success:function(res){
+				if(res>0){
+					$.messager.alert('提示','推送成功');
+					$("#tui").dialog("close");
+				}
+			}
+		});  
+	}
+	
 	function formatteruserName(value,row,index){
 		return row.users != undefined ?  row.users.u_name : "未分配";
 	}
+	
 </script>
 </head>
 <body>
@@ -261,23 +307,7 @@ function seachselect(){
 								<td><input type="checkbox" value="s_preMoney"/>定金金额</td>
 								<td><input type="checkbox" value="s_preMoneyTime"/>定金时间</td>
 								<td><input type="checkbox" value="u_id"/>员工id</td>
-							
-								
 							</tr>
-							<!-- <tr style="display: none">
-								<td><input type="checkbox" value="s_ext1"/>备注</td>
-								<td><input type="checkbox" value="s_ext2"/>备注</td>
-							
-								<td><input type="checkbox" value="s_ext3"/>备注</td>
-							</tr>
-							<tr style="display: none">
-								<td><input type="checkbox" value="s_ext4"/>备注</td>
-							
-								<td><input type="checkbox" value="s_ext5"/>备注</td>
-							</tr>
-							<tr style="display: none">
-								<td><input type="checkbox" value="s_ext6"/>备注</td>
-							</tr> -->
 						</table>
 					</form>
 					
@@ -549,6 +579,47 @@ function seachselect(){
 			</table>
 		</form>
 	</div>
+	
+	
+	<!-- 推送 -->
+	<div id="tui" class="easyui-window" title="推送" 
+		data-options="modal:true,closed:true,iconCls:'icon-save'"
+		style="padding:10px; top: auto;">
+		<form id="tuiform">
+			<table>
+				<tr>
+					<td>
+						<table cellpadding="5">
+							
+							<tr>
+								<td>名称:</td>
+								<td>
+								<input type="hidden" name="s_id" id="idd" />
+								<input type="hidden" id="zxid" />
+								<input class="easyui-textbox" type="text" name="s_name" id="namess"
+									style="width: 80px" /></td>
+								<td>推送咨询师名字:</td>
+								<td><input class="easyui-textbox"  name="zxname" id="users"
+									style="width: 80px"  /></td>
+							</tr>
+						</table>
+						<table>
+							<tr>
+								<td>推送内容:</td>
+								<td><input class="easyui-textbox"
+									data-options="multiline:true,height:50,width:329" type="text"
+									name="lb" id="nr"/></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</form>
+		<div style="text-align:center;padding:5px">
+		<a href="javascript:void(0)" class="easyui-linkbutton" type="button" onclick="send()">立即推送</a>
+		</div>
+	</div>
+	
 </body>
 <script type="text/javascript">
 	function shezhidongtai() {
@@ -675,7 +746,6 @@ function seachselect(){
 			var row = "";
 			//此循环将从数组的第一个索引中提取标签
 			for ( var index in arrData[0]) {
-
 				//现在将每个值转换为字符串和逗号分隔
 				row += index + ',';
 			}
@@ -733,6 +803,7 @@ function seachselect(){
 		link.click();
 		document.body.removeChild(link);
 	}
+	
 	$("#btnExport").click(function() {
 		var row=$("#dg").datagrid("getSelections");
 		if(row.length == 0){
@@ -740,9 +811,6 @@ function seachselect(){
 			return;
 		}
 		var data = JSON.stringify(row);
-		
-			
-
 		JSONToCSVConvertor(data, "数据信息", true);
 	});
 
