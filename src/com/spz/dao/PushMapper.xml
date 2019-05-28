@@ -25,8 +25,8 @@
 	 and zxname = #{zxname}
 	</if>
 	
-	<if test="tstime !=null and tstime!=''">
-		and tstime=#{tstime}
+	<if test="tstime !=null and tstime !=''">
+		and tstime like"%"#{tstime}"%"
 	</if>
 	
 	<if test="isreader!=null and isreader!=''">
@@ -62,8 +62,8 @@
 	 	and push.studentid =#{push.studentid}
 	</if>
 	
-	<if test="tstime !=null and tstime!=''">
-		and tstime=#{tstime}
+	<if test="tstime !=null and tstime !=''">
+		and tstime like"%"#{tstime}"%"
 	</if>
 	
 	<if test="isreader!=null and isreader!=''">

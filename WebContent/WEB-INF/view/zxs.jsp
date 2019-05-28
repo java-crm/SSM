@@ -309,7 +309,7 @@ function seachselect(){
 
 
 		<!-- 多条件查询 -->
-<div id="toolbar" style="background-color:silver;" >
+<div id="toolbar"  >
 	姓名：<input class="easyui-textbox" id="s_name">
 	电话 ：<input class="easyui-numberbox" id="s_iphone">
 	年龄：<input class="easyui-numberbox" id="s_age"> 
@@ -357,7 +357,7 @@ function seachselect(){
 	</div>
 	</div> -->
 	<div class="easyui-accordion" style="width:auto;height:auto;"data-options="selected:false">
-	<div title="更多条件" iconCls="icon-ok" style="background-color:silver;" data-options="selected:false">
+	<div title="更多条件" iconCls="icon-ok"  data-options="selected:false">
 	创建时间：<input class="easyui-datebox" id="min_s_createTime">~<input class="easyui-datebox" id="max_s_createTime">
 	上门时间：<input class="easyui-datebox" id="min_s_homeTime">~<input class="easyui-datebox" id="max_s_homeTime">
 	<br/>
