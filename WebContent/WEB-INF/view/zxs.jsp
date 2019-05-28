@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
+﻿<%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <!DOCTYPE html>
 <html>
@@ -298,6 +298,8 @@ function seachselect(){
             <th field="s_isbaobei" hidden="true">是否报备</th>
             <th field="s_returnMoneyReason" hidden="true">退费原因</th>
             <th field="s_preMoney" hidden="true">定金金额</th>
+            <th field="s_preMoneyTime" hidden="true">定金时间</th>
+            <th field="u_id" hidden="true">咨询师id</th>
             <th field="s_preMoneyTime" hidden="true">定金时间</th> 
             <th field="u_id" hidden="true">员工id</th>            
             <th data-options="field:'njknjk',formatter:formattercaosuo">操作</th>  
@@ -423,6 +425,7 @@ function seachselect(){
 								<td><input type="checkbox" value="s_preMoney"/>定金金额</td>
 								<td><input type="checkbox" value="s_preMoneyTime"/>定金时间</td>
 								<td><input type="checkbox" value="s_stuConcern"/>客户学历</td>
+								<td><input type="checkbox" value="u_id"/>咨询师id</td>
 								<td><input type="checkbox" value="u_id"/>员工id</td>
 							
 								

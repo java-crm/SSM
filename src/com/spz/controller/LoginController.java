@@ -161,5 +161,9 @@ public class LoginController {
 	public String wflxs() {
 		return "view/wflxs";
 	}
+	@RequestMapping(value="/tuisong",method=RequestMethod.GET)
+	public String tuisong() {
+		return "view/tuisong";
+	}
 	
 }
