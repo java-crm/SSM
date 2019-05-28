@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -32,8 +32,23 @@
 	function piliangQD(index){
 		var usid=[];
 		var rows = $("#dg").datagrid("getSelections"); // 获取所有选中的行
-		 $(rows).each(function(){
-			usid.push(this.us_id);
+		
+		/* 签到状态 */
+		var us_checkState=[];
+		$(rows).each(function(){
+			us_checkState.push(this.us_checkState);   
+	     });
+		
+		for(var i=0;i<us_checkState.length;i++){
+			if(us_checkState[i]=="是"){
+				$.messager.alert("提示信息","重复签到！！");
+				return;
+			}
+		};
+		
+		/* 签到 */
+		$(rows).each(function(){
+			usid.push(this.us_id);   
 	     });
 		$.ajax({
     		url:'${pageContext.request.contextPath}/updateUserchecksPL',
@@ -58,6 +73,19 @@
 	function piliangQT(index){
 		var usid=[];
 		var rows = $("#dg").datagrid("getSelections"); // 获取所有选中的行
+		
+		var us_checkState=[];
+		$(rows).each(function(){
+			us_checkState.push(this.us_checkState);   
+	     });
+		
+		for(var i=0;i<us_checkState.length;i++){
+			if(us_checkState[i]=="否"){
+				$.messager.alert("提示信息","尚未签到，不能签退！！");
+				return;
+			}
+		};
+		
 		 $(rows).each(function(){
 			usid.push(this.us_id);   
 	     });
@@ -90,13 +118,17 @@
 	}
 	function szqd(index){
 		var data=$("#dg").datagrid("getData");
-		 if(data.rows[index].us_isCancel=="是"){
-			$("#szjb").switchbutton({checked:false});
+		var us_ch=data.rows[index].us_checkState;
+		if(us_ch=='否'){
+			$.messager.alert("提示信息","该员工未签到,不能加班！！");
+			return ;
 		}else{
-			$("#szjb").switchbutton({checked:true});
-		}   
-		$("#shezhidd").dialog("open");
-		
+			if(data.rows[index].us_isCancel=="是"){
+				$("#szjb").switchbutton({checked:false});
+			}else{
+				$("#szjb").switchbutton({checked:true});
+			}   
+			$("#shezhidd").dialog("open");
 		
 		
 		$('#szjb').switchbutton({
@@ -118,9 +150,24 @@
 							initt();
 						}
 					}
-				})
-			}
-		});
+					if (checked == false){
+						alert(us_isCancel);
+						us_isCancel='是';
+					}
+					$.ajax({
+						url:'${pageContext.request.contextPath}/updateUserchecks',
+						method:'post',
+						data:{us_isCancel:us_isCancel,us_id:data.rows[index].us_id},
+						dataType:'json',
+						success:function(res){
+							if(res>0){
+								initt();
+							}
+						}
+					})
+				}
+			});
+		}
 	}
 </script>
 
