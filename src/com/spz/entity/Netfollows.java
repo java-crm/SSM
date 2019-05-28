@@ -82,9 +82,7 @@ public class Netfollows {
 	}
 
 	
-	public String getN_userid() {
-		return n_userid;
-	}
+	
 
 	public void setN_userid(String n_userid) {
 		this.n_userid = n_userid;

@@ -60,11 +60,13 @@ public class StudentController {
 	}
 	
 	//周炎
+	
+	
 	@RequestMapping (value="selectStu",method=RequestMethod.POST)
 	@ResponseBody
 	public String selectStu(Student stu) {
 		String selectStu = studentService.selectStu(stu);
-		
+		System.out.println(selectStu);
 		return selectStu;
 	}
 	

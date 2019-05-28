@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.spz.dao.PushMapper">
+
+<select id="selectPush" parameterType="com.spz.entity.Push" resultMap="com.spz.dao.mapperMap.resultPush">
+	SELECT
+	push.id,
+	push.studentid,
+	student.s_name,
+	push.zxname,
+	push.context,
+	push.studentname,
+	push.isreader,
+	DATE_FORMAT( push.tstime, '%Y-%m-%d' ) tstime 
+	FROM
+	push
+	INNER JOIN student ON push.studentid = student.s_id 
+	<where>
+	<if test="context !=null and context !=''">
+	 and student.s_name like "%"#{context}"%"
+	</if>
+	<if test="zxname !=null and zxname != ''">
+	 and zxname = #{zxname}
+	</if>
+	
+	<if test="tstime !=null and tstime!=''">
+		and tstime=#{tstime}
+	</if>
+	
+	<if test="isreader!=null and isreader!=''">
+		and isreader=#{isreader}
+	</if>
+	</where>
+	limit #{page},#{rows}
+</select>
+
+<select id="selectPushcount" parameterType="com.spz.entity.Push" resultType="int">
+
+		SELECT
+			count(id),
+		push.id,
+		push.studentid,
+		student.s_name,
+		push.zxname,
+		push.context,
+		push.studentname,
+		push.isreader,
+		DATE_FORMAT( push.tstime, '%Y-%m-%d' ) tstime 
+		FROM
+		push
+		INNER JOIN student ON push.studentid = student.s_id 
+	<where>
+	<if test="context !=null and context !=''">
+	 and student.s_name like "%"#{context}"%"
+	</if>
+	<if test="zxname !=null and zxname !=''">
+	 and zxname = #{zxname}
+	</if>
+	<if test="studentid!=null and studentid!=''">
+	 	and push.studentid =#{push.studentid}
+	</if>
+	
+	<if test="tstime !=null and tstime!=''">
+		and tstime=#{tstime}
+	</if>
+	
+	<if test="isreader!=null and isreader!=''">
+		and isreader=#{isreader}
+	</if>
+	
+	</where>
+
+</select>
+
+
+</mapper>
