@@ -191,7 +191,7 @@
 	        	</div>
 	        </div>
 	        <div data-options="region:'south',split:true" style="height:50px;"></div>
-	        <div daata-options="region:'east',split:true,collapsed:true,title:'East'" style="width:150px;padding:10px;">东部区域</div>
+	        <div data-options="region:'east',split:true,collapsed:true,title:'East'" style="width:150px;padding:10px;">东部区域</div>
 		        <div data-options="region:'west',split:true" title="导航应用" style="width:150px;">
 		           <div id="menuTree" ><!--这个地方显示树状结构-->
 		           		
