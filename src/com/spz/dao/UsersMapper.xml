@@ -6,7 +6,7 @@
 
 	<sql id="UsersSql">
 		u_id,u_name,u_pwd,u_isLockout,u_lastLoginTime,u_createTime,u_pwdWrongTime
-			u_lockTime,u_protectEmail,u_protectMtel from Users 
+			u_lockTime,u_protectEmail,u_protectMtel from users 
 	</sql>
 	<!-- 登录时（添加时）查询用户是否存在 -->
 	<select id="selectUserBylogin" parameterType="Users" resultType="Users">
@@ -63,7 +63,7 @@
 	
 	<!-- 搜索条件模糊查询数据条数 -->
 	<select id="selectUsersByUsersCount" parameterType="Users" resultType="int">
-		select count(u_id) from Users 
+		select count(u_id) from users 
 			<where>
 				<if test="u_name !=null and u_name !=''">
 					and u_name like "%"#{u_name}"%"
@@ -275,6 +275,11 @@
 	
 	<!-- 查询当前咨询师的未读消息数量 -->
 	<select id="selectUserAndPushIsreaderCount" parameterType="String" resultType="Push">
-		SELECT count(1) id,zxname FROM `push` where zxname=#{String} and isreader=2
+		SELECT count(1) id,zxname FROM push where zxname=#{String} and isreader=2
+	</select>
+	
+	<!-- 显示聊天页面的全部人员 -->
+	<select id="selectAllUsers" resultType="users">
+		select * from users 
 	</select>
 </mapper>

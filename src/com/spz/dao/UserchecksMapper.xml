@@ -6,7 +6,7 @@
 	
 	<!-- 员工登录后查到该员工是否已经打卡 -->
 	<select id="selectUserchecks" parameterType="int" resultType="Userchecks">
-		select * from Userchecks where u_id=#{u_id}
+		select * from userchecks where u_id=#{u_id}
 	</select>
 	
 	<!-- 修改为否之后 则不能统一的到下班时间一起打卡，需要员工手动打卡，（推出登录时判断用户是否签退） -->
@@ -31,7 +31,7 @@
 	
 	<!-- 每次添加一个员工同时在签到表添加一条该员工的签到数据 -->
 	<insert id="insertUserchecks" parameterType="Userchecks">
-		insert into Userchecks(u_id,us_userName,us_checkinTime,us_checkState,us_isCancel)
+		insert into userchecks(u_id,us_userName,us_checkinTime,us_checkState,us_isCancel)
 		VALUES(#{u_id},#{us_userName},#{us_checkinTime},'否','是')
 	</insert>
 	

@@ -145,6 +145,7 @@
 		<result column="u_protectMtel" property="u_protectMtel" />
 	</resultMap>
 	
+ 
 	<resultMap type="push" id="resultPush">
 		<id column="id" property="id"/>
 		<result column="studentid" property="studentid" />
@@ -157,3 +158,4 @@
 	</resultMap>
 	
 </mapper>
+

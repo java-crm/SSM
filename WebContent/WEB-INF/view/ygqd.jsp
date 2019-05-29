@@ -148,7 +148,6 @@
 					success:function(res){
 						if(res>0){
 							initt();
-						}
 					}
 					if (checked == false){
 						alert(us_isCancel);

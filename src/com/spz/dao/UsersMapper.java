@@ -116,6 +116,12 @@ public interface UsersMapper {
 	 */
 	Push selectUserAndPushIsreaderCount(String u_name);
 	
+	/**
+	 * 查看全部员工
+	 * @return
+	 */
+	List<Users> selectAllUsers();
+	
 	//孙所蕾
 	/**
 	 * 查询所有员工

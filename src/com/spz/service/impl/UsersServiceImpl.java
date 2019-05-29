@@ -191,5 +191,10 @@ public class UsersServiceImpl implements UsersService {
 	public Push selectPushByName(String u_name) {
 		return usersMapper.selectUserAndPushIsreaderCount(u_name);
 	}
+
+	@Override
+	public List<Users> selectAllUsers() {
+		return usersMapper.selectAllUsers();
+	}
 	
 }
