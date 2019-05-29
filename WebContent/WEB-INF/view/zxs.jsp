@@ -468,9 +468,11 @@ function seachselect(){
 							<tr>
 								<td><h3>网络咨询师：</h3></td>
 								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
+								<tr>
+								<td>录入人</td>
+								<td><input class="easyui-textbox" data-options="readonly:true" type="text" name="s_createUser"
+									style="width: 80px"/></td>
+								</tr>
 							<tr>
 								<td>名称:</td>
 								<td><input class="easyui-textbox" data-options="readonly:true" type="text" name="s_name"
@@ -644,10 +646,14 @@ function seachselect(){
 						<table cellpadding="5">
 							<tr>
 								<td><h3>网络咨询师：</h3></td>
-								<td></td>
+								
 								<td><input hidden data-options="readonly:true" type="text" name="s_id" /><td>
-								<td></td>
 							</tr>
+							<tr>
+								<td>录入人</td>
+								<td><input class="easyui-textbox" data-options="readonly:true" type="text" name="s_createUser"
+									style="width: 80px"/></td>
+								</tr>
 							<tr>
 								<td>名称:</td>
 								<td><input class="easyui-textbox" data-options="readonly:true" type="text" name="s_name" id="s_name"
