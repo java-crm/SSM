@@ -43,6 +43,8 @@ public class LoginController {
 			if(users2 != null) {
 				// 声明application
 				ServletContext application = request.getServletContext();
+				
+				
 				if (application.getAttribute(""+users2.getU_id()+"") != null && application.getAttribute(""+users2.getU_id()+"").equals(""+users2.getU_id()+"")) {
 					return Result.toClient(false, "该用户已登陆。");
 				} else {
