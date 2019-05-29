@@ -144,4 +144,4 @@
 		<result column="u_protectMtel" property="u_protectMtel" />
 	</resultMap>
 	
-</mapper>
+</mapper> 

@@ -12,7 +12,6 @@
 	    $(function(){
 	    	var roleName=globalData.getCurUName();
 	    	$("#spName").text(globalData.getCurUName());
-	    	
 	    	$("#menuTree").tree({
 	    		url:'moduls?u_id='+<%=request.getSession().getAttribute("u_id")%>,
 	    		method:'post',
@@ -21,7 +20,7 @@
 	    			 var flag = $("#tt").tabs('exists', node.text);
 	    			 var isLeaf = $('#treeUlId').tree('isLeaf',node.target); //是否是叶子节点
 	                 if (isLeaf) {//只有叶子节点才会在选项卡中创建选项页（每个选项页对应1个功能）
-	                     if(!flag) {
+	                     if(!flag){
 	                         $('#tt').tabs('add', { //在选项卡中，创建1个选项页
 	                             title: node.text,   //选项卡中，选项页的标题（在同一个选项卡中，选项页需要保持一致）。
 	                             closable: true,
@@ -30,6 +29,19 @@
 	                     } else {
 	                         $("#tt").tabs('select', node.text); //直接选中title对应的选项卡
 	                     }
+	                 }else{
+	                	 if(node.url!=null){
+	                		 //如果是父节点还有url的话则可以选中打开
+	                		 /* if(!flag) {
+		                         $('#tt').tabs('add', { //在选项卡中，创建1个选项页
+		                             title: node.text,   //选项卡中，选项页的标题（在同一个选项卡中，选项页需要保持一致）。
+		                             closable: true,
+		                             content: "<iframe  src='"+node.url+"' style='height:100%;width:100%'/>"    //此处做了调整，推荐使用iframe的方式实现
+		                        });
+		                     } else {
+		                         $("#tt").tabs('select', node.text); //直接选中title对应的选项卡
+		                     }  */
+	                	 }
 	                 }
 	    		}
 	    		

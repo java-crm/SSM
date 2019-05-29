@@ -161,5 +161,4 @@ public class LoginController {
 	public String wflxs() {
 		return "view/wflxs";
 	}
-	
 }

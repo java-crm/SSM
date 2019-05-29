@@ -18,9 +18,21 @@
 				/* 将验证码隐藏 */
 				$("#yzm").hide();
 				/* 获取cookis的值 */
-				if($.cookie('u_name') !=undefined && $.cookie('u_pwd')!=undefined){
-					$("#u_name").val($.cookie('u_name'));
-					$("#u_pwd").val($.cookie('u_pwd'));
+				if($.cookie('u_name') !=undefined){
+					$.ajax({
+						url:'login',
+						method:'post',
+						data:{
+							u_name:$.cookie('u_name')
+						},
+						dataType:"json",
+						success:function(res){
+							if(res.success){
+								globalData.setUserInfo(<%=request.getSession().getAttribute("u_id")%>, $.cookie('u_name'));
+								window.location.href = "/SSM/main";
+							}
+						}
+					})
 					// 这个事件可以模拟“我”直接触发登录的那个点击事件
 					submitLoginForm();
 				}

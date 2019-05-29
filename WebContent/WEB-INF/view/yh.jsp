@@ -261,10 +261,21 @@
 	}
 	function adddiaUserRoles(){
 		var nodes = $("#allRoles").datagrid("getSelected");
+		var data=$("#allUserRoles").datagrid("getData");
+		var row=data.rows;
+		
+		for(var i=0;i<row.length;i++){
+			if(row[i].r_id==nodes.r_id){
+				$.messager.alert("提示信息","角色已存在！");
+				return;
+			}
+		}
 		if(nodes.r_id==2){
 			$.messager.alert("提示信息","管理员不能设置多个！");
 			return;
 		}
+		
+		
 		if(nodes.r_id==15){
 			$.ajax({
 				method:'post',

@@ -99,5 +99,10 @@ public interface UsersService {
 	 * @return
 	 */
 	Integer selectUserAndPushIsreaderCount(String u_name);
+	/**
+	 * 查看全部员工
+	 * @return
+	 */
+	List<Users> selectAllUsers();
 	
 }

@@ -11,12 +11,12 @@
 	
 	<!-- 岳治文 -->
 	<select id="selectStudentUserName" parameterType="int" resultType="users" >
-		SELECT DISTINCT users.u_id,users.u_name FROM `student` 
+		SELECT DISTINCT users.u_id,users.u_name FROM student 
 		INNER join users on student.u_id=users.u_id where student.s_createUser=#{s_createUser}
 	</select>
 	
 	<select id="selectStudent" parameterType="student" resultMap="com.spz.dao.mapperMap.resultMapStudent">
-		SELECT  student.*,users.* FROM `student` left join users on student.u_id=users.u_id 
+		SELECT  student.*,users.* FROM student left join users on student.u_id=users.u_id 
 		<where>
 			<if test="s_name !=null and s_name != ''">
 				and s_name like "%"#{s_name}"%"
@@ -195,7 +195,7 @@
 	</select>
 	
 	<select id="CountStudent" parameterType="student" resultType="int">
-		SELECT count(s_id) FROM `student` left join users on student.u_id=users.u_id
+		SELECT count(s_id) FROM student left join users on student.u_id=users.u_id
 		<where>
 			<if test="s_name != null and s_name != ''">
 				and s_name like "%"#{s_name}"%"
