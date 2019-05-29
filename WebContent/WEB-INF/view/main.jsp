@@ -115,6 +115,9 @@
 	   			$.removeCookie('u_pwd',{ path: '/'});
 	   			$.removeCookie('u_name',{ path: '/'});
 	    		sessionStorage.clear();
+	    		$.post("errorClose",{
+		    		u_id:"${u_id}"
+		    	})
 	    		window.location.href="/SSM/log";
 	   		}
 	   	});
@@ -170,6 +173,14 @@
     	}
     	
     }
+    
+    window.onbeforeunload = function () {
+    	// 从application清空当前用户信息
+    	$.post("errorClose",{
+    		u_id:"${u_id}"
+        })
+    }
+    
 		</script>
 	</head>
 	<body> 

@@ -242,6 +242,8 @@ function seachselect(){
 					n_followState:$("#n_followState").val()
 					
 				},
+				
+				
 				success:function(res){
 					if(res>0){
 						$('#dg').datagrid("reload");
@@ -633,9 +635,9 @@ function seachselect(){
 
 <div id="updateStu" class="easyui-window" title="修改" 
 		data-options="modal:true,closed:true,iconCls:'icon-save'"
-		style="padding:10px; top: auto;">
+		style="padding:10px; top: auto; height: 490px; width:1100px;">
 		<form id="updateform">
-		
+
 			<table>
 				<tr>
 					<td>
