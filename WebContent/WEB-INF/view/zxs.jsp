@@ -129,20 +129,59 @@ function seachselect(){
 		 var data=$("#dg").datagrid("getData");
 		$("#updateform").form("load",data.rows[index])
 		$("#updateStu").dialog("open");
+		
+		
+		
 	}
 	function updateStudent(){
-		$.ajax({
-			url:'${pageContext.request.contextPath}/updateStu',
-			method:'post',
-			data:$("#updateform").serializeArray(),
-			success:function(res){
-				if(res>0){
-					$('#dg').datagrid("reload");
-					$("#updateStu").dialog("close");
-					$.messager.alert('提示信息','修改成功');    
-				}
+		var s_homeTime = $('#s_homeTime1').datebox('getValue');
+		var s_firstVisitTime = $('#s_fistVisitTime1').datebox('getValue');
+		// 判断上门时间是否大于首访时间
+		if (s_homeTime > s_firstVisitTime) {
+			// 上门时间大于受访时间进入这里
+			var  s_paytime = $('#s_paytime').datebox('getValue');
+			var s_preMoneyTime = $('#s_preMoneyTime').datebox('getValue');
+			
+			//缴费时间大于定金时间
+			if(s_paytime>s_preMoneyTime){
+				
+				var s_inClassTime = $('#s_inClassTime').datebox('getValue');
+				//进班时间大于缴费时间
+			if(s_inClassTime>s_paytime){
+				$.ajax({
+					url:'${pageContext.request.contextPath}/updateStu',
+					method:'post',
+					data:$("#updateform").serializeArray(),
+					
+					success:function(res){
+						if(res>0){
+							$('#dg').datagrid("reload");
+							$("#updateStu").dialog("close");
+							$.messager.alert('提示信息','修改成功');    
+						}
+					}
+				},"json");
+				
+			}else{
+				
+				$.messager.alert("提示","进班时间要大于缴费时间","error");				
+			}	
+				
+			}else{
+				$.messager.alert("提示","缴费时间大于定金时间","error");
 			}
-		},"json")
+			
+		} else {
+			// 上门时间小于受访时间进入这里
+			$.messager.alert("提示","上门时间要大于首访时间","error");
+		}
+		
+
+		
+		
+		
+		
+		
 	}
 		function clearUpdateStudent(){
 			$("#updateStu").dialog("close");
@@ -227,31 +266,44 @@ function seachselect(){
 		}
 
 		function genzong(){
-			var row= $("#dg").datagrid("getSelected");
-			$.ajax({
-				url:'${pageContext.request.contextPath}/insertStugz',
-				method:'post',
-				data:{
-					s_id:row.s_id,
-					s_name:row.s_name,
-					n_userid:row.u_id,
-					n_followTime:$("#n_followTime").datebox("getValue"),
-					n_nextfollowTime:$("#n_nextfollowTime").datebox("getValue"),
-					n_content:$("#n_contentgz").val(),
-					n_followType:$("#n_followTypegz").val(),
-					n_followState:$("#n_followState").val()
+			if($("#genzong").form("validate")){
+				var row= $("#dg").datagrid("getSelected");
+				
+				var n_followTime = $("#n_followTime").datebox("getValue");
+				var n_nextfollowTime = $("#n_nextfollowTime").datebox("getValue");
+				if(n_followTime<n_nextfollowTime){
+
+					$.ajax({
+						url:'${pageContext.request.contextPath}/insertStugz',
+						method:'post',
+						data:{
+							s_id:row.s_id,
+							s_name:row.s_name,
+							n_userid:row.u_id,
+							n_followTime:$("#n_followTime").datebox("getValue"),
+							n_nextfollowTime:$("#n_nextfollowTime").datebox("getValue"),
+							n_content:$("#n_contentgz").val(),
+							n_followType:$("#n_followTypegz").val(),
+							n_followState:$("#n_followState").val()
+							
+						},
+						success:function(res){
+							if(res>0){
+								$('#dg').datagrid("reload");
+								$("#genzongStu").dialog("close");
+								$.messager.alert('提示信息','添加成功');    
+							}
+						}
+					},"json")
+				}else{
 					
-				},
-				
-				
-				success:function(res){
-					if(res>0){
-						$('#dg').datagrid("reload");
-						$("#genzongStu").dialog("close");
-						$.messager.alert('提示信息','添加成功');    
-					}
+					$.messager.alert("提示信息","请填写正确时间");
 				}
-			},"json")
+				
+			}else{
+				$.messager.alert("提示信息","请填写完整！");
+			}
+			
 		}
 </script>
 </head>
@@ -459,7 +511,7 @@ function seachselect(){
 
 <div id="chaStu" class="easyui-window" title="查看" 
 		data-options="modal:true,closed:true,iconCls:'icon-save'"
-		style="padding:10px; top: auto;">
+		style="padding:10px; top: auto; height: 490px; width:1100px;">
 		<form id="chaform">
 			<table>
 				<tr>
@@ -558,7 +610,7 @@ function seachselect(){
 							</tr>
 							<tr>
 								<td>无效原因:</td>
-								<td><input class="easyui-textbox" data-options="readonly:true" type="text"
+								<td><input class="easyui-textbox" data-options="multiline:true,readonly:true,height:50," type="text"
 									name="s_lostValid"   /></td>
 								<td>是否回访:</td>
 								<td><input class="easyui-textbox" data-options="readonly:true" type="text"
@@ -566,7 +618,7 @@ function seachselect(){
 							</tr>
 							<tr>
 								<td>首访时间:</td>
-								<td><input class="easyui-textbox"  
+								<td><input class="easyui-datebox"  
 									type="text" data-options="readonly:true" name="s_fistVisitTime" /></td>
 								<td>是否上门:</td>
 								<td><input class="easyui-textbox" data-options="readonly:true" type="text"
@@ -574,15 +626,15 @@ function seachselect(){
 							</tr>
 							<tr>
 								<td>上门时间:</td>
-								<td><input class="easyui-textbox"  
+								<td><input class="easyui-datebox"  
 									type="text" data-options="readonly:true" name="s_homeTime" /></td>
 								<td>定金金额:</td>
-								<td><input class="easyui-textbox" type="text"
-									data-options="readonly:true" name="s_preMoney" /></td>
+								<td><input class="easyui-numberbox" type="text"
+									data-options="readonly:true,min:0,precision:2" name="s_preMoney" /></td>
 							</tr>
 							<tr>
 								<td>定金时间:</td>
-								<td><input class="easyui-textbox" data-options="readonly:true"  
+								<td><input class="easyui-datebox" data-options="readonly:true"  
 									type="text" name="s_preMoneyTime" /></td>
 								<td>是否缴费:</td>
 								<td><input class="easyui-textbox" type="text" data-options="readonly:true"
@@ -590,10 +642,10 @@ function seachselect(){
 							</tr>
 							<tr>
 								<td>缴费时间:</td>
-								<td><input class="easyui-textbox" type="text" data-options="readonly:true"
+								<td><input class="easyui-datebox" type="text" data-options="readonly:true"
 									name="s_paytime" /></td>
 								<td>缴费金额:</td>
-								<td><input class="easyui-numberbox" type="text" data-options="readonly:true"
+								<td><input class="easyui-numberbox" type="text" data-options="readonly:true,min:0,precision:2"
 									name="s_money" /></td>
 							</tr>
 							<tr>
@@ -601,7 +653,7 @@ function seachselect(){
 								<td><input class="easyui-textbox" type="text" data-options="readonly:true"
 									name="s_isReturnMoney" /></td>
 								<td>退费原因:</td>
-								<td><input class="easyui-textbox" type="text" data-options="readonly:true"
+								<td><input class="easyui-textbox" type="text" data-options="multiline:true,readonly:true,height:50,"
 									name="s_returnMoneyReason" /></td>
 							</tr>
 							<tr>
@@ -723,7 +775,7 @@ function seachselect(){
 						<tr>
 								
 								<td>课程方向:</td>
-					<td><select class="easyui-combobox" panelHeight='auto' data-options="prompt:'——请选择 ——'" style="width: 150px" name="s_source"> 
+					<td><select class="easyui-combobox" panelHeight='auto' data-options="prompt:'——请选择 ——'," style="width: 150px" name="s_source"> 
 								     
 								    <option value="软件开发">软件开发</option> 
 								    <option value="软件设计">软件设计</option>
@@ -741,13 +793,13 @@ function seachselect(){
 									</select></td>
 								<td>是否有效:</td>
 								<td>
-								 <input type="radio" value="是" name="s_isValid" />是
+								 <input type="radio" value="是" name="s_isValid" checked="checked" />是
 						        <input type="radio" value="否" name="s_isValid" />否
 								</td>
 							</tr>
 							<tr>
 								<td>无效原因:</td>
-								<td><input class="easyui-textbox" data-options="prompt:'如果无效请输入原因'" type="text"
+								<td><input class="easyui-textbox" data-options="multiline:true,height:50,prompt:'如果无效请输入原因'" type="text"
 									name="s_lostValid"   /></td>
 								<td>是否回访:</td>
 								<td>
@@ -758,7 +810,7 @@ function seachselect(){
 							<tr>
 								<td>首访时间:</td>
 								<td><input class="easyui-datebox"
-									type="text" data-options="prompt:'请输入正确时间'" name="s_fistVisitTime" /></td>
+									type="text" data-options="prompt:'请输入正确时间'" name="s_fistVisitTime" id="s_fistVisitTime1" /></td>
 								<td>是否上门:</td>
 								<td>
 								<input type="radio" value="已上门" name="s_ishome" />已上门
@@ -768,15 +820,15 @@ function seachselect(){
 							<tr>
 								<td>上门时间:</td>
 								<td><input class="easyui-datebox"  
-									type="text" data-options="prompt:'请输入正确时间'" name="s_homeTime" /></td>
+									type="text" data-options="prompt:'请输入正确时间'" name="s_homeTime" id="s_homeTime1" /></td>
 								<td>定金金额:</td>
-								<td><input class="easyui-textbox" type="text"
-									data-options="prompt:'请输入金额'" name="s_preMoney" /></td>
+								<td><input class="easyui-numberbox" type="text"
+									data-options="prompt:'请输入金额',min:0,precision:2" name="s_preMoney" /></td>
 							</tr>
 							<tr>
 								<td>定金时间:</td>
 								<td><input class="easyui-datebox" data-options="prompt:'请输入正确时间'"  
-									type="text" name="s_preMoneyTime" /></td>
+									type="text" name="s_preMoneyTime"id="s_preMoneyTime" /></td>
 								<td>是否缴费:</td>
 								<td>
 								<input type="radio" value="已缴费" name="s_ispay" />已缴费
@@ -787,9 +839,9 @@ function seachselect(){
 							<tr>
 								<td>缴费时间:</td>
 								<td><input class="easyui-datebox" type="text" data-options="prompt:'请输入正确时间'"
-									name="s_paytime" /></td>
+									name="s_paytime"  id="s_paytime"/></td>
 								<td>缴费金额:</td>
-								<td><input class="easyui-numberbox" type="text" data-options="prompt:'请输入金额'"
+								<td><input class="easyui-numberbox" type="text" data-options="prompt:'请输入金额',min:0,precision:2"
 									name="s_money" /></td>
 							</tr>
 							<tr>
@@ -799,7 +851,7 @@ function seachselect(){
 						        <input type="radio" value="未退费" name="s_isReturnMoney" />未退费
 								</td>
 								<td>退费原因:</td>
-								<td><input class="easyui-textbox" type="text" data-options="prompt:'如果退费请输入原因'"
+								<td><input class="easyui-textbox" type="text" data-options="multiline:true,height:50,prompt:'如果退费请输入原因'"
 									name="s_returnMoneyReason" /></td>
 							</tr>
 							<tr>
@@ -810,7 +862,7 @@ function seachselect(){
 								</td>
 								<td>进班时间:</td>
 								<td><input class="easyui-datebox" type="text" data-options="prompt:'请输入正确时间'"
-									name="s_inClassTime" /></td>
+									name="s_inClassTime" id="s_inClassTime" /></td>
 							</tr>
 							<tr>
 								<td>进班备注:</td>
@@ -863,17 +915,17 @@ function seachselect(){
      <form id="genzong">
      </br>
      	<div>   
-	        <label for="name">回访时间:</label>   
+	        <label for="name">&ensp;回&ensp;访&ensp;时&ensp;间:</label>   
 	        <input class="easyui-datebox"  data-options="required:true,prompt:'必须选择回访时间'" required="required" type="text" name="n_followTime" id="n_followTime" />   
 	    </div> 
 	    <br/>
 	    <div>   
-	        <label for="name">回访情况:</label>   
+	        <label for="name">&ensp;回&ensp;访&ensp;情&ensp;况:</label>   
 	        <input class="easyui-textbox" required="required" data-options="multiline:true,height:50,required:true,prompt:'必须选择回访情况'" type="text" name="n_contentgz" id="n_contentgz" />   
 	    </div>
 	    <br/>   
 	    <div>   
-	        <label for="email">跟踪方式:</label>   
+	        <label for="email">&ensp;跟&ensp;踪&ensp;方&ensp;式:</label>   
 	        <input class="easyui-textbox" required="required" data-options="required:true,prompt:'必须填写跟踪方式'" type="text" name="n_followTypegz" id="n_followTypegz" />   
 	    </div>
 	    <br/>
@@ -883,7 +935,7 @@ function seachselect(){
 	    </div>
 	    <br/>
 	    <div>   
-	        <label for="email">备注:</label>   
+	        <label for="email">&ensp;&ensp;备&ensp;&ensp;注&ensp;&ensp;&ensp;&ensp;:</label>   
 	        <input class="easyui-textbox"   type="text" name="n_followState" id="n_followState" />   
 	    </div>      
 	</form> 
