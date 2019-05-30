@@ -3,6 +3,7 @@ package com.spz.service;
 import java.util.List;
 import java.util.Map;
 
+import com.spz.entity.Push;
 import com.spz.entity.Roles;
 import com.spz.entity.Users;
 
@@ -104,5 +105,17 @@ public interface UsersService {
 	 * @return
 	 */
 	List<Users> selectAllUsers();
+	/**
+	 * 根据登录的咨询师名字去查未读数据
+	 * @param u_name
+	 * @return
+	 */
+	List<Push> selectPushIsWeidu(String u_name);
+	/**
+	 * 点击查看后修改登录人的未读消息为已读状态
+	 * @param u_name
+	 * @return
+	 */
+	void updatePushIsreader(String u_name);
 	
 }

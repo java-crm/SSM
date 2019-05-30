@@ -11,9 +11,13 @@
            float:left;
        }
    </style>
+   <script type="text/javascript">
+   		//$("#chart")
+   </script>
 </head>
 <body>
-	<div id="chart"style="width: 1200px; height: 420px; margin: 0 auto; border: 1px solid gray;"></div>
+	
+	<div id="chart" style="width: 1200px; height: 420px; margin: 0 auto; border: 1px solid gray;"></div>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/echartsFigure/barTest2.js"> </script>
 </body>
 </html>

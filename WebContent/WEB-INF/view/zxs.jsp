@@ -9,20 +9,15 @@
 <script type="text/javascript">
 	var webscoket=new WebSocket("ws:localhost:8080/SSM/webscoket/"+<%=request.getSession().getAttribute("u_id")%>+"");
 	webscoket.onopen=function(){
-		alert("连接建立");
+		//alert("连接建立");
 	}
 	webscoket.onmessage=function(event){
-		$.messager.show({
-			title:'提示信息',
-			msg:event.data,
-			timeout:5000,
-			showType:'slide'
-		});
+		//chakansuiduxinxi();
+		$("#weidu").html(event.data);
 		//$.messager.alert("提示信息",event.data);
 	}
 	$(function(){
 		seachselect();
-		
 		$.ajax({
 			url:'${pageContext.request.contextPath}/selectUserAndPushIsreaderCount',
 			method:'post',
@@ -31,17 +26,36 @@
 			},
 			dataType:'json',
 			success:function(res){
-				if(res>0){
-					$.messager.show({
-						title:'提示信息',
-						msg:"您当前有 "+res+" 条未读动态！",
-						timeout:5000,
-						showType:'slide'
-					});
-				}
+				$("#weidu").append(res);
 			}
 		})
-	})
+	});
+	function chakansuiduxinxi(){
+		$.ajax({
+			url:'${pageContext.request.contextPath}/selectPushIsWeidu',
+			method:'post',
+			dataType:'json',
+			data:{
+				u_name:globalData.getCurUName()
+			},
+			success:function(res){
+				if(res.length>0){
+					for(var i=0;i<res.length;i++){
+						$("#zxfwdxx").append("<div><font color='red'>"+res[i].studentname+"</font> 对你说 :<font color='red'>"+res[i].student.s_name+"</font><br/>"+res[i].context+"</div>")
+					}
+					$.ajax({
+						url:'${pageContext.request.contextPath}/updatePushIsreader',
+						method:'post',
+						data:{
+							u_name:globalData.getCurUName()
+						}
+					});
+				}else{
+					$.messager.alert("提示信息","暂无信息！")
+				}
+			}
+		});
+	}
 function seachselect(){
 	$('#dg').datagrid({
 	    url:'${pageContext.request.contextPath}/selectStu',
@@ -227,31 +241,34 @@ function seachselect(){
 		}
 
 		function genzong(){
-			var row= $("#dg").datagrid("getSelected");
-			$.ajax({
-				url:'${pageContext.request.contextPath}/insertStugz',
-				method:'post',
-				data:{
-					s_id:row.s_id,
-					s_name:row.s_name,
-					n_userid:row.u_id,
-					n_followTime:$("#n_followTime").datebox("getValue"),
-					n_nextfollowTime:$("#n_nextfollowTime").datebox("getValue"),
-					n_content:$("#n_contentgz").val(),
-					n_followType:$("#n_followTypegz").val(),
-					n_followState:$("#n_followState").val()
-					
-				},
-				
-				
-				success:function(res){
-					if(res>0){
-						$('#dg').datagrid("reload");
-						$("#genzongStu").dialog("close");
-						$.messager.alert('提示信息','添加成功');    
+			if($("#genzong").form("validate")){
+				var row= $("#dg").datagrid("getSelected");
+				$.ajax({
+					url:'${pageContext.request.contextPath}/insertStugz',
+					method:'post',
+					data:{
+						s_id:row.s_id,
+						s_name:row.s_name,
+						n_userid:row.u_id,
+						n_followTime:$("#n_followTime").datebox("getValue"),
+						n_nextfollowTime:$("#n_nextfollowTime").datebox("getValue"),
+						n_content:$("#n_contentgz").val(),
+						n_followType:$("#n_followTypegz").val(),
+						n_followState:$("#n_followState").val()
+						
+					},
+					success:function(res){
+						if(res>0){
+							$('#dg').datagrid("reload");
+							$("#genzongStu").dialog("close");
+							$.messager.alert('提示信息','添加成功');    
+						}
 					}
-				}
-			},"json")
+				},"json")
+			}else{
+				$.messager.alert("提示信息","请填写完整！");
+			}
+			
 		}
 </script>
 </head>
@@ -309,7 +326,9 @@ function seachselect(){
     </thead>
 </table>
 
+<a href="javascript:void(0)" data-options="plain:true"  class="easyui-linkbutton" onclick="chakansuiduxinxi()"><font color="red">未读消息:<span id="weidu"></span> 个</font></a>
 
+<div id="zxfwdxx"></div>
 		<!-- 多条件查询 -->
 <div id="toolbar"  >
 	姓名：<input class="easyui-textbox" id="s_name">
@@ -322,21 +341,21 @@ function seachselect(){
 	</br>
 	</br>
 	 <label for="s_sex">性别：</label>   
-		        <select class="easyui-combobox" panelHeight='auto'  style="width: 159px" id="s_sex">
+		        <select class="easyui-combobox" panelHeight='auto' data-options="editable:false" style="width: 159px" id="s_sex">
 		        	 <option value="">-请选择-</option>
 				    <option value="男">男</option>
 				    <option value="女">女</option> 
 				</select>
 <!-- 	是否缴费：<input class="easyui-textbox" id="s_ispay"> -->
 	<label for="s_sex">是否缴费：</label>
-		        <select class="easyui-combobox" panelHeight='auto' style="width: 159px" id="s_ispay">
+		        <select class="easyui-combobox" panelHeight='auto' data-options="editable:false" style="width: 159px" id="s_ispay">
 		        	 <option value="">-请选择-</option>
 				    <option value="已缴费">已缴费</option>   
 				    <option value="未缴费">未缴费</option>   
 				</select>
 	<!-- 是否有效：<input class="easyui-textbox" id="s_isValid"> -->
 	<label for="s_isValid">是否有效：</label>   
-		        <select class="easyui-combobox" panelHeight='auto' style="width: 159px" id="s_isValid">
+		        <select class="easyui-combobox" panelHeight='auto' data-options="editable:false" style="width: 159px" id="s_isValid">
 		        	 <option value="">-请选择-</option>
 				    <option value="是">是</option>   
 				    <option value="否">否</option>   
@@ -344,14 +363,14 @@ function seachselect(){
 	<!-- 是否回访：<input class="easyui-textbox" id="s_isreturnVist"> -->
 	
 	<label for="s_isValid">是否回访：</label>   
-		        <select class="easyui-combobox" panelHeight='auto' style="width: 159px" id="s_isreturnVist">
+		        <select class="easyui-combobox" panelHeight='auto' data-options="editable:false" style="width: 159px" id="s_isreturnVist">
 		        	 <option value="">-请选择-</option>
 				    <option value="已回访">已回访</option>   
 				    <option value="未回访">未回访</option>   
 				</select>
 				
 				&nbsp;&nbsp;&nbsp;<a id="btn" href="javascript:void(0)" onclick="seachselect()" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">检索</a>
-<a href="javascript:void(0);" id="btnExport" class="easyui-linkbutton" iconCls='icon-print'>导出Excel</a>
+<a href="javascript:void(0);" id="btnExport" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-print'">导出Excel</a>
 	</br>
 	<!-- <div class="easyui-accordion" style="width:300px;height:200px;">
 	<div title="About Accordion" iconCls="icon-ok">
@@ -544,8 +563,6 @@ function seachselect(){
 								<td><input class="easyui-textbox" data-options="readonly:true" name="s_source" /></td>
 						</tr>
 							<tr>
-								
-							
 								<td>打分:</td>
 								<td><input class="easyui-textbox" type="text"
 								data-options="readonly:true"
@@ -717,7 +734,7 @@ function seachselect(){
 						<tr>
 								
 								<td>课程方向:</td>
-					<td><select class="easyui-combobox" panelHeight='auto' data-options="prompt:'——请选择 ——'" style="width: 150px" name="s_source"> 
+					<td><select class="easyui-combobox" panelHeight='auto'  data-options="editable:false,prompt:'——请选择 ——'" style="width: 150px" name="s_source"> 
 								     
 								    <option value="软件开发">软件开发</option> 
 								    <option value="软件设计">软件设计</option>
@@ -726,7 +743,7 @@ function seachselect(){
 							</tr>
 							<tr>
 								<td>打分:</td>
-								<td><select class="easyui-combobox" panelHeight='auto' data-options="prompt:'——请选择 ——'" style="width: 150px" name="s_learnforward"> 
+								<td><select class="easyui-combobox" panelHeight='auto'  data-options="editable:false,prompt:'——请选择 ——'" style="width: 150px" name="s_learnforward"> 
 								     
 								    <option value="A、近期可报名">A、近期可报名</option>
 								    <option value="B、一个月内可报名">B、一个月内可报名</option>

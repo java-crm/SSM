@@ -163,13 +163,15 @@
 	<!-- 查询已打卡咨询师成交的学生总个数，和已录入的未成交的个数，以及成功率 -->
 	<select id="selectUsersByFenLiang" parameterType="Users" resultType="Users">
 		select a.*,IFNULL(b.count,0) counts ,IFNULL(d.count ,0) dcount , IFNULL(b.count/a.count,0)  as bfb  from (   
-			select users.u_id,users.u_name,count(users.u_id) as count from users
-			INNER JOIN userchecks ON users.u_id=userchecks.u_id		
+			select users.u_id,
+			users.u_name ,count(student.s_id) as count from users
 			left JOIN student on users.u_id=student.u_id
-			inner JOIN userroles ON users.u_id = userroles.u_id
-			inner JOIN roles ON userroles.r_id = roles.r_id
-			where roles.r_id=10 and userchecks.us_checkState='是' 
-			group by users.u_id HAVING count>0 ) a left join
+			INNER JOIN userchecks on users.u_id=userchecks.u_id
+			INNER JOIN userroles on users.u_id=userroles.u_id
+			INNER JOIN roles on userroles.r_id=roles.r_id
+			where roles.r_id = 10 
+			AND userchecks.us_checkState = '是' 
+			GROUP BY users.u_id ) a left join
 			(select users.u_id,users.u_name,count(users.u_id) as count from users  
 			INNER JOIN userchecks ON users.u_id=userchecks.u_id	
 			left JOIN student on users.u_id=student.u_id
@@ -277,6 +279,15 @@
 	<select id="selectUserAndPushIsreaderCount" parameterType="String" resultType="Push">
 		SELECT count(1) id,zxname FROM push where zxname=#{String} and isreader=2
 	</select>
+	
+	<!-- 查看咨询师未读消息 -->
+	<select id="selectPushIsWeidu" parameterType="String" resultMap="com.spz.dao.mapperMap.resultPush">
+		select push.*,student.s_name from push INNER JOIN student on push.studentid=student.s_id where  zxname=#{String} and isreader=2
+	</select>
+	
+	<update id="updatePushIsreader" parameterType="String">
+		update push set push.isreader='1' where push.zxname=#{String}
+	</update>
 	
 	<!-- 显示聊天页面的全部人员 -->
 	<select id="selectAllUsers" resultType="users">
