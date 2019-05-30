@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spz.entity.Push;
 import com.spz.entity.Roles;
 import com.spz.entity.Student;
 import com.spz.entity.UserRoles;
@@ -232,6 +233,19 @@ public class UsersController {
 	public Integer selectUserAndPushIsreaderCount(String u_name) {
 		return usersService.selectUserAndPushIsreaderCount(u_name);
 	}
+	
+	@RequestMapping(value="/selectPushIsWeidu")
+	@ResponseBody
+	public List<Push> selectPushIsWeidu(String u_name) {
+		return usersService.selectPushIsWeidu(u_name);
+	}
+	
+	@RequestMapping(value="/updatePushIsreader",method=RequestMethod.POST)
+	@ResponseBody
+	public void updatePushIsreader(String u_name) {
+		usersService.updatePushIsreader(u_name);
+	}
+	
 	
 	@RequestMapping(value="/selectAllUsers")
 	public String  selectAllUsers(Model model) {

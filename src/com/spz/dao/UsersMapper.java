@@ -122,6 +122,19 @@ public interface UsersMapper {
 	 */
 	List<Users> selectAllUsers();
 	
+	/**
+	 * 根据登录的咨询师名字去查未读数据
+	 * @param u_name
+	 * @return
+	 */
+	List<Push> selectPushIsWeidu(String u_name);
+	
+	/**
+	 * 点击查看后修改登录人的未读消息为已读状态
+	 * @param u_name
+	 * @return
+	 */
+	Integer updatePushIsreader(String u_name);
 	//孙所蕾
 	/**
 	 * 查询所有员工

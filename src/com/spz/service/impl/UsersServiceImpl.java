@@ -169,7 +169,7 @@ public class UsersServiceImpl implements UsersService {
 		System.out.println(u_name);
 		Push push= redisDao.getPush(u_name);
 		System.out.println("直接从缓存拿的数据："+push);
-		if(push==null) {
+		if(push==null||push.getId()==0) {
 			push = selectPushByName(u_name);
 			 System.out.println("数据库中取出的数据："+push.toString());
 			 if(push.getId()>0) {
@@ -179,12 +179,13 @@ public class UsersServiceImpl implements UsersService {
 				 System.out.println("写入redis:"+result.toLowerCase());
 				 System.out.println("缓存中查的数据:"+redisDao.getPush(u_name));
 			 }else {
-				 System.out.println("如果数据库没有未读的消息对缓存存-1");
-				 push.setId(-1);
+				 System.out.println("如果数据库没有未读的消息对缓存存0");
+				 push.setId(0);
 				 String result = redisDao.putPush(push);
-				 System.out.println("对redis写入-1:"+result);
+				 System.out.println("对redis写入0:"+result);
 			 }
 		}
+		System.out.println(push.getId());
 		return push.getId();
 	}
 	
@@ -195,6 +196,21 @@ public class UsersServiceImpl implements UsersService {
 	@Override
 	public List<Users> selectAllUsers() {
 		return usersMapper.selectAllUsers();
+	}
+
+	@Override
+	public List<Push> selectPushIsWeidu(String u_name) {
+		List<Push> weidu = usersMapper.selectPushIsWeidu(u_name);
+		return weidu;
+	}
+
+	@Override
+	public void updatePushIsreader(String u_name) {
+		Push push=new Push();
+		push.setZxname(u_name);
+		push.setId(0);
+		redisDao.putPush(push);
+		usersMapper.updatePushIsreader(u_name);
 	}
 	
 }

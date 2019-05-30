@@ -10,7 +10,7 @@
 var webscoket=new WebSocket("ws:localhost:8080/SSM/webscoket/"+globalData.getCurUName()+"");
 
 webscoket.onopen=function(){
-	alert("连接建立");
+	//alert("连接建立");
 }
 webscoket.onclose=function(){
 	//alert("连接关闭了");
@@ -146,7 +146,7 @@ function seachselect(){
 				studentname:globalData.getCurUName(),
 				zxname:$("#users").val(),
 				context:$("#nr").val(),
-				isreader:1
+				isreader:2
 			},
 			success:function(res){
 				if(res>0){
@@ -219,9 +219,9 @@ function seachselect(){
 						电话：<input class="easyui-numberbox" id="s_iphone" style="width:80px"> 
 						qq：<input class="easyui-numberbox" id="s_qq" style="width:80px"> 
 						咨询师: <!-- <input class="easyui-textbox" id="s_zixunName" style="width:80px"> -->
-							<input class="easyui-combobox" id="u_id"  style="width:80px"/>
+							<input class="easyui-combobox" panelHeight='auto' id="u_id"  style="width:80px"/>
 						性别：
-						<select id="dd" class="easyui-combobox" data-options="editable:false" name=s_sex style="width:auto;">
+						<select id="dd" class="easyui-combobox" panelHeight='auto' data-options="editable:false" name=s_sex style="width:auto;">
 							<option value="">--请选择---</option>
 							<option value="男">男</option>
 							<option value="女">女</option>
@@ -231,19 +231,19 @@ function seachselect(){
 						-
 						<input class="easyui-datebox" id="max_s_createTime" style="width:100px"> &nbsp;&nbsp;
 						 <br/>是否缴费:
-						<select id="s_ispay" class="easyui-combobox" data-options="editable:false" name="s_ispay" style="width:auto;">
+						<select id="s_ispay" class="easyui-combobox" panelHeight='auto' data-options="editable:false" name="s_ispay" style="width:auto;">
 							<option value="">--请选择---</option>
 							<option value="已缴费">已缴费</option>
 							<option value="未缴费">未缴费</option>
 					    </select> 
 						是否报备:
-						<select id="s_isbaobei" class="easyui-combobox" data-options="editable:false" name="s_isbaobei" style="width:auto;">
+						<select id="s_isbaobei" class="easyui-combobox" panelHeight='auto' data-options="editable:false" name="s_isbaobei" style="width:auto;">
 							<option value="">--请选择---</option>
 							<option value="是">是</option>
 							<option value="否">否</option>
 					    </select>
 					           是否回访:
-					    <select id="s_isreturnVist" class="easyui-combobox" data-options="editable:false" name="s_isreturnVist" style="width:auto;">
+					    <select id="s_isreturnVist" class="easyui-combobox" panelHeight='auto' data-options="editable:false" name="s_isreturnVist" style="width:auto;">
 							<option value="">--请选择---</option>
 							<option value="已回访">已回访</option>
 							<option value="未回访">未回访</option>
