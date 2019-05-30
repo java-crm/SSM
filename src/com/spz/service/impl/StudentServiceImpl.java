@@ -44,6 +44,8 @@ public class StudentServiceImpl implements StudentService {
 
 	@Override
 	public Integer insertStu(Student student,Integer fenliang){
+		System.out.println("111111111111111111111111111");
+		System.out.println(student.toString());
 		//未开启分量直接添加
 		if(fenliang==0) {
 			return studentMapper.insertStudent(student);
@@ -368,6 +370,11 @@ public class StudentServiceImpl implements StudentService {
 	@Override
 	public Integer selectMaxId() {
 		return studentMapper.selectMaxId();
+	}
+	@Override
+	public Integer shoudongFenLiang(Student student) {
+		// TODO Auto-generated method stub
+		return studentMapper.shoudongFenLiang(student);
 	}
 	
 }

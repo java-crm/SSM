@@ -141,4 +141,10 @@ public interface StudentService {
 	 * @return
 	 */
 	Integer insertjingliFenPei(String u_id);
+	/**
+	 * wflxs手动分配客户给咨询师
+	 * @param student
+	 * @return
+	 */
+	Integer shoudongFenLiang(Student student);
 }

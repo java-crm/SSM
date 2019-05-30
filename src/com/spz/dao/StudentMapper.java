@@ -157,4 +157,11 @@ public interface StudentMapper {
 	 * @return
 	 */
 	Integer selectStudentWeriFenliangCount(Student student);
+	
+	/**
+	 * wflxs手动分配客户给咨询师
+	 * @param student
+	 * @return
+	 */
+	Integer shoudongFenLiang(Student student);
 }

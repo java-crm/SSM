@@ -371,10 +371,10 @@
 	
 	<insert id="insertStudent" parameterType="student">
 		INSERT INTO student (s_name,s_sex,s_age,s_iphone,s_state,s_courceurl,
-							s_keywords,s_qq,s_wx,s_inClassContent,s_isdel,s_fromPart,
+							s_keywords,s_qq,s_wx,s_record,s_isdel,s_fromPart,
 							s_stuConcern,s_isbaobei,s_createUser,s_ispay,u_id)
 						values(#{s_name},#{s_sex},#{s_age},#{s_iphone},#{s_state},#{s_courceurl},
-							#{s_keywords},#{s_qq},#{s_wx},#{s_inClassContent},'是',#{s_fromPart},
+							#{s_keywords},#{s_qq},#{s_wx},#{s_record},'是',#{s_fromPart},
 							#{s_stuConcern},#{s_isbaobei},#{s_createUser},'未缴费',#{u_id})
 	</insert>
 	<!-- 添加一条推送消息 -->
@@ -1390,11 +1390,16 @@
 	<!-- 查询修改删除中下拉框的咨询师 -->
 	<select id="selectUsersByZXS" resultType="users">
 		SELECT
-			users.*
+			users.u_id,
+			users.u_name 
 		FROM
-			student
-			INNER JOIN users ON student.u_id = users.u_id 
-		where student.s_id =#{s_id}
+			users
+			INNER JOIN userchecks ON users.u_id = userchecks.u_id
+			INNER JOIN userroles ON userchecks.u_id = userroles.u_id
+			INNER JOIN roles ON userroles.r_id = roles.r_id 
+		WHERE
+			roles.r_id = 10 
+			AND us_checkState = '是'
 	</select>
 	
 	<!-- 查看未分配的的学生 -->
@@ -1435,4 +1440,15 @@
 				</if>
 			</where>
 	</select>
+	
+	<!--  wflxs手动分配客户给咨询师(根据s_id修改u_id) -->
+	<update id="shoudongFenLiang" parameterType="student">
+		update student 
+		<set>
+			u_id=#{u_id},
+		</set>
+		<where>
+			s_id=#{s_id}
+		</where>
+	</update>
 </mapper>

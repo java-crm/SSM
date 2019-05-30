@@ -11,6 +11,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,7 @@ public class StudentController {
 	@Resource
 	private StudentService studentService;
 	
+
 	@RequestMapping(value="/selectAll")
 	@ResponseBody
 	public String selectAll(Student student) {
@@ -43,6 +45,8 @@ public class StudentController {
 	@RequestMapping(value="/insertStu",method=RequestMethod.POST)
 	@ResponseBody
 	public Integer insertStu(Student student,Integer fenliang) {
+		System.out.println("111111111111111111111111111111111111");
+		System.out.println("11111111111111111"+student.toString());
 		return studentService.insertStu(student,fenliang);
 		
 	}
@@ -117,6 +121,9 @@ public class StudentController {
 	@RequestMapping(value="/insertStus")
 	@ResponseBody
 	public Integer insertStus(Student student) {
+		/*if(zdfl!=null && "on".equals(zdfl)) {
+			studentService.insertStu(student, zdfl);
+		}*/
 		return studentService.insertStus(student);
 	}
 	
@@ -150,5 +157,18 @@ public class StudentController {
 	@ResponseBody
 	public Integer insertjingliFenPei(String s_id) {
 		return studentService.insertjingliFenPei(s_id);
+	}
+	
+	@RequestMapping(value="/shoudongFenLiang")
+	@ResponseBody
+	public Integer shoudongFenLiang(Student student,String u_ids) {
+		String[] ssid=u_ids.split(",");
+		Integer ii =0;
+		for (int i = 0; i < ssid.length; i++) {
+			Integer sid = Integer.parseInt(ssid[i]);
+			student.setS_id(sid);
+			ii=studentService.shoudongFenLiang(student);
+		}
+		return ii;
 	}
 }

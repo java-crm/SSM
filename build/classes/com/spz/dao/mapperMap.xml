@@ -103,6 +103,7 @@
 		<result column="s_returnMoneyReason" property="s_returnMoneyReason" />
 		<result column="s_preMoney" property="s_preMoney" />
 		<result column="s_preMoneyTime" property="s_preMoneyTime" />
+		<result column="u_id" property="u_id"/>
 		
 		<association property="users" column="users" resultMap="resultMapUsers"></association>
 		<association property="userRoles" column="userRoles" resultMap="resultMapUserroles"></association>

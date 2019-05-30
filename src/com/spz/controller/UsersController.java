@@ -153,6 +153,7 @@ public class UsersController {
 	@RequestMapping(value="/selectUsersByKaiQi",method=RequestMethod.POST)
 	@ResponseBody
 	public String selectUsersByKaiQi(Integer u_id) {
+		System.out.println(u_id);
 		Users usersByKaiQi = usersService.selectUsersByKaiQi(u_id);
 		return Result.toClient(usersByKaiQi.getU_state() == 1 ? true : false, "");
 	}
