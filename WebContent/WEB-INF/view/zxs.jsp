@@ -28,7 +28,29 @@
 			success:function(res){
 				$("#weidu").append(res);
 			}
-		})
+		});
+		
+		$.ajax({
+			url:'${pageContext.request.contextPath}/selectUsersByu_pwdWrongTime',
+			method:'post',
+			data:{
+				u_id:"${u_id}"
+			},
+			dataType:'json',
+			success:function(res){
+				if(res>0){
+					$.messager.alert("提示信息","您有 "+res+" 个新分配的学生！","info",function(){
+						$.ajax({
+							url:'${pageContext.request.contextPath}/updateUsersByu_pwdWrongTimeIsNUll',
+							method:'post',
+							data:{
+								u_id:"${u_id}"
+							}
+						});
+					});
+				}
+			}
+		});
 	});
 	function chakansuiduxinxi(){
 		$.ajax({

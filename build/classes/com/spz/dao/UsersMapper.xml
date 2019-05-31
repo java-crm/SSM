@@ -121,6 +121,21 @@
 			where u_id=#{u_id}
 	</update>
 	
+	<!-- 这个字段别处未曾使用，这里用来为咨询师提供分配的多少学生使用 -->
+	<update id="updateUsersByu_pwdWrongTime" parameterType="int">
+		update users set users.u_pwdWrongTime=users.u_pwdWrongTime+1 where users.u_id=#{u_id}
+	</update>
+	
+	<!-- 修改咨询师的通知为0个未读心学生 -->
+	<update id="updateUsersByu_pwdWrongTimeIsNUll" parameterType="int">
+		update users set users.u_pwdWrongTime=0 where users.u_id=#{u_id}
+	</update>
+	
+	<!-- 查询咨询师有多少新分配的学生 -->
+	<select id="selectUsersByu_pwdWrongTime" parameterType="int" resultType="int">
+		SELECT users.u_pwdWrongTime FROM users where users.u_id=#{u_id}
+	</select>
+	
 	<!-- 可以和下面的写查所有子模块 可以放在一起（后面再修改） -->
 	<select id="selectUserModuls" parameterType="int" resultType="Modules">
 		SELECT 

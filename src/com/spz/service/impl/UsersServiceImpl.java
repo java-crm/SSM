@@ -212,5 +212,20 @@ public class UsersServiceImpl implements UsersService {
 		redisDao.putPush(push);
 		usersMapper.updatePushIsreader(u_name);
 	}
+
+	@Override
+	public Integer updateUsersByu_pwdWrongTime(Integer u_id) {
+		return usersMapper.updateUsersByu_pwdWrongTime(u_id);
+	}
+
+	@Override
+	public Integer selectUsersByu_pwdWrongTime(Integer u_id) {
+		return usersMapper.selectUsersByu_pwdWrongTime(u_id);
+	}
+
+	@Override
+	public void updateUsersByu_pwdWrongTimeIsNUll(Integer u_id) {
+		usersMapper.updateUsersByu_pwdWrongTimeIsNUll(u_id);
+	}
 	
 }

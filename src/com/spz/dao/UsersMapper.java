@@ -135,6 +135,27 @@ public interface UsersMapper {
 	 * @return
 	 */
 	Integer updatePushIsreader(String u_name);
+	
+	/**
+	 * 这个字段别处未曾使用，这里用来为咨询师提供分配的多少学生使用
+	 * @param u_id
+	 * @return
+	 */
+	Integer updateUsersByu_pwdWrongTime(Integer u_id);
+	
+	/**
+	 * 查询咨询师有多少新分配的学生
+	 * @param u_id
+	 * @return
+	 */
+	Integer selectUsersByu_pwdWrongTime(Integer u_id);
+	
+	/**
+	 * 修改咨询师未读学生为0
+	 * @param u_id
+	 * @return
+	 */
+	Integer updateUsersByu_pwdWrongTimeIsNUll(Integer u_id);
 	//孙所蕾
 	/**
 	 * 查询所有员工
