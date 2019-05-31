@@ -246,6 +246,17 @@ public class UsersController {
 		usersService.updatePushIsreader(u_name);
 	}
 	
+	@RequestMapping(value="/selectUsersByu_pwdWrongTime",method=RequestMethod.POST)
+	@ResponseBody
+	public Integer selectUsersByu_pwdWrongTime(Integer u_id) {
+		return usersService.selectUsersByu_pwdWrongTime(u_id);
+	}
+	
+	@RequestMapping(value="/updateUsersByu_pwdWrongTimeIsNUll",method=RequestMethod.POST)
+	@ResponseBody
+	public void updateUsersByu_pwdWrongTimeIsNUll(Integer u_id) {
+		usersService.updateUsersByu_pwdWrongTimeIsNUll(u_id);
+	}
 	
 	@RequestMapping(value="/selectAllUsers")
 	public String  selectAllUsers(Model model) {

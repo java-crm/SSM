@@ -153,4 +153,39 @@ public class StudentController {
 	public Integer insertjingliFenPei(String s_id) {
 		return studentService.insertjingliFenPei(s_id);
 	}
+	
+	@RequestMapping(value="/selectStudentIsdelAll",method=RequestMethod.POST)
+	@ResponseBody
+	public String selectStudentIsdelAll(Student student) {
+		return studentService.selectStudentIsdelAll(student);
+	}
+	@RequestMapping(value="/deleteStudenthsz",method=RequestMethod.POST)
+	@ResponseBody
+	public Integer deleteStudenthsz() {
+		return studentService.deleteStudenthsz();
+	}
+	@RequestMapping(value="/deleteByIdStuhsz",method=RequestMethod.POST)
+	@ResponseBody
+	public Integer deleteByIdStuhsz(Integer s_id) {
+		return studentService.deleteByIdStuhsz(s_id);
+	}
+	@RequestMapping(value="/updateStudenthsz",method=RequestMethod.POST)
+	@ResponseBody
+	public Integer updateStudenthsz(Integer s_id) {
+		return studentService.updateStudenthsz(s_id);
+	}
+	@RequestMapping(value="/plczhsz",method=RequestMethod.POST)
+	@ResponseBody
+	public Integer plczhsz(String s_id,Integer a) {
+		String[] split = s_id.split(",");
+		Integer num=null;
+		for(int i=0;i<split.length;i++) {
+			if(a==1) {//全部清除
+				num=studentService.deleteByIdStuhsz(Integer.parseInt(split[i]));
+			}else {//全部恢复
+				num=studentService.updateStudenthsz(Integer.parseInt(split[i]));
+			}
+		}
+		return num;
+	}
 }

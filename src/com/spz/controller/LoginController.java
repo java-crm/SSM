@@ -204,4 +204,13 @@ public class LoginController {
 		return "view/tuisong";
 	}
 	
+	@RequestMapping(value="/yggl",method=RequestMethod.GET)
+	public String yggl() {
+		return "view/yggl";
+	}
+	
+	@RequestMapping(value="/hsz",method=RequestMethod.GET)
+	public String hsz() {
+		return "view/hsz";
+	}
 }
