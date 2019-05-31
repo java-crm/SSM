@@ -67,6 +67,11 @@ public class Netfollows {
 		this.n_content = n_content;
 	}
 	
+
+	public String getN_userid() {
+		return n_userid;
+	}
+
 	@Override
 	public String toString() {
 		return "Netfollows [n_id=" + n_id + ", s_id=" + s_id + ", s_name=" + s_name + ", n_followTime=" + n_followTime
@@ -75,10 +80,10 @@ public class Netfollows {
 				+ n_followState + ", page=" + page + ", rows=" + rows + ", mincreateTime=" + mincreateTime
 				+ ", maxcreateTime=" + maxcreateTime + "]";
 	}
+
 	
-	public String getN_userid() {
-		return n_userid;
-	}
+	
+
 	public void setN_userid(String n_userid) {
 		this.n_userid = n_userid;
 	}

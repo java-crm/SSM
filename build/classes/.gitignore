@@ -3,4 +3,7 @@
 /com/
 /jdbc.properties
 /mybatis.xml
+
+/redis.properties
+
 /springmvc.xml

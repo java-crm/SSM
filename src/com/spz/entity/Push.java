@@ -8,6 +8,29 @@ public class Push {
 	private String zxname;//接收者
 	private Integer isreader;//状态（已读/未读）
 	private String tstime;//发送的时间
+	private Student student;
+	
+	public Student getStudent() {
+		return student;
+	}
+	public void setStudent(Student student) {
+		this.student = student;
+	}
+	private Integer page;
+	private Integer rows;
+	
+	public Integer getPage() {
+		return page;
+	}
+	public void setPage(Integer page) {
+		this.page = page;
+	}
+	public Integer getRows() {
+		return rows;
+	}
+	public void setRows(Integer rows) {
+		this.rows = rows;
+	}
 	public Integer getId() {
 		return id;
 	}
@@ -55,7 +78,8 @@ public class Push {
 	@Override
 	public String toString() {
 		return "Push [id=" + id + ", studentid=" + studentid + ", studentname=" + studentname + ", context=" + context
-				+ ", zxname=" + zxname + ", isreader=" + isreader + ", tstime=" + tstime + "]";
+				+ ", zxname=" + zxname + ", isreader=" + isreader + ", tstime=" + tstime + ", student=" + student
+				+ ", page=" + page + ", rows=" + rows + "]";
 	}
 	
 	

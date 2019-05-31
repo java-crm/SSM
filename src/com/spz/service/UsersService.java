@@ -3,6 +3,7 @@ package com.spz.service;
 import java.util.List;
 import java.util.Map;
 
+import com.spz.entity.Push;
 import com.spz.entity.Roles;
 import com.spz.entity.Users;
 
@@ -93,4 +94,48 @@ public interface UsersService {
 	 */
 	String selectUsersJingLi();
 	
+	/**
+	 * 根据登录的咨询师名字去查有多少条未读数据
+	 * @param u_name 登录的咨询师的名称
+	 * @return
+	 */
+	Integer selectUserAndPushIsreaderCount(String u_name);
+	/**
+	 * 查看全部员工
+	 * @return
+	 */
+	List<Users> selectAllUsers();
+	/**
+	 * 根据登录的咨询师名字去查未读数据
+	 * @param u_name
+	 * @return
+	 */
+	List<Push> selectPushIsWeidu(String u_name);
+	/**
+	 * 点击查看后修改登录人的未读消息为已读状态
+	 * @param u_name
+	 * @return
+	 */
+	void updatePushIsreader(String u_name);
+	
+	/**
+	 * 这个字段别处未曾使用，这里用来为咨询师提供分配的多少学生使用
+	 * @param u_id
+	 * @return
+	 */
+	Integer updateUsersByu_pwdWrongTime(Integer u_id);
+	
+	/**
+	 * 查询咨询师有多少新分配的学生
+	 * @param u_id
+	 * @return
+	 */
+	Integer selectUsersByu_pwdWrongTime(Integer u_id);
+	
+	/**
+	 * 修改咨询师未读学生为0
+	 * @param u_id
+	 * @return
+	 */
+	void updateUsersByu_pwdWrongTimeIsNUll(Integer u_id);
 }

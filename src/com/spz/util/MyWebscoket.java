@@ -17,6 +17,8 @@ import org.springframework.web.context.ContextLoader;
 import com.spz.entity.Push;
 import com.spz.service.StudentService;
 import com.spz.service.impl.StudentServiceImpl;
+import com.spz.service.impl.UsersServiceImpl;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -40,22 +42,19 @@ public class MyWebscoket {
 		String formName=split[0];
 		String tomName=split[1];
 		String content=split[2];
-		//String studentid=split[3];
+		String studentid=split[3];
+		ApplicationContext context=new ClassPathXmlApplicationContext("applicationContext-dao.xml");
+		StudentServiceImpl bean=(StudentServiceImpl)context.getBean("studentServiceImpl");
+		UsersServiceImpl usersServiceImpl=(UsersServiceImpl)context.getBean("usersServiceImpl");
+		RedisDao redisDao=(RedisDao)context.getBean("redisDao");
+		Push push = usersServiceImpl.selectPushByName(studentid);
 		if(map.containsKey(tomName)) {
 			//在线的情况下直接相应消息
-			map.get(tomName).session.getAsyncRemote().sendText(formName+" 对您说:"+content);
+			map.get(tomName).session.getAsyncRemote().sendText(push.getId()+"");
 		}else {
 			//不在线的话得到消息后存数据库中等上线后再通知
-			ApplicationContext context=new ClassPathXmlApplicationContext("applicationContext-dao.xml");
-			StudentServiceImpl bean=(StudentServiceImpl)context.getBean("studentServiceImpl");
-			/*Push push=new Push();
-			push.setZxname(tomName);
-			push.setStudentid(Integer.parseInt(studentid));
-			push.setContext(content);
-			push.setStudentname(formName);
-			push.setIsreader(2);
-			bean.addPush(push);*/
-			bean.updatePushIsreader(bean.selectMaxId());
+			String result = redisDao.putPush(push);
+			System.out.println("写入redis:"+result.toLowerCase());
 			System.out.println("不在线");
 		}
 	}

@@ -1,8 +1,6 @@
 package com.spz.service.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,11 +14,13 @@ import com.spz.dao.UserchecksMapper;
 import com.spz.dao.UsersMapper;
 import com.spz.entity.Fenye;
 import com.spz.entity.Modules;
+import com.spz.entity.Push;
 import com.spz.entity.Roles;
 import com.spz.entity.Userchecks;
 import com.spz.entity.Users;
 import com.spz.service.UsersService;
 import com.spz.util.MyMd5Util;
+import com.spz.util.RedisDao;
 import com.spz.util.Result;
 @Service
 public class UsersServiceImpl implements UsersService {
@@ -28,6 +28,8 @@ public class UsersServiceImpl implements UsersService {
 	@Autowired private UsersMapper usersMapper;
 	
 	@Autowired private RolesMapper rolesMapper;
+	
+	@Autowired private RedisDao redisDao;
 	
 	@Autowired private UserchecksMapper userchecksMapper;
 	
@@ -162,5 +164,68 @@ public class UsersServiceImpl implements UsersService {
 		}
 	}
 
+	@Override
+	public Integer selectUserAndPushIsreaderCount(String u_name) {
+		System.out.println(u_name);
+		Push push= redisDao.getPush(u_name);
+		System.out.println("直接从缓存拿的数据："+push);
+		if(push==null||push.getId()==0) {
+			push = selectPushByName(u_name);
+			 System.out.println("数据库中取出的数据："+push.toString());
+			 if(push.getId()>0) {
+				 //System.out.println("写入"+redisDao.putPush(push));
+				 System.out.println("开始向redis写入！");
+				 String result = redisDao.putPush(push);
+				 System.out.println("写入redis:"+result.toLowerCase());
+				 System.out.println("缓存中查的数据:"+redisDao.getPush(u_name));
+			 }else {
+				 System.out.println("如果数据库没有未读的消息对缓存存0");
+				 push.setId(0);
+				 String result = redisDao.putPush(push);
+				 System.out.println("对redis写入0:"+result);
+			 }
+		}
+		System.out.println(push.getId());
+		return push.getId();
+	}
+	
+	public Push selectPushByName(String u_name) {
+		return usersMapper.selectUserAndPushIsreaderCount(u_name);
+	}
+
+	@Override
+	public List<Users> selectAllUsers() {
+		return usersMapper.selectAllUsers();
+	}
+
+	@Override
+	public List<Push> selectPushIsWeidu(String u_name) {
+		List<Push> weidu = usersMapper.selectPushIsWeidu(u_name);
+		return weidu;
+	}
+
+	@Override
+	public void updatePushIsreader(String u_name) {
+		Push push=new Push();
+		push.setZxname(u_name);
+		push.setId(0);
+		redisDao.putPush(push);
+		usersMapper.updatePushIsreader(u_name);
+	}
+
+	@Override
+	public Integer updateUsersByu_pwdWrongTime(Integer u_id) {
+		return usersMapper.updateUsersByu_pwdWrongTime(u_id);
+	}
+
+	@Override
+	public Integer selectUsersByu_pwdWrongTime(Integer u_id) {
+		return usersMapper.selectUsersByu_pwdWrongTime(u_id);
+	}
+
+	@Override
+	public void updateUsersByu_pwdWrongTimeIsNUll(Integer u_id) {
+		usersMapper.updateUsersByu_pwdWrongTimeIsNUll(u_id);
+	}
 	
 }

@@ -5,10 +5,13 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
+import com.spz.entity.Push;
 import com.spz.entity.Roles;
 import com.spz.entity.Student;
 import com.spz.entity.UserRoles;
@@ -224,6 +227,42 @@ public class UsersController {
 	@ResponseBody
 	public Integer updateUserchecks(Userchecks userchecks) {
 		return userchecksService.updateUserchecksPL(userchecks);
+	}
+	
+	@RequestMapping(value="/selectUserAndPushIsreaderCount")
+	@ResponseBody
+	public Integer selectUserAndPushIsreaderCount(String u_name) {
+		return usersService.selectUserAndPushIsreaderCount(u_name);
+	}
+	
+	@RequestMapping(value="/selectPushIsWeidu")
+	@ResponseBody
+	public List<Push> selectPushIsWeidu(String u_name) {
+		return usersService.selectPushIsWeidu(u_name);
+	}
+	
+	@RequestMapping(value="/updatePushIsreader",method=RequestMethod.POST)
+	@ResponseBody
+	public void updatePushIsreader(String u_name) {
+		usersService.updatePushIsreader(u_name);
+	}
+	
+	@RequestMapping(value="/selectUsersByu_pwdWrongTime",method=RequestMethod.POST)
+	@ResponseBody
+	public Integer selectUsersByu_pwdWrongTime(Integer u_id) {
+		return usersService.selectUsersByu_pwdWrongTime(u_id);
+	}
+	
+	@RequestMapping(value="/updateUsersByu_pwdWrongTimeIsNUll",method=RequestMethod.POST)
+	@ResponseBody
+	public void updateUsersByu_pwdWrongTimeIsNUll(Integer u_id) {
+		usersService.updateUsersByu_pwdWrongTimeIsNUll(u_id);
+	}
+	
+	@RequestMapping(value="/selectAllUsers")
+	public String  selectAllUsers(Model model) {
+		model.addAttribute("listUsers", usersService.selectAllUsers());
+		return "view/ltym";
 	}
 	
 }

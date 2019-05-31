@@ -16,6 +16,37 @@ public interface StudentMapper {
 	 */
 	List<Student> selectStudentByU_id(Integer u_id);
 	
+	/**
+	 * 查看回收站的学生
+	 * @return
+	 */
+	List<Student> selectStudentIsdel(Student student);
+	
+	/**
+	 * 清空回收站
+	 * @return
+	 */
+	Integer deleteStudenthsz();
+	
+	/**
+	 * 根据id去从回收站删除学生
+	 * @param u_id
+	 * @return
+	 */
+	Integer deleteByIdStuhsz(Integer s_id);
+
+	/**
+	 * 根据id去从回收站恢复学生
+	 * @param u_id
+	 * @return
+	 */
+	Integer updateStudenthsz(Integer s_id);
+	
+	/**
+	 * 查看回收站的学生数量
+	 * @return
+	 */
+	Integer selectStudentIsdelCount(Student student);
 	//岳治文
 	/**
 	 * 多条件分页查询数据y

@@ -6,7 +6,7 @@
 
 	<sql id="UsersSql">
 		u_id,u_name,u_pwd,u_isLockout,u_lastLoginTime,u_createTime,u_pwdWrongTime
-			u_lockTime,u_protectEmail,u_protectMtel from Users 
+			u_lockTime,u_protectEmail,u_protectMtel from users 
 	</sql>
 	<!-- 登录时（添加时）查询用户是否存在 -->
 	<select id="selectUserBylogin" parameterType="Users" resultType="Users">
@@ -63,7 +63,7 @@
 	
 	<!-- 搜索条件模糊查询数据条数 -->
 	<select id="selectUsersByUsersCount" parameterType="Users" resultType="int">
-		select count(u_id) from Users 
+		select count(u_id) from users 
 			<where>
 				<if test="u_name !=null and u_name !=''">
 					and u_name like "%"#{u_name}"%"
@@ -121,6 +121,21 @@
 			where u_id=#{u_id}
 	</update>
 	
+	<!-- 这个字段别处未曾使用，这里用来为咨询师提供分配的多少学生使用 -->
+	<update id="updateUsersByu_pwdWrongTime" parameterType="int">
+		update users set users.u_pwdWrongTime=users.u_pwdWrongTime+1 where users.u_id=#{u_id}
+	</update>
+	
+	<!-- 修改咨询师的通知为0个未读心学生 -->
+	<update id="updateUsersByu_pwdWrongTimeIsNUll" parameterType="int">
+		update users set users.u_pwdWrongTime=0 where users.u_id=#{u_id}
+	</update>
+	
+	<!-- 查询咨询师有多少新分配的学生 -->
+	<select id="selectUsersByu_pwdWrongTime" parameterType="int" resultType="int">
+		SELECT users.u_pwdWrongTime FROM users where users.u_id=#{u_id}
+	</select>
+	
 	<!-- 可以和下面的写查所有子模块 可以放在一起（后面再修改） -->
 	<select id="selectUserModuls" parameterType="int" resultType="Modules">
 		SELECT 
@@ -163,13 +178,15 @@
 	<!-- 查询已打卡咨询师成交的学生总个数，和已录入的未成交的个数，以及成功率 -->
 	<select id="selectUsersByFenLiang" parameterType="Users" resultType="Users">
 		select a.*,IFNULL(b.count,0) counts ,IFNULL(d.count ,0) dcount , IFNULL(b.count/a.count,0)  as bfb  from (   
-			select users.u_id,users.u_name,count(users.u_id) as count from users
-			INNER JOIN userchecks ON users.u_id=userchecks.u_id		
+			select users.u_id,
+			users.u_name ,count(student.s_id) as count from users
 			left JOIN student on users.u_id=student.u_id
-			inner JOIN userroles ON users.u_id = userroles.u_id
-			inner JOIN roles ON userroles.r_id = roles.r_id
-			where roles.r_id=10 and userchecks.us_checkState='是' 
-			group by users.u_id HAVING count>0 ) a left join
+			INNER JOIN userchecks on users.u_id=userchecks.u_id
+			INNER JOIN userroles on users.u_id=userroles.u_id
+			INNER JOIN roles on userroles.r_id=roles.r_id
+			where roles.r_id = 10 
+			AND userchecks.us_checkState = '是' 
+			GROUP BY users.u_id ) a left join
 			(select users.u_id,users.u_name,count(users.u_id) as count from users  
 			INNER JOIN userchecks ON users.u_id=userchecks.u_id	
 			left JOIN student on users.u_id=student.u_id
@@ -271,5 +288,24 @@
 	<!-- 添加员工时同时添加签到表的数据 -->
 	<select id="selecuMaxUserId" resultType="users">
 		select users.*  from users order by users.u_id desc limit 1
+	</select>
+	
+	<!-- 查询当前咨询师的未读消息数量 -->
+	<select id="selectUserAndPushIsreaderCount" parameterType="String" resultType="Push">
+		SELECT count(1) id,zxname FROM push where zxname=#{String} and isreader=2
+	</select>
+	
+	<!-- 查看咨询师未读消息 -->
+	<select id="selectPushIsWeidu" parameterType="String" resultMap="com.spz.dao.mapperMap.resultPush">
+		select push.*,student.s_name from push INNER JOIN student on push.studentid=student.s_id where  zxname=#{String} and isreader=2
+	</select>
+	
+	<update id="updatePushIsreader" parameterType="String">
+		update push set push.isreader='1' where push.zxname=#{String}
+	</update>
+	
+	<!-- 显示聊天页面的全部人员 -->
+	<select id="selectAllUsers" resultType="users">
+		select * from users 
 	</select>
 </mapper>

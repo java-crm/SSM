@@ -1,4 +1,4 @@
-package com.spz.controller;
+﻿package com.spz.controller;
 
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
@@ -64,11 +64,13 @@ public class StudentController {
 	}
 	
 	//周炎
+	
+	
 	@RequestMapping (value="selectStu",method=RequestMethod.POST)
 	@ResponseBody
 	public String selectStu(Student stu) {
 		String selectStu = studentService.selectStu(stu);
-		
+		System.out.println(selectStu);
 		return selectStu;
 	}
 	
@@ -159,6 +161,7 @@ public class StudentController {
 		return studentService.insertjingliFenPei(s_id);
 	}
 	
+
 	@RequestMapping(value="/shoudongFenLiang")
 	@ResponseBody
 	public Integer shoudongFenLiang(Student student,String u_ids) {
@@ -170,5 +173,40 @@ public class StudentController {
 			ii=studentService.shoudongFenLiang(student);
 		}
 		return ii;
+
+	@RequestMapping(value="/selectStudentIsdelAll",method=RequestMethod.POST)
+	@ResponseBody
+	public String selectStudentIsdelAll(Student student) {
+		return studentService.selectStudentIsdelAll(student);
+	}
+	@RequestMapping(value="/deleteStudenthsz",method=RequestMethod.POST)
+	@ResponseBody
+	public Integer deleteStudenthsz() {
+		return studentService.deleteStudenthsz();
+	}
+	@RequestMapping(value="/deleteByIdStuhsz",method=RequestMethod.POST)
+	@ResponseBody
+	public Integer deleteByIdStuhsz(Integer s_id) {
+		return studentService.deleteByIdStuhsz(s_id);
+	}
+	@RequestMapping(value="/updateStudenthsz",method=RequestMethod.POST)
+	@ResponseBody
+	public Integer updateStudenthsz(Integer s_id) {
+		return studentService.updateStudenthsz(s_id);
+	}
+	@RequestMapping(value="/plczhsz",method=RequestMethod.POST)
+	@ResponseBody
+	public Integer plczhsz(String s_id,Integer a) {
+		String[] split = s_id.split(",");
+		Integer num=null;
+		for(int i=0;i<split.length;i++) {
+			if(a==1) {//全部清除
+				num=studentService.deleteByIdStuhsz(Integer.parseInt(split[i]));
+			}else {//全部恢复
+				num=studentService.updateStudenthsz(Integer.parseInt(split[i]));
+			}
+		}
+		return num;
+
 	}
 }

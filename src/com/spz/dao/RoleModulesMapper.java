@@ -2,7 +2,6 @@ package com.spz.dao;
 
 import java.util.List;
 
-import com.spz.entity.RoleModules;
 import com.spz.entity.Roles;
 
 public interface RoleModulesMapper {

@@ -105,6 +105,7 @@
 		<result column="s_preMoneyTime" property="s_preMoneyTime" />
 		<result column="u_id" property="u_id"/>
 		
+		
 		<association property="users" column="users" resultMap="resultMapUsers"></association>
 		<association property="userRoles" column="userRoles" resultMap="resultMapUserroles"></association>
 		<association property="roles" column="roles" resultMap="resultMapRoles"></association>
@@ -145,4 +146,17 @@
 		<result column="u_protectMtel" property="u_protectMtel" />
 	</resultMap>
 	
-</mapper>
+
+	<resultMap type="push" id="resultPush">
+		<id column="id" property="id"/>
+		<result column="studentid" property="studentid" />
+		<result column="context" property="context" />
+		<result column="zxname" property="zxname" />
+		<result column="studentname" property="studentname" />
+		<result column="isreader" property="isreader" />
+		<result column="tstime" property="tstime" />
+		<association property="student" column="student" resultMap="resultMapStudent"></association>
+	</resultMap>
+	
+</mapper> 
+

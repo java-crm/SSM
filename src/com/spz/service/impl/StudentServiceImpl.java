@@ -44,11 +44,13 @@ public class StudentServiceImpl implements StudentService {
 
 	@Override
 	public Integer insertStu(Student student,Integer fenliang){
-		System.out.println("111111111111111111111111111");
-		System.out.println(student.toString());
+
+		Integer tjstu=0;
+
 		//未开启分量直接添加
 		if(fenliang==0) {
-			return studentMapper.insertStudent(student);
+			tjstu=studentMapper.insertStudent(student);
+			return tjstu;
 		}else {
 			//开启分量
 			Class stuCla = (Class) student.getClass();//得到类对象
@@ -78,7 +80,12 @@ public class StudentServiceImpl implements StudentService {
 	        	u_id=bubbleSoreMin();
 	        }
 			student.setU_id(u_id);
-			return studentMapper.insertStudent(student);
+			tjstu =studentMapper.insertStudent(student);
+			if(tjstu>0) {
+				System.out.println("添加了"+u_id);
+				usersMapper.updateUsersByu_pwdWrongTime(u_id);
+			}
+			return tjstu;
 		}
 	}
 	//普通学生则让它自动分配给手里数量较少的咨询师（如果手里数量一样则优先分给成交率底的）
@@ -306,7 +313,6 @@ public class StudentServiceImpl implements StudentService {
 	}
 	@Override
 	public String selectUsersByZXS() {
-		// TODO Auto-generated method stub
 		return new Gson().toJson(studentMapper.selectUsersByZXS());
 	}
 	@Override
@@ -341,6 +347,7 @@ public class StudentServiceImpl implements StudentService {
 	        	id=bubbleSoreMin();
 	        }
 	        stuByid.setU_id(id);
+			usersMapper.updateUsersByu_pwdWrongTime(id);
 	        Retu=studentMapper.updateStus(stuByid);
 		}
 		return Retu;
@@ -372,9 +379,29 @@ public class StudentServiceImpl implements StudentService {
 		return studentMapper.selectMaxId();
 	}
 	@Override
+
 	public Integer shoudongFenLiang(Student student) {
-		// TODO Auto-generated method stub
 		return studentMapper.shoudongFenLiang(student);
+
+	public String selectStudentIsdelAll(Student student) {
+		Fenye<Student> fy=new Fenye<Student>();
+		student.setPage((student.getPage()-1)*student.getRows());
+		fy.setRows(studentMapper.selectStudentIsdel(student));
+		fy.setTotal(studentMapper.selectStudentIsdelCount(student));
+		return new Gson().toJson(fy);
+	}
+	@Override
+	public Integer deleteStudenthsz() {
+		return studentMapper.deleteStudenthsz();
+	}
+	@Override
+	public Integer deleteByIdStuhsz(Integer s_id) {
+		return studentMapper.deleteByIdStuhsz(s_id);
+	}
+	@Override
+	public Integer updateStudenthsz(Integer s_id) {
+		return studentMapper.updateStudenthsz(s_id);
+
 	}
 	
 }

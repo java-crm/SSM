@@ -9,14 +9,56 @@
 		select student.* from student where u_id=#{u_id} and s_ispay ='未缴费';
 	</select>
 	
+	<!-- 查看回收站的学生 -->
+	<select id="selectStudentIsdel" parameterType="Student" resultType="Student">
+		select * from student 
+		<where>
+			<if test="s_name !=null and s_name != ''">
+				and s_name like "%"#{s_name}"%"
+			</if>
+			<if test="1>0">
+				student.s_isdel='否'
+			</if>
+		</where>
+		 limit #{page},#{rows}
+	</select>
+	
+	<!-- 查看回收站的学生数量 -->
+	<select id="selectStudentIsdelCount" parameterType="Student" resultType="int">
+		select count(1) from student 
+		<where>
+			<if test="s_name !=null and s_name != ''">
+				and s_name like "%"#{s_name}"%"
+			</if>
+			<if test="1>0">
+				student.s_isdel='否'
+			</if>
+		</where>
+	</select>
+	
+	<!-- 清空回收站 -->
+	<delete id="deleteStudenthsz">
+		delete from student where s_isdel='否'
+	</delete>
+	
+	<!-- 从回收站删除学生 -->
+	<delete id="deleteByIdStuhsz" parameterType="int">
+		delete from student where s_id=#{s_id}
+	</delete>	
+	
+	<!-- 从回收站恢复学生 -->
+	<update id="updateStudenthsz" parameterType="int">
+		update student set s_isdel='是' where s_id = #{s_id}
+	</update>
+	
 	<!-- 岳治文 -->
 	<select id="selectStudentUserName" parameterType="int" resultType="users" >
-		SELECT DISTINCT users.u_id,users.u_name FROM `student` 
+		SELECT DISTINCT users.u_id,users.u_name FROM student 
 		INNER join users on student.u_id=users.u_id where student.s_createUser=#{s_createUser}
 	</select>
 	
 	<select id="selectStudent" parameterType="student" resultMap="com.spz.dao.mapperMap.resultMapStudent">
-		SELECT  student.*,users.* FROM `student` left join users on student.u_id=users.u_id 
+		SELECT  student.*,users.* FROM student left join users on student.u_id=users.u_id 
 		<where>
 			<if test="s_name !=null and s_name != ''">
 				and s_name like "%"#{s_name}"%"
@@ -195,7 +237,7 @@
 	</select>
 	
 	<select id="CountStudent" parameterType="student" resultType="int">
-		SELECT count(s_id) FROM `student` left join users on student.u_id=users.u_id
+		SELECT count(s_id) FROM student left join users on student.u_id=users.u_id
 		<where>
 			<if test="s_name != null and s_name != ''">
 				and s_name like "%"#{s_name}"%"
