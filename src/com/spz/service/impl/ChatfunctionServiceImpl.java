@@ -16,16 +16,28 @@ public class ChatfunctionServiceImpl implements ChatfunctionService {
 	
 	@Override
 	public void insertChatfunction(Chatfunction chatfunction) {
+		
 		chatfunctionMapper.insertChatfunction(chatfunction);
+		/*List<Chatfunction> isYiDuCount = chatfunctionMapper.selectChatfunctionIsYiDuCount(chatfunction);
+		System.out.println("这俩人俩天记录已读的共："+isYiDuCount);
+		chatfunction.setFsTime(isYiDuCount.get(isYiDuCount.size()-1).getFsTime());
+		System.out.println("删除的数据"+chatfunction.toString());
+		chatfunctionMapper.deleteChatfunctionliaotyidu(chatfunction);*/
 	}
 	
 	@Override
 	public List<Chatfunction> selectChatfunction(Chatfunction chatfunction) {
 		List<Chatfunction> chatfunction2 = chatfunctionMapper.selectChatfunction(chatfunction);
-		for (Chatfunction chatfunction3 : chatfunction2) {
-			System.out.println(chatfunction3.toString());
-		}
 		return chatfunction2;
 	}
-	
+
+	@Override
+	public List<Chatfunction> selectChatfunctionIsWeiDu(Chatfunction chatfunction) {
+		return chatfunctionMapper.selectChatfunctionIsWeiDu(chatfunction);
+	}
+
+	@Override
+	public void updateChatfunctionIsYiDu(Chatfunction chatfunction) {
+		 chatfunctionMapper.updateChatfunctionIsYiDu(chatfunction);
+	}
 }

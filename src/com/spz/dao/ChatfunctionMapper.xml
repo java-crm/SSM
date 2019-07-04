@@ -19,4 +19,25 @@
 		where chatfunction.jszName=#{fszName} and chatfunction.fszName=#{jszName}) a 
 		ORDER BY a.fsTime asc
 	</select>
+	
+	<!-- 查看离线时接受的信息二次登录后做提示 -->
+	<select id="selectChatfunctionIsWeiDu" parameterType="Chatfunction" resultType="Chatfunction">
+		SELECT distinct  chatfunction.fszName   FROM  chatfunction  where isyidu='否' and jszName =#{jszName}
+	</select>
+	
+	<!-- 修改状态为已读 -->
+	<update id="updateChatfunctionIsYiDu" parameterType="Chatfunction">
+		update chatfunction set isyidu ='是' where fszName=#{fszName} and jszName=#{jszName}
+	</update>
+	
+	<!-- 时间倒叙查询最后的10条聊天记录 -->
+	<select id="selectChatfunctionIsYiDuCount" parameterType="Chatfunction" resultType="Chatfunction">
+		select * from chatfunction where  fszName=#{fszName} and jszName=#{jszName}  and isyidu='是'  ORDER BY fsTime desc limit 0,10
+	</select>
+	
+	<!-- 只保留最近的十条聊天记录 -->
+	<delete id="deleteChatfunctionliaotyidu" parameterType="Chatfunction">
+		delete from chatfunction where fsTime > #{fsTime} and fszName= #{fszName} and jszName=#{jszName}  and isyidu='是'
+	</delete>
+	
 </mapper>

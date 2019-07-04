@@ -14,8 +14,29 @@ $(function(){
 			send();
 		}
 	}
-});
-var webscoket=new WebSocket("ws:localhost:8080/SSM/webscoketRescore/"+globalData.getCurUName()+"");
+	
+	$.ajax({
+		url:'${pageContext.request.contextPath}/selectChatfunctionIsWeiDu',
+		method:'post',
+		data:{
+			jszName:"${u_name}"
+		},
+		dataType:'json',
+		success:function(res){
+			   if(res.length>0){
+				for(var i=0;i<res.length;i++){
+					if(res[i].fszName!=undefined){
+						idname=res[i].fszName;
+						iCount=setInterval("changeColor()",200);//定时器
+					}
+				}
+			}  
+			
+		}
+	});
+	
+});//39.105.35.157
+var webscoket=new WebSocket("ws:39.105.35.157:8080/SSM/webscoketRescore/"+globalData.getCurUName()+"");
 
 webscoket.onopen=function(){
 	//alert(globalData.getCurUName()+"连接建立");
@@ -39,7 +60,7 @@ webscoket.onmessage=function(event){
 	}
 };
 var iCount=setInterval("changeColor()",200);
-function changeColor(){ 
+function changeColor(){
 	var color="#f00|#0f0|#00f|#880|#808|#088|yellow|green|blue|gray"; 
 	color=color.split("|"); 
 	document.getElementById(""+idname+"").style.color=color[parseInt(Math.random() * color.length)]; 
@@ -79,7 +100,6 @@ function showcontent(name){
 		        closable: false,
 		        content: "<div id='testlt'></div>"
 		   });
-			 
 			$.ajax({
 				url:'${pageContext.request.contextPath}/selectChatfunction',
 				method:'post',
@@ -100,7 +120,18 @@ function showcontent(name){
 					}else{
 						$("#testlt").append("<br/><div style='margin-left:550px;'>暂无聊天记录</div>")
 					}
+					
+					$.ajax({
+						url:'${pageContext.request.contextPath}/updateChatfunctionIsYiDu',
+						method:'post',
+						data:{
+							fszName:nam,
+							jszName:"${u_name}"
+						}
+					});
+					document.getElementById(nam).style.color="blue"; 
 				}
+				
 			});
 		}
 	}
@@ -114,24 +145,25 @@ function showcontent(name){
 <body>
 	<table>
 		<tr>
+			<td>
 				<!-- 点击tree上的不同用过户名可以对不同的用户进行聊天操作-->
 				<div class="easyui-layout" style="width:1280px;height:480px;">
-				<div region="west" split="true" title="好友列表" style="width:150px;">
-					<p style="padding:5px;margin:0;">@全部人员:</p>
-					<ul>
-					 <c:set var="count" value="0"></c:set>
-						<c:forEach items="${listUsers}" var="us">
-							<li><a href="javascript:void(0)" id="${us.u_name}" style="line-height:20px" onclick="showcontent('${us.u_name}')">${us.u_name}</a></li>
-						</c:forEach>
-					</ul>
+					<div region="west" split="true" title="好友列表" style="width:150px;">
+						<p style="padding:5px;margin:0;">@全部人员:</p>
+						<ul>
+						 <c:set var="count" value="0"></c:set>
+							<c:forEach items="${listUsers}" var="us">
+								<li><a href="javascript:void(0)" id="${us.u_name}" style="line-height:20px" onclick="showcontent('${us.u_name}')">${us.u_name}</a></li>
+							</c:forEach>
+						</ul>
+					</div>
+					<div id="content" region="center" title="聊天平台" style="padding:5px;">
+						<div id="tt" class="easyui-tabs" style="width:1121px;height:300px;">   
+						</div> 
+						<input  class="easyui-textbox" id="ltcontext" data-options="multiline:true,height:50,prompt:'发送消息...'"  style="width:1000px;height:100px;"/>
+						<a href="javascript:void(0)" onclick="send()" class="easyui-linkbutton" data-options="height:100,plain:true,iconCls:'icon-ok'" onclick="fasongxiaoxi()">发生消息</a>
+					</div>
 				</div>
-				<div id="content" region="center" title="聊天平台" style="padding:5px;">
-					<div id="tt" class="easyui-tabs" style="width:1121px;height:300px;">   
-					</div> 
-					<input  class="easyui-textbox" id="ltcontext" data-options="multiline:true,height:50,prompt:'发送消息...'"  style="width:1000px;height:100px;"/>
-					<a href="javascript:void(0)" onclick="send()" class="easyui-linkbutton" data-options="height:100,plain:true,iconCls:'icon-ok'" onclick="fasongxiaoxi()">发生消息</a>
-				</div>
-			</div>
 			</td>
 		</tr>
 	</table>

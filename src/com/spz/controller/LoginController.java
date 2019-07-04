@@ -47,6 +47,7 @@ public class LoginController {
 					return Result.toClient(false, "该用户已登陆。");
 				} else {
 					session.setAttribute("u_id", users2.getU_id());
+					session.setAttribute("u_name", users2.getU_name());
 					if(users2.getU_isLockout()==2) {
 						return Result.toClient(false, "用户已被锁定。");
 					}
@@ -150,7 +151,6 @@ public class LoginController {
 	
 	@RequestMapping(value="/log",method=RequestMethod.GET)
 	public String login2() {
-		
 		return "view/index";
 	}
 	

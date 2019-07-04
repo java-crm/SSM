@@ -12,18 +12,23 @@
 	})
 	
 	function initt(){
-		$('#dg').datagrid({    
+		$('#dg').datagrid({
 	    url:'${pageContext.request.contextPath}/selectUserCheckAll', 
 	    fitColumns:true,
 	    pagination:true,
+	    singleSelect:true,
+		selectOnCheck:false,
+		striped:true,
+		checkOnSelect:false,
 	    toolbar:"#dd",
 	    queryParams: {
-	    	u_id:$("#u_id").val(),
-	    	us_checkState:$("#us_checkState").val(),
+	    	us_userName:$("#us_userName").textbox("getValue"),
+	    	us_checkState:$("#us_checkState").combobox("getValue"),
 	    	us_checkinTime:$("#us_checkinTime").datebox("getValue"),
 	    	us_checkoutTime:$("#us_checkoutTime").datebox("getValue")
 		}
 	});  
+		$("#ff").form("reset");
 		
 }
 	
@@ -31,8 +36,7 @@
 	/* 批量签到 */
 	function piliangQD(index){
 		var usid=[];
-		var rows = $("#dg").datagrid("getSelections"); // 获取所有选中的行
-		
+		var rows = $("#dg").datagrid("getChecked"); // 获取所有选中的行
 		/* 签到状态 */
 		var us_checkState=[];
 		$(rows).each(function(){
@@ -72,7 +76,7 @@
 	/* 批量签退 */
 	function piliangQT(index){
 		var usid=[];
-		var rows = $("#dg").datagrid("getSelections"); // 获取所有选中的行
+		var rows = $("#dg").datagrid("getChecked"); // 获取所有选中的行
 		
 		var us_checkState=[];
 		$(rows).each(function(){
@@ -89,26 +93,30 @@
 		 $(rows).each(function(){
 			usid.push(this.us_id);   
 	     });
-		$.ajax({
-    		url:'${pageContext.request.contextPath}/updateUserchecksPL',
-    		data:{
-    			usid:usid.toString(),
-    			us_checkState:"否"
-    		},
-    		method:'post',
-    		dataType:'json',
-    		success:function(res){
-    			if(res>0){
-    				$('#dg').datagrid("reload");
-    				$('#dk').linkbutton({text:'已打卡'});
-    				$('#dk').linkbutton('disable');
-    				$.messager.alert("提示信息","签退成功");
-    			}
-    		}
-    	})  
+		 $.messager.confirm('确认','您确认想要签退此员工吗？',function(r){    
+		    if (r){  
+		    	$.ajax({
+		    		url:'${pageContext.request.contextPath}/updateUserchecksPL',
+		    		data:{
+		    			usid:usid.toString(),
+		    			us_checkState:"否"
+		    		},
+		    		method:'post',
+		    		dataType:'json',
+		    		success:function(res){
+		    			if(res>0){
+		    				$('#dg').datagrid("reload");
+		    				$('#dk').linkbutton({text:'已打卡'});
+		    				$('#dk').linkbutton('disable');
+		    				$.messager.alert("提示信息","签退成功");
+		    			}
+		    		}
+		    	})  
+			}
+		 })
 	}
 	function formatterzd(value,row,index){
-		return row.us_checkState=="是" ? "已签到" : "未签到";
+		return value=="是" ? "已签到" : "未签到";
 	}
 	function formatterc(value,row,index){
 		return row.us_isCancel=="是" ? "不加班" : "加班";
@@ -118,6 +126,7 @@
 	}
 	function szqd(index){
 		var data=$("#dg").datagrid("getData");
+		
 		var us_ch=data.rows[index].us_checkState;
 		if(us_ch=='否'){
 			$.messager.alert("提示信息","该员工未签到,不能加班！！");
@@ -129,28 +138,14 @@
 				$("#szjb").switchbutton({checked:true});
 			}   
 			$("#shezhidd").dialog("open");
-		
-		
-		$('#szjb').switchbutton({
-			onChange: function(checked){
-				var us_isCancel='否';
-				if (checked == true){
-					us_isCancel='否';
-				}
-				if (checked == false){
-					us_isCancel='是';
-				}
-				$.ajax({
-					url:'${pageContext.request.contextPath}/updateUserchecks',
-					method:'post',
-					data:{us_isCancel:us_isCancel,us_id:data.rows[index].us_id},
-					dataType:'json',
-					success:function(res){
-						if(res>0){
-							initt();
+			
+			$('#szjb').switchbutton({
+				onChange: function(checked){
+					var us_isCancel='否';
+					if (checked == true){
+						us_isCancel='否';
 					}
 					if (checked == false){
-						alert(us_isCancel);
 						us_isCancel='是';
 					}
 					$.ajax({
@@ -168,6 +163,9 @@
 			});
 		}
 	}
+	function formatterroles(value,row,index){
+		return row.roles !=undefined ? row.roles.r_name : null;
+	}
 </script>
 
 </head>
@@ -180,9 +178,10 @@
 	            <th data-options="field:'u_id',width:100,hidden:true">员工id</th>   
 	            <th data-options="field:'us_userName',width:100">员工名字</th>
 	            <th data-options="field:'us_checkinTime',width:100">上班时间</th>   
-	            <th data-options="field:'us_checkState',width:100,formatter:formatterzd">状态</th>   
+	            <th data-options="field:'us_checkState',width:100,formatter:formatterzd">签到状态</th>   
 	            <th data-options="field:'us_isCancel',width:100,formatter:formatterc">是否加班</th>
 	            <th data-options="field:'us_checkoutTime',width:100">下班时间</th>   
+	            <th data-options="field:'roles',width:100,formatter:formatterroles">角色</th>   
 	            <th data-options="field:'shezhi',width:100,formatter:formattershezhi">设置</th>   
 	        </tr>   
 	    </thead>   
@@ -193,15 +192,19 @@
 		    <a id="btn" href="javascript:void(0)" onclick="piliangQD()" class="easyui-linkbutton" data-options="plain:true">签到</a>
 		   <a id="btn" href="javascript:void(0)" onclick="piliangQT()" class="easyui-linkbutton" data-options="plain:true">签退</a>
 		        <label for="name">用户名:</label>   
-		        <input class="easyui-textbox" type="text" id="u_id" />   
+		        <input class="easyui-textbox" type="text" id="us_userName" />   
 		     
 		        <label for="name">签到状态:</label>   
-		        <input class="easyui-textbox" type="text" id="us_checkState"  />   
-		      
+		        <select class="easyui-combobox" data-options="editable:false" panelHeight='auto' style="width: 80px" id="us_checkState"> 
+				    <option value="">--请选择--</option>   
+				    <option value="是">已签到</option>   
+				    <option value="否">未签到</option> 
+				</select> 
+				
 		        <label for="name">签到时间:</label>   
-		        <input class="easyui-datebox" type="text" id="us_checkinTime" />  
+		        <input class="easyui-datebox" data-options="editable:false" type="text" id="us_checkoutTime" />  
 		      	~
-		        <input class="easyui-datebox" type="text" id="us_checkoutTime" />  
+		        <input class="easyui-datebox" data-options="editable:false" type="text" id="us_checkinTime" />  
 		    
 		   <a id="btn" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="initt()">搜索</a>
 		</form>    

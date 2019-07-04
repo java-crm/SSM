@@ -48,6 +48,9 @@ public class StudentServiceImpl implements StudentService {
 		//未开启分量直接添加
 		if(fenliang==0) {
 			tjstu=studentMapper.insertStudent(student);
+			if(student.getU_id()!=null) {
+				usersMapper.updateUsersByu_pwdWrongTime(student.getU_id());
+			}
 			return tjstu;
 		}else {
 			//开启分量
@@ -88,87 +91,7 @@ public class StudentServiceImpl implements StudentService {
 	}
 	//普通学生则让它自动分配给手里数量较少的咨询师（如果手里数量一样则优先分给成交率底的）
 	public Integer bubbleSoreMin() {
-		Users users = new Users();
-		users.setBeginCreateTime(InitDateTime.initDate());
-		users.setEndCreateTime(InitDateTime.initTime());
-		List<Users> fl = usersMapper.selectUsersByFenLiang(users);
-		
-		if(fl.size()==0) {
-			return null;
-		}
-		
-		Integer uid =null;
-		 
-		int total = 0;
-		Double bfb = fl.get(0).getBfb();
-		uid = fl.get(0).getU_id();
-		List<Users> list = new ArrayList<Users>();//将查询的数据存到集合中
-		for (int i = 0; i < fl.size(); i++) {
-			total += fl.get(i).getDcount();// 得到今天的总来源学生数量
-			if (fl.get(i).getDcount() == 0) {// 如果咨询师有的没有学生优先分配没有学生的咨询师
-				list.add(fl.get(i));
-			}
-		}
-		System.out.println("今日总共来了："+total);
-		System.out.println("有几个等于0的咨询师："+list.size());
-		// 今天有咨询师没有被分配学生
-		List<Users> myfl = new ArrayList<Users>();
-		if (list.size() != 0) {
-			bfb=list.get(0).getBfb();//修改为list.get(0).getBfb()
-			for (int i = 0; i < list.size(); i++) {
-				try {
-					if (list.get(i).getBfb() <= bfb) { // 从没有学生的咨询师中取成交率底的咨询师优先分配一般的学生
-						bfb = list.get(i).getBfb();
-						uid = list.get(i).getU_id();
-					}
-				} catch (Exception e) {
-					System.out.println("底，可能所有未被分配的咨询师成功率都为0");
-				}
-				System.out.println(fl.get(i).getU_id());
-			}
-			System.out.println("目前没有学生的，成交率最底的咨询师" + uid);
-		}
-		
-		
-		List<Users> zdfl = new ArrayList<Users>();
-		if (list.size() == 0) {
-			for (int i = 0; i < fl.size(); i++) {// 如果都拥有学生就按照今日所分配的学生数量低于总数量的平个数中找到成功率最高的咨询师
-				try {
-					if (fl.get(i).getDcount() < (total / fl.size() )) {
-						zdfl.add(fl.get(i));//今日录入的数量低于平均数量的添加到集合中
-					}
-				} catch (Exception e) {
-					System.out.println("异常可能找不到今日所分配的学生数量低于总数量的平个数中找到成功率最底的咨询师");
-				}
-			}
-			System.out.println("都有学生平均：" + total / fl.size() + "个，成交率最底的咨询师id:" + uid);
-			System.out.println("咨询师低于平均个数的有几个："+zdfl.size());
-		  }
-		
-		if(zdfl.size()!=0) {
-			bfb=zdfl.get(0).getBfb();
-			for(int i=0;i<zdfl.size();i++) {
-				if(zdfl.get(i).getBfb()<=bfb) {
-					bfb = zdfl.get(i).getBfb();
-					uid = zdfl.get(i).getU_id();
-				}
-			}
-		}else {//如果所有咨询师下的学生数量都一样则取成交率最高的优先录入优质客户
-			bfb = fl.get(0).getBfb();
-			uid = fl.get(0).getU_id();
-			for(int i=0;i<fl.size();i++) {
-				if(fl.get(i).getBfb()<=bfb) {
-					bfb = fl.get(i).getBfb();
-					uid = fl.get(i).getU_id();
-				}
-			}
-		}
-		System.out.println("最终录入咨询师id:"+uid);
-		
-		return uid;
-	}
-	//分配成交率高学生给成交率高的咨询师
-	public Integer bubbleSortMax() {
+		System.out.println("-------------------调用自动分量分普通学生");
 	 	Users users = new Users();
 		users.setBeginCreateTime(InitDateTime.initDate());
 		users.setEndCreateTime(InitDateTime.initTime());
@@ -176,80 +99,154 @@ public class StudentServiceImpl implements StudentService {
 		System.out.println(users.getBeginCreateTime());
 		System.out.println(users.getEndCreateTime());
 		List<Users> fl = usersMapper.selectUsersByFenLiang(users);
-			if(fl.size()==0) {
-				return null;
+		for (Users users2 : fl) {
+			System.out.println("-----"+users2.toString());
+		}
+		if(fl.size()==0) {
+			return null;
+		}
+		List<Users> listmxs = new ArrayList<Users>();//如果咨询师有的没有学生优先分配没有学生的咨询师
+		
+		List<Users> listyxs = new ArrayList<Users>();//手里有学生的咨询师存到集合中
+		for (int i = 0; i < fl.size(); i++) {
+			if (fl.get(i).getDcount() == 0) {
+				listmxs.add(fl.get(i));
+			}else {
+				listyxs.add(fl.get(i));
 			}
-			Integer uid =null;
-		 
-			int total = 0;
-			
-			Double bfb = fl.get(0).getBfb();
-			
-			uid = fl.get(0).getU_id();
-			
-			List<Users> list = new ArrayList<Users>();//将查询的数据存到集合中
-			
-			for (int i = 0; i < fl.size(); i++) {
-				total += fl.get(i).getDcount();// 得到今天的总来源学生数量
-				if (fl.get(i).getDcount() == 0) {// 如果咨询师有的没有学生优先分配没有学生的咨询师
-					list.add(fl.get(i));
+		}
+		//对手里没有学生的咨询师自动分配
+		if(listmxs.size()!=0) {
+			Double bfb = listmxs.get(0).getBfb();
+			Integer uid = listmxs.get(0).getU_id();
+			for (int i = 0; i < listmxs.size(); i++) {
+				if (listmxs.get(i).getBfb() < bfb) { // 从没有学生的咨询师中取成交率高的咨询师优先分配高质量的学生
+					bfb = listmxs.get(i).getBfb();
+					uid = listmxs.get(i).getU_id();
 				}
 			}
-			System.out.println("今日总共来了："+total);
-			System.out.println("有几个等于0的咨询师："+list.size());
-			// 今天有咨询师没有被分配学生
-			List<Users> myfl = new ArrayList<Users>();
-			if (list.size() != 0) {
-				bfb=list.get(0).getBfb();//修改为list.get(0).getBfb()
-				for (int i = 0; i < list.size(); i++) {
-					try {
-						if (list.get(i).getBfb() >= bfb) { // 从没有学生的咨询师中取成交率高的咨询师优先分配高质量的学生
-							bfb = list.get(i).getBfb();
-							uid = list.get(i).getU_id();
+			return uid;
+		}else{ /*对手里有学生的咨询师自动分配
+				if(listyxs.size()!=0) */
+			//循环得出今天这次分量前总共已经来了多少个学生
+			Integer total=0;
+			for(int i=0;i<listyxs.size();i++) {
+				total += listyxs.get(i).getDcount();
+			}
+			Integer uid=0;
+			if(total!=0) {
+				double pingjun=(double) total/listyxs.size();
+				for(int i=0;i<listyxs.size();i++) {
+					if(listyxs.get(i).getDcount()<pingjun) {//自己今天被分配的学生低于平均数量
+						uid=listyxs.get(i).getU_id();
+					}
+				}
+				if(uid==0) {//进这里说明当前所有已打卡的咨询师被分配的数量和平均值一样大这时按照成交率去选则分给谁
+					Double bfb = listyxs.get(0).getBfb();
+					uid=listyxs.get(0).getU_id();
+					for(int i=0;i<listyxs.size();i++) {
+						if (listyxs.get(i).getBfb() < bfb) { 
+							bfb = listyxs.get(i).getBfb();
+							uid = listyxs.get(i).getU_id();
 						}
-					} catch (Exception e) {
-						System.out.println("可能所有未被分配的咨询师成功率都为0");
 					}
-					System.out.println(fl.get(i).getU_id());
+					return uid;
+				}else {
+					return uid;
 				}
-				System.out.println("目前没有学生的，成交率最高的咨询师" + uid);
-			}
-			
-			List<Users> zdfl = new ArrayList<Users>();
-			if (list.size() == 0) {
-				for (int i = 0; i < fl.size(); i++) {// 如果都拥有学生就按照今日所分配的学生数量低于总数量的平个数中找到成功率最高的咨询师
-					try {
-						if (fl.get(i).getDcount() < (total / fl.size() )) {
-							zdfl.add(fl.get(i));//今日录入的数量低于平均数量的添加到集合中
-						}
-					} catch (Exception e) {
-						System.out.println("异常可能找不到今日所分配的学生数量低于总数量的平个数中找到成功率最高的咨询师");
-					}
-				}
-				System.out.println("都有学生平均：" + total / fl.size() + "个，成交率最高的咨询师id:" + uid);
-				System.out.println("咨询师低于平均个数的有几个："+zdfl.size());
-			  }
-			
-			if(zdfl.size()!=0) {
-				bfb=zdfl.get(0).getBfb();
-				for(int i=0;i<zdfl.size();i++) {
-					if(zdfl.get(i).getBfb()>=bfb) {
-						bfb = zdfl.get(i).getBfb();
-						uid = zdfl.get(i).getU_id();
-					}
-				}
-			}else {//如果所有咨询师下的学生数量都一样则取成交率最高的优先录入优质客户
-				bfb = fl.get(0).getBfb();
-				uid = fl.get(0).getU_id();
+			}else {//到else中今天总共来了0个学生 则直接反回成交率最高的咨询师id不做别的判定（出现这种情况只能说明今天刚开始上班所有人都是0个学生对来的第一个学生做分配）
+				Double bfb = listmxs.get(0).getBfb();
+				uid=listmxs.get(0).getU_id();
 				for(int i=0;i<fl.size();i++) {
-					if(fl.get(i).getBfb()>=bfb) {
+					if (fl.get(i).getBfb() < bfb) { 
 						bfb = fl.get(i).getBfb();
 						uid = fl.get(i).getU_id();
 					}
 				}
+				return uid;
 			}
-			System.out.println("最终录入咨询师id:"+uid);
-		return uid;
+		}
+	}
+	//分配成交率高学生给成交率高的咨询师
+	public Integer bubbleSortMax() {
+		System.out.println("====================调用自动分量给给成交率最高的");
+	 	Users users = new Users();
+		users.setBeginCreateTime(InitDateTime.initDate());
+		users.setEndCreateTime(InitDateTime.initTime());
+		// 将当天的凌晨时间和保存当前的时间加入实体类
+		System.out.println(users.getBeginCreateTime());
+		System.out.println(users.getEndCreateTime());
+		List<Users> fl = usersMapper.selectUsersByFenLiang(users);
+		for (Users users2 : fl) {
+			System.out.println("-----"+users2.toString());
+		}
+		if(fl.size()==0) {
+			return null;
+		}
+		List<Users> listmxs = new ArrayList<Users>();//如果咨询师有的没有学生优先分配没有学生的咨询师
+		
+		List<Users> listyxs = new ArrayList<Users>();//手里有学生的咨询师存到集合中
+		for (int i = 0; i < fl.size(); i++) {
+			if (fl.get(i).getDcount() == 0) {
+				listmxs.add(fl.get(i));
+			}else {
+				listyxs.add(fl.get(i));
+			}
+		}
+		//对手里没有学生的咨询师自动分配
+		if(listmxs.size()!=0) {
+			Double bfb = listmxs.get(0).getBfb();
+			Integer uid = listmxs.get(0).getU_id();
+			for (int i = 0; i < listmxs.size(); i++) {
+				if (listmxs.get(i).getBfb() > bfb) { // 从没有学生的咨询师中取成交率高的咨询师优先分配高质量的学生
+					bfb = listmxs.get(i).getBfb();
+					uid = listmxs.get(i).getU_id();
+					System.out.println("手里没有学生并且成交率为最高的咨询师："+uid);
+				}
+			}
+			System.out.println("手里没有学生的咨询师并且成交率最高的or是也有可能是所有成交率都为0.0这样则取第一个就行了："+uid);
+			return uid;
+		}else{ /*对手里有学生的咨询师自动分配
+				if(listyxs.size()!=0) */
+			//循环得出今天这次分量前总共已经来了多少个学生
+			Integer total=0;
+			for(int i=0;i<listyxs.size();i++) {
+				total += listyxs.get(i).getDcount();
+			}
+			System.out.println("今天总共来了："+total+" 个学生");
+			Integer uid=0;
+			if(total!=0) {
+				double pingjun=(double) total/listyxs.size();
+				for(int i=0;i<listyxs.size();i++) {
+					if(listyxs.get(i).getDcount()<pingjun) {//自己今天被分配的学生低于平均数量
+						uid=listyxs.get(i).getU_id();
+					}
+				}
+				if(uid==0) {//进这里说明当前所有已打卡的咨询师被分配的数量和平均值一样大这时按照成交率去选则分给谁
+					Double bfb = listyxs.get(0).getBfb();
+					uid=listyxs.get(0).getU_id();
+					for(int i=0;i<listyxs.size();i++) {
+						if (listyxs.get(i).getBfb() > bfb) { 
+							bfb = listyxs.get(i).getBfb();
+							uid = listyxs.get(i).getU_id();
+						}
+					}
+					return uid;
+				}else {
+					return uid;
+				}
+			}else {//到else中今天总共来了0个学生 则直接反回成交率最高的咨询师id不做别的判定（出现这种情况只能说明今天刚开始上班所有人都是0个学生对来的第一个学生做分配）
+				Double bfb = listmxs.get(0).getBfb();
+				uid=listmxs.get(0).getU_id();
+				for(int i=0;i<fl.size();i++) {
+					if (fl.get(i).getBfb() > bfb) { 
+						bfb = fl.get(i).getBfb();
+						uid = fl.get(i).getU_id();
+					}
+				}
+				return uid;
+			}
+		}
 	}
 	
 	//周炎
@@ -314,7 +311,7 @@ public class StudentServiceImpl implements StudentService {
 		return new Gson().toJson(studentMapper.selectUsersByZXS());
 	}
 	@Override
-	public List<Users> selectStudentUserName(Integer s_createUser) {
+	public List<Users> selectStudentUserName(String s_createUser) {
 		return studentMapper.selectStudentUserName(s_createUser);
 	}
 	@Override
@@ -396,5 +393,12 @@ public class StudentServiceImpl implements StudentService {
 	public Integer updateStudenthsz(Integer s_id) {
 		return studentMapper.updateStudenthsz(s_id);
 	}
-	
+	@Override
+	public Integer shoudongFenLiang(Student student) {
+		Integer liang = studentMapper.shoudongFenLiang(student);
+		if(liang>0) {
+			usersMapper.updateUsersByu_pwdWrongTime(student.getU_id());
+		}
+		return liang;
+	}
 }

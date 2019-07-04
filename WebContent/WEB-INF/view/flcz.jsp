@@ -123,10 +123,10 @@
 	全部开启自动分配：<input class='easyui-switchbutton' id="kqzdfl"  onText='开' offText='关' />&nbsp;&nbsp;
 	用户名: <input class="easyui-textbox" id="userName" style="width:80px"> 
 	分量状态:
-	<select class="easyui-combobox" style="width: 80px" id="u_state"> 
-					    <option value="">--请选择--</option>   
-					    <option value="1">自动分量</option>   
-					    <option value="2">未设置</option> 
+	<select class="easyui-combobox" data-options="editable:false" panelHeight='auto' style="width: 80px" id="u_state"> 
+		    <option value="">--请选择--</option>   
+		    <option value="1">自动分量</option>   
+		    <option value="2">未设置</option> 
 	</select> 
 	<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search'" onclick="searchUserInfo()">检索</a>
 </div>

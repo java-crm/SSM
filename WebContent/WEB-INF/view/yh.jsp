@@ -12,6 +12,9 @@
 			fitColumns:true,
 			pagination:true,
 			striped:true,
+			onDblClickRow:function(index, row){
+				updateInfo(index);
+			},
 			toolbar:'#usertb',
 			pageSize:10,
 			queryParams: {
@@ -172,7 +175,6 @@
 		})
 		$("#diaUserRoles").window("open");
 	}
-
 	function lockUser(index) {
 		var data = $("#dg").datagrid("getData");
 		var row = data.rows[index];

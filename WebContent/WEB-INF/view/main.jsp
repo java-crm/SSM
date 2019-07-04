@@ -122,7 +122,7 @@
 	       
 	    } 
     function tuichu(){
-	   	$.messager.confirm("确认","你确认要推出当前页面吗？",function(r){
+	   	$.messager.confirm("确认","你确认要退出当前页面吗？",function(r){
 	   		if(r){
 	   			$.removeCookie('u_pwd',{ path: '/'});
 	   			$.removeCookie('u_name',{ path: '/'});
@@ -200,6 +200,7 @@
 	    <div class="easyui-layout" style="width:100%;height:700px;">
 	        <div data-options="region:'north'" style="height:100px">
 	        	<img alt="" src="img/main.jpg" style="height:98px;width:700px;float:left;"  >
+	        	<!-- <iframe name="weather_inc" src="http://i.tianqi.com/index.php?c=code&id=2&num=1" width="650" height="70" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe> -->
 	        	<div style="margin:60px 50px 20px;float:right;">
 	        	<font color="green" >CRM系统&nbsp;&nbsp;欢迎您：</font>&nbsp;
 	        	<font color="red"><span id="spName"></span>&nbsp;&nbsp;</font>
@@ -214,7 +215,9 @@
 	        	</div>
 	        </div>
 	        <div data-options="region:'south',split:true" style="height:50px;"></div>
-	        <div data-options="region:'east',split:true,collapsed:true,title:'East'" style="width:150px;padding:10px;">东部区域</div>
+	        <div data-options="region:'east',split:true,collapsed:true,title:'East'" style="width:150px;padding:10px;">
+	        	
+	        </div>
 		        <div data-options="region:'west',split:true" title="导航应用" style="width:150px;">
 		           <div id="menuTree" ><!--这个地方显示树状结构-->
 		           		

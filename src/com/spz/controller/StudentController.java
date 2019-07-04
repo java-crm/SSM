@@ -48,7 +48,7 @@ public class StudentController {
 	}
 	@RequestMapping(value="/selectUserName",method=RequestMethod.POST)
 	@ResponseBody
-	public List<Users> selectUserName(Integer s_createUser) {
+	public List<Users> selectUserName(String s_createUser) {
 		return studentService.selectStudentUserName(s_createUser);
 		
 	}
@@ -187,5 +187,17 @@ public class StudentController {
 			}
 		}
 		return num;
+	}
+	@RequestMapping(value="/shoudongFenLiang")
+	@ResponseBody
+	public Integer shoudongFenLiang(Student student,String u_ids) {
+		String[] ssid=u_ids.split(",");
+		Integer ii =0;
+		for (int i = 0; i < ssid.length; i++) {
+			Integer sid = Integer.parseInt(ssid[i]);
+			student.setS_id(sid);
+			ii=studentService.shoudongFenLiang(student);
+		}
+		return ii;
 	}
 }

@@ -22,14 +22,14 @@
 		    UNION ALL
 		    SELECT DATE_SUB(CURDATE(), INTERVAL 6 DAY) AS click_date
 			) a LEFT JOIN (
-			  SELECT  s_name,DATE_FORMAT(s_createTime,'%Y-%m-%d') AS dt,count(1) as amt
+			  SELECT  student.s_name,DATE_FORMAT(student.s_createTime,'%Y-%m-%d') AS dt,count(1) as amt
 			  FROM student 
 			  <where>
 			  	<if test="u_id !=null and u_id !='' ">
-			  		and u_id=#{u_id} 
+			  		and student.u_id=#{u_id} 
 			  	</if>
 			  	<if test="s_createUser !=null and s_createUser !='' ">
-			  		and s_createUser=#{s_createUser} 
+			  		and student.s_createUser=#{s_createUser} 
 			  	</if>
 			  </where>
 			  GROUP BY dt
