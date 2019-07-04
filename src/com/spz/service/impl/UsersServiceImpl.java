@@ -166,7 +166,6 @@ public class UsersServiceImpl implements UsersService {
 
 	@Override
 	public Integer selectUserAndPushIsreaderCount(String u_name) {
-		System.out.println(u_name);
 		Push push= redisDao.getPush(u_name);
 		System.out.println("直接从缓存拿的数据："+push);
 		if(push==null||push.getId()==0) {

@@ -6,8 +6,8 @@
 <meta charset="UTF-8">
 <script src="${pageContext.request.contextPath}/js/global.js"></script>
 <script type="text/javascript">
-
-var webscoket=new WebSocket("ws:localhost:8080/SSM/webscoket/"+globalData.getCurUName()+"");
+///39.105.35.157
+var webscoket=new WebSocket("ws:39.105.35.157:8080/SSM/webscoket/"+globalData.getCurUName()+"");
 
 webscoket.onopen=function(){
 	//alert("连接建立");
@@ -17,7 +17,7 @@ webscoket.onclose=function(){
 }
 $(function(){
 	$("#u_id").combobox({
-		url:'${pageContext.request.contextPath}/selectUserName?s_createUser='+<%=request.getSession().getAttribute("u_id")%>,
+		url:'${pageContext.request.contextPath}/selectUserName?s_createUser='+globalData.getCurUName(),
 		editable:false, //不可编辑状态 
 		valueField:'u_id',
 		textField:'u_name'
@@ -33,13 +33,18 @@ function seachselect(){
 		    url:'${pageContext.request.contextPath}/selectAll',
 			method:'post',
 			rownumbers:true,
-			
+			singleSelect:true,
+			selectOnCheck:false,
+			checkOnSelect:false,
 			fitColumns:true,
 			pagination:true,
 			striped:true, 
+			onDblClickRow:function(index, row){
+				chaStu(index);
+			},
 		    toolbar:"#toolbar",
 		    queryParams: {
-		    	s_createUser:<%=request.getSession().getAttribute("u_id")%>,
+		    	s_createUser:globalData.getCurUName(),
 		    	s_name: $("#s_name").textbox("getValue"),
 				s_sex:$('#dd').textbox('getValue'),
 				/* s_zixunName: $('#s_zixunName').textbox('getValue'), */
@@ -57,9 +62,10 @@ function seachselect(){
 	}
 
 	function formattercaosuo(value,row,index){
-		return  " <a href='javascript:void(0)' onclick='chaStu("+index+")'>查看</a>||<a href='javascript:void(0)' onclick='tuisong("+index+")'>动态推送</a>";
+		return  " <a style='cursor: pointer;' onclick='chaStu("+index+")'>查看</a> | <a  style='cursor: pointer;' onclick='tuisong("+index+")'>动态推送</a>";
 	}
 	
+	//关闭添加窗口
 	function clearStudent(){
 		$("#insertStu").dialog("close");
 	}
@@ -85,22 +91,25 @@ function seachselect(){
 	}
 	
 	function insertStudent(){
-		
-		/* 是否开启自动分量 */
-		var status= $("#zdfl").switchbutton("options").checked;
-		var fenliang= status ==true ? "1" : "0"
-		$.ajax({
-			url:'${pageContext.request.contextPath}/insertStu?s_createUser='+<%=request.getSession().getAttribute("u_id")%>+'&fenliang='+fenliang,
-			method:'post',
-			data:$("#insertform").serializeArray(),
-			success:function(res){
-				if(res>0){
-					$('#dg').datagrid("reload");
-					$("#insertStu").dialog("close");
-					$.messager.alert('提示信息','添加成功');    
+		if($("#insertform").form("validate")){
+			/* 是否开启自动分量 */
+			var status= $("#zdfl").switchbutton("options").checked;
+			var fenliang= status ==true ? "1" : "0"
+			$.ajax({
+				url:'${pageContext.request.contextPath}/insertStu?s_createUser='+globalData.getCurUName()+'&fenliang='+fenliang,
+				method:'post',
+				data:$("#insertform").serializeArray(),
+				success:function(res){
+					if(res>0){
+						$('#dg').datagrid("reload");
+						$("#insertStu").dialog("close");
+						$.messager.alert('提示信息','添加成功');    
+					}
 				}
-			}
-		},"json")
+			},"json");
+		}else{
+			$.messager.alert("提示信息","请完善必填数据！");
+		}
 	}
 	
 	function chaStu(index){
@@ -123,19 +132,28 @@ function seachselect(){
 	
 	//推送
 	function tuisong(index) {
+		//打开时清空
 		$("#tuiform").form("clear");
-		var data=$("#dg").datagrid("getData");
+		//var data=$("#dg").datagrid("getData");
 		if(data.rows[index].users==undefined){
 			$.messager.alert("提示信息","未分配咨询师不能推送!");
 			return;
 		}
+		//获取咨询师id 赋值到下面隐藏的input框里
 		$("#zxid").val(data.rows[index].users.u_id);
+		//获取咨询师name 显示到input框里
 		$("#users").textbox('setValue',data.rows[index].users.u_name);
+		
 		var zhi=$("#dg").datagrid("getData");
+		//获取的值 传到from表单中
 		$("#tuiform").form("load",zhi.rows[index])
 		$("#tui").dialog("open");
 	}
 	function send(){
+		if($("#nr").val().trim()==''){
+			return $.messager.alert("提示信息","推送内容不能为空！");
+		}
+		/* 发送者，接收者(id)，发送内容，接收者（name） */
 		webscoket.send(globalData.getCurUName()+","+$("#zxid").val()+","+$("#nr").val()+","+$("#users").val());
 		$.ajax({
 			url:"${pageContext.request.contextPath}/addPush",
@@ -146,7 +164,7 @@ function seachselect(){
 				studentname:globalData.getCurUName(),
 				zxname:$("#users").val(),
 				context:$("#nr").val(),
-				isreader:2
+				isreader:2//已读未读状态
 			},
 			success:function(res){
 				if(res>0){
@@ -156,7 +174,6 @@ function seachselect(){
 			}
 		});  
 	}
-	
 	function formatteruserName(value,row,index){
 		return row.users != undefined ?  row.users.u_name : "未分配";
 	}
@@ -221,15 +238,15 @@ function seachselect(){
 						咨询师: <!-- <input class="easyui-textbox" id="s_zixunName" style="width:80px"> -->
 							<input class="easyui-combobox" panelHeight='auto' id="u_id"  style="width:80px"/>
 						性别：
-						<select id="dd" class="easyui-combobox" panelHeight='auto' data-options="editable:false" name=s_sex style="width:auto;">
+						<select id="dd" class="easyui-combobox" panelHeight='auto' data-options="editable:false" name="s_sex" style="width:auto;">
 							<option value="">--请选择---</option>
 							<option value="男">男</option>
 							<option value="女">女</option>
 					    </select>
 					   
-						创建时间: <input class="easyui-datebox" id="min_s_createTime" style="width:100px">
+						创建时间: <input class="easyui-datebox" id="min_s_createTime" data-options="editable:false" style="width:100px">
 						-
-						<input class="easyui-datebox" id="max_s_createTime" style="width:100px"> &nbsp;&nbsp;
+						<input class="easyui-datebox" id="max_s_createTime" data-options="editable:false" style="width:100px"> &nbsp;&nbsp;
 						 <br/>是否缴费:
 						<select id="s_ispay" class="easyui-combobox" panelHeight='auto' data-options="editable:false" name="s_ispay" style="width:auto;">
 							<option value="">--请选择---</option>
@@ -248,9 +265,11 @@ function seachselect(){
 							<option value="已回访">已回访</option>
 							<option value="未回访">未回访</option>
 					    </select>
-		<a href="javascript:void(0);" id="btnExport" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-print'">导出Excel</a>
-		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'" onclick="seachinsert()">新增</a>		
-		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search'" onclick="seachselect()">检索</a>
+					    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search'" onclick="seachselect()">检索</a>
+						<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'" onclick="seachinsert()">新增</a>	
+						<a href="javascript:void(0);" id="btnExport" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-print'">导出Excel</a>
+							
+		
 		<!-- 设置隐藏列 -->
 		 <div  class="easyui-accordion" style="width:atuo;height:auto;" data-options="selected:false">
 	  						
@@ -327,10 +346,10 @@ function seachselect(){
 			</tr>
 			<tr>
 				<td>年龄:</td>
-				<td><input class="easyui-numberbox" type="text" name="s_age" style="width: 80px"  data-options="min:16,max:30,prompt:'16-30岁之间'"/></td>
+				<td><input class="easyui-numberbox" type="text" name="s_age" style="width: 80px"  data-options="required:true,min:16,max:30,prompt:'16-30岁之间'"/></td>
 				<td>来源渠道:</td>
 				<td>
-					<select class="easyui-combobox"  name="s_courceurl" style="width: 159px" data-options="required:true,prompt:'必须选择来源渠道'" > 
+					<select class="easyui-combobox"  name="s_courceurl" style="width: 159px"  panelHeight='auto' data-options="editable:false,required:true,prompt:'必须选择来源渠道'" > 
 					    <option value=""></option>   
 					    <option value="未知">未知</option>   
 					    <option value="百度">百度</option> 
@@ -350,15 +369,19 @@ function seachselect(){
 			</tr>
 			<tr>
 				<td>性别:</td>
-				<td><input type="radio" name="s_sex" value="男" checked="checked" />男  
-					<input type="radio" name="s_sex" value="女"/> 女  </td>
+				<td>
+					<input type="radio" id="nan"  name="s_sex" value="男" checked="checked" />
+					<label for="nan">男</label>
+					<input type="radio" id="nv"  name="s_sex" value="女"/> 
+					<label for="nv">女</label>
+				</td>
 				<td>来源关键词:</td>
 				<td><input class="easyui-textbox" type="text" data-options="prompt:'请输入来源关键词'" name="s_keywords" /></td>
 			</tr>
 			<tr>
 				<td>客户学历:</td>
 				<td>
-					<select class="easyui-combobox" style="width: 80px" name="s_stuConcern" > 
+					<select class="easyui-combobox" data-options="editable:false"  panelHeight='auto' style="width: 80px" name="s_stuConcern" > 
 					    <option value="">--请选择--</option>   
 					    <option value="未知">未知</option>   
 					    <option value="大专">大专</option>   
@@ -375,7 +398,7 @@ function seachselect(){
 			<tr>
 				<td>状态:</td>
 				<td> 
-					<select class="easyui-combobox" style="width: 80px" name="s_state"> 
+					<select class="easyui-combobox" panelHeight='auto' data-options="editable:false" style="width: 80px" name="s_state"> 
 					    <option value="">--请选择--</option>   
 					    <option value="未知">未知</option>   
 					    <option value="待业">待业</option> 
@@ -389,7 +412,7 @@ function seachselect(){
 			<tr>
 				<td>来源网址:</td>
 				<td>
-					<select class="easyui-combobox" style="width: 80px" name="s_fromPart"> 
+					<select class="easyui-combobox" panelHeight='auto' data-options="editable:false" style="width: 80px" name="s_fromPart"> 
 					    <option value="">--请选择--</option>   
 					    <option value="其他">其他</option>   
 					    <option value="职英B站">职英B站</option> 
@@ -399,22 +422,25 @@ function seachselect(){
 				</td>
 				<td>是否报备:</td>
 				<td>
-					 <input type="radio" value="是" name="s_isbaobei" checked="checked" />是
-		       		 <input type="radio" value="否" name="s_isbaobei" />否
+					 <input type="radio" id="shi" value="是" name="s_isbaobei" checked="checked" />
+					 <label for="shi">是</label>
+		       		 <input type="radio" id="fou" value="否" name="s_isbaobei" />
+		       		 <label for="fou">否</label>
 				</td>
 			</tr>
 			<tr>
 				<td>是否自动分量:</td>
 				<td><input class="easyui-switchbutton" id="zdfl" data-options="onText:'开',offText:'关'" ></td>
 				<td>备注:</td>
-				<td><input class="easyui-textbox" data-options="multiline:true,height:50,prompt:'备注...'" type="text" name="s_inClassContent"/></td>
+				<td><input class="easyui-textbox" data-options="multiline:true,height:50,prompt:'备注...'" type="text" name="s_record"/></td>
 			</tr>
 		</table>
 		
 	</form>
 	<div style="text-align:center;padding:5px">
-		<a href="javascript:void(0)" class="easyui-linkbutton" type="button" onclick="insertStudent()">保存</a>
-		<a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearStudent()">取消</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" type="button" onclick="insertStudent()">保存</a>
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-clear'" onclick="clearStudent()">取消</a>
 	</div>
 </div>
 
@@ -435,46 +461,46 @@ function seachselect(){
 							</tr>
 							<tr>
 								<td>名称:</td>
-								<td><input class="easyui-textbox" type="text" name="s_name"
+								<td><input class="easyui-textbox" data-options="editable:false" type="text" name="s_name"
 									style="width: 80px" /></td>
 								<td>手机号:</td>
-								<td><input class="easyui-textbox" name="s_iphone" /></td>
+								<td><input class="easyui-textbox" data-options="editable:false" name="s_iphone" /></td>
 							</tr>
 							<tr>
 								<td>年龄:</td>
-								<td><input class="easyui-numberbox" type="text"
+								<td><input class="easyui-numberbox" data-options="editable:false" type="text"
 									name="s_age" style="width: 80px" /></td>
 								<td>来源渠道:</td>
-								<td><input class="easyui-textbox" name="s_courceurl" /></td>
+								<td><input class="easyui-textbox" data-options="editable:false" name="s_courceurl" /></td>
 							</tr>
 							<tr>
 								<td>性别:</td>
-								<td><input class="easyui-textbox" type="text" name="s_sex"
+								<td><input class="easyui-textbox" data-options="editable:false" type="text" name="s_sex"
 									style="width: 80px" /></td>
 								<td>来源关键词:</td>
-								<td><input class="easyui-textbox" type="text"
+								<td><input class="easyui-textbox" data-options="editable:false" type="text"
 									name="s_keywords" /></td>
 							</tr>
 							<tr>
 								<td>学历:</td>
-								<td><input class="easyui-textbox" style="width: 80px"
+								<td><input class="easyui-textbox" data-options="editable:false" style="width: 80px"
 									type="text" name="s_stuConcern" /></td>
 								<td>qq:</td>
-								<td><input class="easyui-numberbox" type="text" name="s_qq" /></td>
+								<td><input class="easyui-numberbox" data-options="editable:false" type="text" name="s_qq" /></td>
 							</tr>
 							<tr>
 								<td>状态:</td>
-								<td><input class="easyui-textbox" style="width: 80px"
+								<td><input class="easyui-textbox" data-options="editable:false" style="width: 80px"
 									type="text" name="s_state" /></td>
 								<td>微信号:</td>
-								<td><input class="easyui-textbox" type="text" name="s_wx" /></td>
+								<td><input class="easyui-textbox" data-options="editable:false" type="text" name="s_wx" /></td>
 							</tr>
 							<tr>
 								<td>来源网址:</td>
-								<td><input class="easyui-textbox" style="width: 80px"
+								<td><input class="easyui-textbox" data-options="editable:false" style="width: 80px"
 									type="text" name="s_fromPart" /></td>
 								<td>是否报备:</td>
-								<td><input class="easyui-textbox" type="text"
+								<td><input class="easyui-textbox" data-options="editable:false" type="text"
 									name="s_isbaobei" /></td>
 							</tr>
 						</table>
@@ -482,8 +508,8 @@ function seachselect(){
 							<tr>
 								<td>&ensp;备&ensp;注:</td>
 								<td>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<input class="easyui-textbox"
-									data-options="multiline:true,height:50,width:329" type="text"
-									name="s_inClassContent" /></td>
+									data-options="multiline:true,height:50,width:329,editable:false" type="text"
+									name="s_record" /></td>
 							</tr>
 							<tr>
 								<td>&ensp;咨询师:</td>
@@ -493,10 +519,10 @@ function seachselect(){
 						<table cellpadding="5">
 							<tr>
 								<td>咨询师:</td>
-								<td>&ensp;&ensp;&ensp;&ensp;&ensp;<input class="easyui-textbox"  type="text" id="u_name"
+								<td>&ensp;&ensp;&ensp;&ensp;&ensp;<input class="easyui-textbox" data-options="editable:false" type="text" id="u_name"
 									style="width: 80px"  /></td>
 								<td>&ensp;&ensp;课程方向:</td>
-								<td><input class="easyui-textbox" name="s_source" /></td>
+								<td><input class="easyui-textbox" data-options="editable:false" name="s_source" /></td>
 							</tr>
 						</table>
 					</td>
@@ -504,65 +530,65 @@ function seachselect(){
 						<table cellpadding="5">
 							<tr>
 								<td>打分:</td>
-								<td><input class="easyui-numberbox" type="text"
-									name="s_learnforward"   /></td>
+								<td><input class="easyui-textbox" type="text"
+									name="s_learnforward" data-options="editable:false"  /></td>
 								<td>是否有效:</td>
-								<td><input class="easyui-textbox" name="s_isValid" /></td>
+								<td><input class="easyui-textbox" data-options="editable:false" name="s_isValid" /></td>
 							</tr>
 							<tr>
 								<td>无效原因:</td>
-								<td><input class="easyui-textbox" type="text"
+								<td><input class="easyui-textbox" data-options="editable:false" type="text"
 									name="s_lostValid"   /></td>
 								<td>是否回访:</td>
-								<td><input class="easyui-textbox" type="text"
+								<td><input class="easyui-textbox" data-options="editable:false" type="text"
 									name="s_isreturnVist" /></td>
 							</tr>
 							<tr>
 								<td>首访时间:</td>
 								<td><input class="easyui-textbox"  
-									type="text" name="s_fistVisitTime" /></td>
+									type="text" data-options="editable:false" name="s_fistVisitTime" /></td>
 								<td>是否上门:</td>
-								<td><input class="easyui-textbox" type="text"
+								<td><input class="easyui-textbox" data-options="editable:false" type="text"
 									name="s_ishome" /></td>
 							</tr>
 							<tr>
 								<td>上门时间:</td>
 								<td><input class="easyui-textbox"  
-									type="text" name="s_homeTime" /></td>
+									type="text" name="s_homeTime" data-options="editable:false" /></td>
 								<td>定金金额:</td>
-								<td><input class="easyui-textbox" type="text"
+								<td><input class="easyui-textbox" data-options="editable:false" type="text"
 									name="s_preMoney" /></td>
 							</tr>
 							<tr>
 								<td>定金时间:</td>
 								<td><input class="easyui-textbox"  
-									type="text" name="s_preMoneyTime" /></td>
+									type="text" data-options="editable:false" name="s_preMoneyTime" /></td>
 								<td>是否缴费:</td>
-								<td><input class="easyui-textbox" type="text"
+								<td><input class="easyui-textbox" data-options="editable:false" type="text"
 									name="s_ispay" /></td>
 							</tr>
 							<tr>
 								<td>缴费时间:</td>
-								<td><input class="easyui-textbox" type="text"
+								<td><input class="easyui-textbox" data-options="editable:false" type="text"
 									name="s_paytime" /></td>
 								<td>缴费金额:</td>
-								<td><input class="easyui-numberbox" type="text"
+								<td><input class="easyui-numberbox" data-options="editable:false" type="text"
 									name="s_money" /></td>
 							</tr>
 							<tr>
 								<td>是否退费:</td>
-								<td><input class="easyui-textbox" type="text"
+								<td><input class="easyui-textbox" data-options="editable:false" type="text"
 									name="s_isReturnMoney" /></td>
 								<td>退费原因:</td>
-								<td><input class="easyui-textbox" type="text"
+								<td><input class="easyui-textbox" data-options="editable:false" type="text"
 									name="s_returnMoneyReason" /></td>
 							</tr>
 							<tr>
 								<td>是否进班:</td>
-								<td><input class="easyui-textbox" type="text"
+								<td><input class="easyui-textbox" data-options="editable:false" type="text"
 									name="s_isInClass" /></td>
 								<td>进班时间:</td>
-								<td><input class="easyui-textbox" type="text"
+								<td><input class="easyui-textbox" data-options="editable:false" type="text"
 									name="s_inClassTime" /></td>
 							</tr>
 						</table>
@@ -570,8 +596,8 @@ function seachselect(){
 							<tr>
 								<td>咨询师备注:</td>
 								<td><input class="easyui-textbox"
-									data-options="multiline:true,height:50,width:395" type="text"
-									name="s_askerContent" /></td>
+									data-options="multiline:true,height:50,width:395,editable:false" type="text"
+									name="s_askerContent"  /></td>
 							</tr>
 						</table>
 					</td>
@@ -596,10 +622,10 @@ function seachselect(){
 								<td>
 								<input type="hidden" name="s_id" id="idd" />
 								<input type="hidden" id="zxid" />
-								<input class="easyui-textbox" type="text" name="s_name" id="namess"
+								<input class="easyui-textbox" type="text" data-options="editable:false" name="s_name" id="namess"
 									style="width: 80px" /></td>
 								<td>推送咨询师名字:</td>
-								<td><input class="easyui-textbox"  name="zxname" id="users"
+								<td><input class="easyui-textbox" data-options="editable:false" name="zxname" id="users"
 									style="width: 80px"  /></td>
 							</tr>
 						</table>
@@ -616,7 +642,7 @@ function seachselect(){
 			</table>
 		</form>
 		<div style="text-align:center;padding:5px">
-		<a href="javascript:void(0)" class="easyui-linkbutton" type="button" onclick="send()">立即推送</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" type="button" onclick="send()">立即推送</a>
 		</div>
 	</div>
 	
@@ -803,14 +829,18 @@ function seachselect(){
 		link.click();
 		document.body.removeChild(link);
 	}
-	
+	//执行点击事件
 	$("#btnExport").click(function() {
-		var row=$("#dg").datagrid("getSelections");
+		//获取选中行的数据
+		var row=$("#dg").datagrid("getChecked");
+		//判断是否选中
 		if(row.length == 0){
 			$.messager.alert("系统信息","请选择数据");
 			return;
 		}
+		//把选中的数据转为字符串
 		var data = JSON.stringify(row);
+		//把数据传入方法里面 进行导出
 		JSONToCSVConvertor(data, "数据信息", true);
 	});
 

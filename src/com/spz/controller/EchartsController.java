@@ -26,9 +26,10 @@ public class EchartsController {
 	@ResponseBody
 	public String EchartsServlet(Student student,HttpServletResponse response,HttpServletRequest request) {
 		Integer id= (Integer)request.getSession().getAttribute("u_id");
+		String u_name= (String)request.getSession().getAttribute("u_name");
 		Integer echarts2 = echartsService.selectRolesEcharts(id);
 		if(echarts2==9) {
-			student.setS_createUser(id+"");
+			student.setS_createUser(u_name);
 		}
 		if(echarts2==10) {
 			student.setU_id(id);

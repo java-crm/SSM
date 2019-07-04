@@ -39,8 +39,8 @@
 	
 	<!-- 孙所蕾 -->
 	<select id="selectUserCheckAll" parameterType="userchecks" resultMap="com.spz.dao.mapperMap.resultMapUserchecks">
-		select us_id,u_id,u_name us_userName,us_checkinTime,us_checkState,us_isCancel,us_checkoutTime from 	(
-			select us_id,users.u_id,users.u_name,us_checkinTime,userchecks.us_checkState,userchecks.us_isCancel,us_checkoutTime from 
+			select us_id,u_id,u_name,us_userName,us_checkinTime,us_checkState,us_isCancel,us_checkoutTime,a.r_name from 	(
+			select us_id,users.u_id,users.u_name,us_userName,us_checkinTime,userchecks.us_checkState,userchecks.us_isCancel,us_checkoutTime,roles.r_name 			from 
 				users LEFT JOIN
 				userchecks on userchecks.u_id=users.u_id
 				INNER JOIN userroles on users.u_id=userroles.u_id
@@ -48,28 +48,25 @@
 				where roles.r_id=10 or roles.r_id=9
 			) a
 			<where>
-				<if test="u_id !=null and u_id !=''">
-					and u_id =#{u_id}
+				<if test="us_userName !=null and us_userName !=''">
+					and us_userName like "%"#{us_userName}"%"
 				</if>
 				<if test="us_checkState !=null and us_checkState !=''">
 					and us_checkState =#{us_checkState}
 				</if>
 				<if test="us_checkinTime != null and us_checkinTime !=''">
-					and us_checkinTime &gt;= #{us_checkinTime}
+					and us_checkinTime &lt;= #{us_checkinTime}
 				</if>
 				<if test="us_checkoutTime !=null and us_checkoutTime !=''">
-					and us_checkoutTime &lt;= #{us_checkoutTime}
+					and us_checkoutTime &gt;= #{us_checkoutTime}
 				</if>
-				<!-- <if test="1>0">
-					and a.us_isCancel=#{us_isCancel}
-				</if> -->
 			</where>
 			  limit #{page},#{rows}
 	</select>
 	
 	<select id="selectUserCheckCount" parameterType="userchecks" resultType="int">
 		select count(1) from 	(
-			select us_id,users.u_id,users.u_name,us_checkinTime,userchecks.us_checkState,userchecks.us_isCancel,us_checkoutTime from 
+			select us_id,users.u_id,users.u_name,us_userName,us_checkinTime,userchecks.us_checkState,userchecks.us_isCancel,us_checkoutTime from 
 				users LEFT JOIN
 				userchecks on userchecks.u_id=users.u_id
 				INNER JOIN userroles on users.u_id=userroles.u_id
@@ -77,21 +74,18 @@
 				where roles.r_id=10 or roles.r_id=9
 			) a 
 			<where>
-				<if test="u_id !=null and u_id !=''">
-					and u_id =#{u_id}
+				<if test="us_userName !=null and us_userName !=''">
+					and us_userName like "%"#{us_userName}"%"
 				</if>
 				<if test="us_checkState !=null and us_checkState !=''">
-					and a.us_checkState =#{us_checkState}
+					and us_checkState =#{us_checkState}
 				</if>
 				<if test="us_checkinTime != null and us_checkinTime !=''">
-					and us_checkinTime &gt;= #{us_checkinTime}
+					and us_checkinTime &lt;= #{us_checkinTime}
 				</if>
 				<if test="us_checkoutTime !=null and us_checkoutTime !=''">
-					and us_checkoutTime &lt;= #{us_checkoutTime}
+					and us_checkoutTime &gt;= #{us_checkoutTime}
 				</if>
-				<!-- <if test="1>0">
-					and a.us_isCancel=#{us_isCancel}
-				</if> -->
 			</where>
 	</select>
 	

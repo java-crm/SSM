@@ -177,34 +177,65 @@
 	
 	<!-- 查询已打卡咨询师成交的学生总个数，和已录入的未成交的个数，以及成功率 -->
 	<select id="selectUsersByFenLiang" parameterType="Users" resultType="Users">
-		select a.*,IFNULL(b.count,0) counts ,IFNULL(d.count ,0) dcount , IFNULL(b.count/a.count,0)  as bfb  from (   
-			select users.u_id,
-			users.u_name ,count(student.s_id) as count from users
-			left JOIN student on users.u_id=student.u_id
-			INNER JOIN userchecks on users.u_id=userchecks.u_id
-			INNER JOIN userroles on users.u_id=userroles.u_id
-			INNER JOIN roles on userroles.r_id=roles.r_id
-			where roles.r_id = 10 
-			AND userchecks.us_checkState = '是' 
-			GROUP BY users.u_id ) a left join
-			(select users.u_id,users.u_name,count(users.u_id) as count from users  
-			INNER JOIN userchecks ON users.u_id=userchecks.u_id	
-			left JOIN student on users.u_id=student.u_id
-			inner JOIN userroles ON users.u_id = userroles.u_id
-			inner JOIN roles ON userroles.r_id = roles.r_id
-			where roles.r_id=10   and student.s_ispay='已缴费'  
-			group by users.u_id HAVING count>0 
-		) b on a.u_id=b.u_id  left join (
-			select users.u_id,count(users.u_id) as count from users
-			INNER JOIN userchecks ON users.u_id=userchecks.u_id		
-			left JOIN student on users.u_id=student.u_id
-			inner JOIN userroles ON users.u_id = userroles.u_id
-			inner JOIN roles ON userroles.r_id = roles.r_id
-			where roles.r_id=10 and userchecks.us_checkState='是' 
-			and  student.s_createTime &gt; #{beginCreateTime} 
-			and student.s_createTime &lt; #{endCreateTime}
-			group by users.u_id HAVING count>0 
-		) d on b.u_id = d.u_id 
+		select tt.*,IFNULL( d.dcount, 0 ) dcount,IFNULL(tt.counts/tt.count,0)  bfb from (
+			SELECT
+				a.*,
+				IFNULL( b.count, 0 ) counts
+			FROM
+				(
+				SELECT
+					users.u_id,
+					users.u_name,
+					count( student.s_id ) AS count 
+				FROM
+					users
+					LEFT JOIN student ON users.u_id = student.u_id
+					INNER JOIN userchecks ON users.u_id = userchecks.u_id
+					INNER JOIN userroles ON users.u_id = userroles.u_id
+					INNER JOIN roles ON userroles.r_id = roles.r_id 
+				WHERE
+					roles.r_id = 10 
+					AND userchecks.us_checkState = '是' 
+				GROUP BY
+					users.u_id 
+				) a
+				LEFT JOIN (
+				SELECT
+					users.u_id,
+					users.u_name,
+					count( users.u_id ) AS count 
+				FROM
+					users
+					INNER JOIN userchecks ON users.u_id = userchecks.u_id
+					LEFT JOIN student ON users.u_id = student.u_id
+					INNER JOIN userroles ON users.u_id = userroles.u_id
+					INNER JOIN roles ON userroles.r_id = roles.r_id 
+				WHERE
+					roles.r_id = 10 
+					AND student.s_ispay = '已缴费' 
+				GROUP BY
+					users.u_id 
+				HAVING
+					count > 0 
+				) b ON a.u_id = b.u_id 
+			) tt left join 
+			 (
+				SELECT
+					users.u_id,
+					count(users.u_id ) AS dcount
+				FROM
+					users
+					INNER JOIN userchecks ON users.u_id = userchecks.u_id
+					LEFT JOIN student ON users.u_id = student.u_id
+					INNER JOIN userroles ON users.u_id = userroles.u_id
+					INNER JOIN roles ON userroles.r_id = roles.r_id 
+				WHERE
+					roles.r_id = 10
+					AND userchecks.us_checkState = '是' 
+					AND student.s_createTime &gt; #{beginCreateTime}
+					AND student.s_createTime &lt; #{endCreateTime}
+					GROUP BY users.u_id HAVING dcount > 0 
+				) d ON tt.u_id = d.u_id
 	</select>
 	
 	<!-- 查看那个网络咨询师被开启分量了 -->

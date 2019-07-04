@@ -61,7 +61,7 @@ public interface StudentService {
 	 * @param s_createUser
 	 * @return
 	 */
-	List<Users> selectStudentUserName(Integer s_createUser);
+	List<Users> selectStudentUserName(String s_createUser);
 
 	/**
 	 * 添加推送
@@ -166,4 +166,10 @@ public interface StudentService {
 	 * @return
 	 */
 	Integer insertjingliFenPei(String u_id);
+	/**
+	 * wflxs手动分配客户给咨询师
+	 * @param student
+	 * @return
+	 */
+	Integer shoudongFenLiang(Student student);
 }

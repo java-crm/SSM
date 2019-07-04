@@ -25,4 +25,15 @@ public class ChatfunctionController {
 	public void insertChatfunction(Chatfunction chatfunction){
 		chatfunctionService.insertChatfunction(chatfunction);
 	}
+	
+	@RequestMapping(value="/selectChatfunctionIsWeiDu",method=RequestMethod.POST)
+	@ResponseBody
+	public List<Chatfunction> selectChatfunctionIsWeiDu(Chatfunction chatfunction){
+		return chatfunctionService.selectChatfunctionIsWeiDu(chatfunction);
+	}
+	
+	@RequestMapping(value="/updateChatfunctionIsYiDu",method=RequestMethod.POST)
+	public void updateChatfunctionIsYiDu(Chatfunction chatfunction){
+		chatfunctionService.updateChatfunctionIsYiDu(chatfunction);
+	}
 }
