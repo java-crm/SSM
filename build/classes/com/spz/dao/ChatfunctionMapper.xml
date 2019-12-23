@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.spz.dao.ChatfunctionMapper">
+	<!--添加一条聊天记录  -->
+	<insert id="insertChatfunction" parameterType="Chatfunction">
+		INSERT INTO chatfunction(fszName, jszName, fsContext,isyidu) 
+		VALUES (#{fszName},#{jszName}, #{fsContext},#{isyidu});
+	</insert>
+	
+	<!-- 查看俩人的聊天记录 -->
+	<select id="selectChatfunction" parameterType="Chatfunction" resultType="Chatfunction">
+		select * from (
+		select * from chatfunction 
+		where chatfunction.fszName=#{fszName} and chatfunction.jszName=#{jszName}
+		UNION ALL
+		select * from chatfunction 
+		where chatfunction.jszName=#{fszName} and chatfunction.fszName=#{jszName}) a 
+		ORDER BY a.fsTime asc
+	</select>
+	
+	<!-- 查看离线时接受的信息二次登录后做提示 -->
+	<select id="selectChatfunctionIsWeiDu" parameterType="Chatfunction" resultType="Chatfunction">
+		SELECT distinct  chatfunction.fszName   FROM  chatfunction  where isyidu='否' and jszName =#{jszName}
+	</select>
+	
+	<!-- 修改状态为已读 -->
+	<update id="updateChatfunctionIsYiDu" parameterType="Chatfunction">
+		update chatfunction set isyidu ='是' where fszName=#{fszName} and jszName=#{jszName}
+	</update>
+	
+	<!-- 时间倒叙查询最后的10条聊天记录 -->
+	<select id="selectChatfunctionIsYiDuCount" parameterType="Chatfunction" resultType="Chatfunction">
+		select * from chatfunction where  fszName=#{fszName} and jszName=#{jszName}  and isyidu='是'  ORDER BY fsTime desc limit 0,10
+	</select>
+	
+	<!-- 只保留最近的十条聊天记录 -->
+	<delete id="deleteChatfunctionliaotyidu" parameterType="Chatfunction">
+		delete from chatfunction where fsTime > #{fsTime} and fszName= #{fszName} and jszName=#{jszName}  and isyidu='是'
+	</delete>
+	
+</mapper>

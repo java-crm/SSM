@@ -41,6 +41,7 @@ var webscoket=new WebSocket("ws:39.105.35.157:8080/SSM/webscoketRescore/"+global
 webscoket.onopen=function(){
 	//alert(globalData.getCurUName()+"连接建立");
 }
+
 webscoket.onclose=function(){
 	//alert("连接关闭了");
 }
