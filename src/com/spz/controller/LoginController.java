@@ -36,8 +36,8 @@ public class LoginController {
 		//获取登陆密码加密后判断
 		Users users2 = usersService.selectUserBylogin(users);
 		String k = (String) session.getAttribute(com.google.code.kaptcha.Constants.KAPTCHA_SESSION_KEY);
-		/*System.out.println(k+"后验证码");
-		System.out.println(yzm+"前验证码"); */
+		System.out.println(k+"后验证码");
+		System.out.println(yzm+"前验证码"); 
 		if(yzm==null) {
 			//前三次无验证码正常查
 			if(users2 != null) {

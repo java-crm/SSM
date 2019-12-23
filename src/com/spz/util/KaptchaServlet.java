@@ -16,12 +16,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class KaptchaServlet extends HttpServlet implements Servlet {
+	
 	private Properties props;
 	private Producer kaptchaProducer;
 	private String sessionKeyValue;
-
+	
+	
 	public KaptchaServlet() {
-		this.props = new Properties();
+		this.props = new Properties(); 
 
 		this.kaptchaProducer = null;
 
@@ -30,7 +32,6 @@ public class KaptchaServlet extends HttpServlet implements Servlet {
 
 	public void init(ServletConfig conf) throws ServletException {
 		super.init(conf);
-
 		ImageIO.setUseCache(false);
 
 		Enumeration initParams = conf.getInitParameterNames();
@@ -61,9 +62,9 @@ public class KaptchaServlet extends HttpServlet implements Servlet {
 		String s1 = capText.substring(0, 1);
 		String s2 = capText.substring(1, 2);
 		int r = Integer.valueOf(s1).intValue() + Integer.valueOf(s2).intValue();
-
+		System.out.println("this.sessionKeyValue:"+this.sessionKeyValue);
 		req.getSession().setAttribute(this.sessionKeyValue, String.valueOf(r));
-
+		
 		BufferedImage bi = this.kaptchaProducer.createImage(s1+"+"+s2+"=?");
 
 		ServletOutputStream out = resp.getOutputStream();
